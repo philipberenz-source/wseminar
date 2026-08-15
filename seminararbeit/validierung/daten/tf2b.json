@@ -1,0 +1,86 @@
+{
+ "energie": {
+  "M": 18,
+  "n_schritte": 300000,
+  "perioden": 10516.727746785118,
+  "sek": 14.671687602996826,
+  "dt": 7.783559309155198e-11,
+  "t_ges": 2.3350677927465594e-05,
+  "schwankung_naiv": 0.3458067675427096,
+  "schwankung_leapfrog": 1.0462369818091425e-14,
+  "streuung_leapfrog": 2.5918292722292747e-15,
+  "drift_je_1000": -1.0611394748240271e-17,
+  "abschnittsmittel": [
+   0.999999999999998,
+   0.999999999999998,
+   0.9999999999999977,
+   0.999999999999998,
+   0.9999999999999987,
+   1.000000000000001,
+   1.000000000000001,
+   1.0000000000000016,
+   1.0000000000000036,
+   1.000000000000005
+  ]
+ },
+ "stabilitaet": {
+  "S_vorhersage_resonator": 1.0062157798658125,
+  "S_vorhersage_cfl": 1.0,
+  "messungen": [
+   {
+    "S": 0.99,
+    "rate_je_schritt": -2.0231436869472998e-10,
+    "n_endlich": 40000,
+    "groesste_amplitude": 1.0000177788915408
+   },
+   {
+    "S": 1.0,
+    "rate_je_schritt": -2.364442714613936e-10,
+    "n_endlich": 40000,
+    "groesste_amplitude": 1.0000848795256294
+   },
+   {
+    "S": 1.004,
+    "rate_je_schritt": -1.6863207732552682e-10,
+    "n_endlich": 40000,
+    "groesste_amplitude": 1.0000000234183233
+   },
+   {
+    "S": 1.006,
+    "rate_je_schritt": 1.2222871048697224e-08,
+    "n_endlich": 40000,
+    "groesste_amplitude": 1.0000117386523801
+   },
+   {
+    "S": 1.0062,
+    "rate_je_schritt": -1.970962150522031e-08,
+    "n_endlich": 40000,
+    "groesste_amplitude": 1.000004276746988
+   },
+   {
+    "S": 1.00625,
+    "rate_je_schritt": 0.016494518321501707,
+    "n_endlich": 10918,
+    "groesste_amplitude": 4.463727172734144e+76
+   },
+   {
+    "S": 1.0063,
+    "rate_je_schritt": 0.02587643329172154,
+    "n_endlich": 6976,
+    "groesste_amplitude": 7.18542541436725e+75
+   },
+   {
+    "S": 1.007,
+    "rate_je_schritt": 0.07895692444115764,
+    "n_endlich": 2300,
+    "groesste_amplitude": 1.0236909053974767e+72
+   },
+   {
+    "S": 1.01,
+    "rate_je_schritt": 0.17340100566627045,
+    "n_endlich": 1051,
+    "groesste_amplitude": 1.0257344214077036e+64
+   }
+  ]
+ }
+}

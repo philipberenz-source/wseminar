@@ -1,0 +1,91 @@
+Alle im Kapitel 5 verwendeten Messwerte, erzeugt von den Skripten in diesem Ordner.
+
+== Testfall 1a: ebene Welle ==
+  N_lam=  5  Gitter 86x36  200 Schritte  c_p/c = 0.96093961 +- 3.3e-05   Theorie 0.96093864   Diff +0.97 ppm   Abw. vom Sollwert -3.9060 %
+  N_lam= 10  Gitter 170x70  400 Schritte  c_p/c = 0.99131942 +- 8.2e-06   Theorie 0.99131679   Diff +2.63 ppm   Abw. vom Sollwert -0.8681 %
+  N_lam= 20  Gitter 340x140  800 Schritte  c_p/c = 0.99788990 +- 1.3e-05   Theorie 0.99788510   Diff +4.80 ppm   Abw. vom Sollwert -0.2110 %
+  N_lam= 40  Gitter 680x280  1600 Schritte  c_p/c = 0.99948059 +- 1.2e-05   Theorie 0.99947462   Diff +5.97 ppm   Abw. vom Sollwert -0.0519 %
+  N_lam= 80  Gitter 1360x560  3200 Schritte  c_p/c = 0.99987547 +- 8.4e-06   Theorie 0.99986886   Diff +6.61 ppm   Abw. vom Sollwert -0.0125 %
+  Konvergenzordnung p = 2.065 +- 0.015
+  Fehlerverhaeltnisse: [4.5, 4.11, 4.06, 4.17]
+  S=0.35  c_p/c = 0.99611613  Theorie 0.99611153  Diff +4.61 ppm
+  S=0.50  c_p/c = 0.99637959  Theorie 0.99637493  Diff +4.66 ppm
+  S=0.70  c_p/c = 0.99687573  Theorie 0.99687101  Diff +4.72 ppm
+  S=0.90  c_p/c = 0.99753778  Theorie 0.99753298  Diff +4.80 ppm
+  S=0.99  c_p/c = 0.99788990  Theorie 0.99788510  Diff +4.80 ppm
+  Verzug N_lam=10: 0.008750 lam/lam (Theorie 0.008759), halbe Wellenlaenge nach 57 lam
+  Verzug N_lam=20: 0.002119 lam/lam (Theorie 0.002119), halbe Wellenlaenge nach 236 lam
+
+== Testfall 1b: Kreiswelle ==
+  Fehler Achse 0.2115 %, Diagonale 0.0041 %, Verhaeltnis 51
+  groesste Abweichung von der Theorie 111 ppm
+  Amplitudenexponent N_lam= 10: p = 0.5009 +- 0.0002  (exakte Loesung 0.4997)
+  Amplitudenexponent N_lam= 20: p = 0.5002 +- 0.0001  (exakte Loesung 0.4997)
+  Amplitudenexponent N_lam= 40: p = 0.4996 +- 0.0002  (exakte Loesung 0.4997)
+  Differenzfeld N_lam= 10: auf dem Ring r=6 lam 15.06 % (vorhergesagt 13.11 %)
+  Differenzfeld N_lam= 20: auf dem Ring r=6 lam 3.85 % (vorhergesagt 3.19 %)
+  Differenzfeld N_lam= 40: auf dem Ring r=6 lam 1.19 % (vorhergesagt 0.79 %)
+
+== Testfall 2: Resonator ==
+  Referenzlauf M=18, 385428 Schritte, Frequenzaufloesung 33 kHz, 8 Linien / 8 Moden
+    (1,1)  N_lam= 20.0  gemessen   450.2257 MHz  Kontinuum   450.3821  Gitter   450.2257  Abw.Kont -0.0347 %  Abw.Gitter -0.03 ppm
+    (2,1)  N_lam= 14.4  gemessen   624.3224 MHz  Kontinuum   624.5676  Gitter   624.3224  Abw.Kont -0.0393 %  Abw.Gitter +0.04 ppm
+    (1,2)  N_lam= 11.4  gemessen   786.6743 MHz  Kontinuum   790.0225  Gitter   786.6743  Abw.Kont -0.4238 %  Abw.Gitter +0.00 ppm
+    (3,1)  N_lam= 10.7  gemessen   835.6438 MHz  Kontinuum   837.9454  Gitter   835.6439  Abw.Kont -0.2747 %  Abw.Gitter -0.03 ppm
+    (2,2)  N_lam= 10.0  gemessen   899.4992 MHz  Kontinuum   900.7642  Gitter   899.4992  Abw.Kont -0.1404 %  Abw.Gitter +0.00 ppm
+    (3,2)  N_lam=  8.5  gemessen  1059.6791 MHz  Kontinuum  1059.9264  Gitter  1059.6788  Abw.Kont -0.0233 %  Abw.Gitter +0.27 ppm
+    (4,1)  N_lam=  8.4  gemessen  1059.8416 MHz  Kontinuum  1067.2616  Gitter  1059.8417  Abw.Kont -0.6952 %  Abw.Gitter -0.15 ppm
+    (1,3)  N_lam=  7.8  gemessen  1138.2420 MHz  Kontinuum  1151.6458  Gitter  1138.2420  Abw.Kont -1.1639 %  Abw.Gitter -0.01 ppm
+  M=  9  N_lam,11= 10.0  Gitter 30x27  mittlere Abweichung 2.0042 %
+  M= 18  N_lam,11= 20.0  Gitter 39x33  mittlere Abweichung 0.1826 %
+  M= 36  N_lam,11= 39.9  Gitter 57x45  mittlere Abweichung 0.0453 %
+  M= 72  N_lam,11= 79.9  Gitter 93x69  mittlere Abweichung 0.0113 %
+  Verhaeltnisse: [10.98, 4.03, 4.01]
+  Energie: 300000 Schritte = 10517 Perioden; naive Summe schwankt 34.6 %, Erhaltungsgroesse 1.05e-12 %
+  Stabilitaetsgrenze: Vorhersage 1.006216
+    S=0.99000: Rate -2.02e-10 je Schritt, endlich bis Schritt 40000
+    S=1.00000: Rate -2.36e-10 je Schritt, endlich bis Schritt 40000
+    S=1.00400: Rate -1.69e-10 je Schritt, endlich bis Schritt 40000
+    S=1.00600: Rate +1.22e-08 je Schritt, endlich bis Schritt 40000
+    S=1.00620: Rate -1.97e-08 je Schritt, endlich bis Schritt 40000
+    S=1.00625: Rate +1.65e-02 je Schritt, endlich bis Schritt 10918
+    S=1.00630: Rate +2.59e-02 je Schritt, endlich bis Schritt 6976
+    S=1.00700: Rate +7.90e-02 je Schritt, endlich bis Schritt 2300
+    S=1.01000: Rate +1.73e-01 je Schritt, endlich bis Schritt 1051
+
+== Testfall 3: Grenzflaeche ==
+  Nachweisgrenze 2.60e-09
+  eps_r= 1.50  N_lam,2= 32.7  |r| = 0.101789  Fresnel 0.101021  Abw +0.761 %  (aus Dispersion allein +0.253 %)  R+T-1 = +1.54e-03
+  eps_r= 2.25  N_lam,2= 26.7  |r| = 0.201868  Fresnel 0.200000  Abw +0.934 %  (aus Dispersion allein +0.310 %)  R+T-1 = +3.74e-03
+  eps_r= 4.00  N_lam,2= 20.0  |r| = 0.337502  Fresnel 0.333333  Abw +1.250 %  (aus Dispersion allein +0.415 %)  R+T-1 = +8.36e-03
+  eps_r= 6.00  N_lam,2= 16.3  |r| = 0.426669  Fresnel 0.420204  Abw +1.539 %  (aus Dispersion allein +0.511 %)  R+T-1 = +1.30e-02
+  eps_r= 9.00  N_lam,2= 13.3  |r| = 0.509483  Fresnel 0.500000  Abw +1.897 %  (aus Dispersion allein +0.629 %)  R+T-1 = +1.91e-02
+  N_lam,2= 10.0 (f=2.001 GHz): |r| = 0.350692  Abw +5.2075 %
+  N_lam,2= 15.0 (f=1.334 GHz): |r| = 0.340820  Abw +2.2460 %
+  N_lam,2= 20.0 (f=1.000 GHz): |r| = 0.337502  Abw +1.2505 %
+  N_lam,2= 30.0 (f=0.667 GHz): |r| = 0.335173  Abw +0.5518 %
+  N_lam,2= 40.0 (f=0.500 GHz): |r| = 0.334365  Abw +0.3096 %
+  Konvergenzordnung p = 2.03
+  sigma= 0.01 S/m  Verlusttangens 0.045  |r| = 0.331603  Fresnel 0.333744  Abw -0.642 %
+  sigma= 0.05 S/m  Verlusttangens 0.225  |r| = 0.342512  Fresnel 0.343220  Abw -0.206 %
+  sigma= 0.20 S/m  Verlusttangens 0.899  |r| = 0.440647  Fresnel 0.437234  Abw +0.781 %
+  sigma= 1.00 S/m  Verlusttangens 4.494  |r| = 0.711039  Fresnel 0.697952  Abw +1.875 %
+
+== Testfall 4: absorbierender Rand ==
+  d=0.200 lam ( 4 Zellen)  senkrecht 9.391e-02 ( -20.5 dB)   alle Winkel 6.179e-01 (  -4.2 dB)
+  d=0.250 lam ( 5 Zellen)  senkrecht 5.304e-02 ( -25.5 dB)   alle Winkel 4.354e-01 (  -7.2 dB)
+  d=0.500 lam (10 Zellen)  senkrecht 7.678e-03 ( -42.3 dB)   alle Winkel 1.726e-01 ( -15.3 dB)
+  d=0.750 lam (15 Zellen)  senkrecht 2.022e-04 ( -73.9 dB)   alle Winkel 9.017e-02 ( -20.9 dB)
+  d=1.000 lam (20 Zellen)  senkrecht 1.029e-03 ( -59.8 dB)   alle Winkel 5.082e-02 ( -25.9 dB)
+  d=1.500 lam (30 Zellen)  senkrecht 2.041e-04 ( -73.8 dB)   alle Winkel 1.573e-02 ( -36.1 dB)
+  d=2.000 lam (40 Zellen)  senkrecht 1.794e-04 ( -74.9 dB)   alle Winkel 3.889e-03 ( -48.2 dB)
+  feste 10 Zellen, N_lam= 10: d=1.00 lam, |R| = 5.605e-02 (-25.0 dB)
+  feste 10 Zellen, N_lam= 20: d=0.50 lam, |R| = 1.659e-01 (-15.6 dB)
+  feste 10 Zellen, N_lam= 40: d=0.25 lam, |R| = 2.105e-01 (-13.5 dB)
+  Daempfungsprofil Faktor 0.2, m=3: |R| = 1.420e-01 (-17.0 dB)
+  Daempfungsprofil Faktor 0.3, m=3: |R| = 1.005e-01 (-20.0 dB)
+  Daempfungsprofil Faktor 0.5, m=3: |R| = 1.214e-01 (-18.3 dB)
+  Daempfungsprofil Faktor 1.0, m=3: |R| = 1.726e-01 (-15.3 dB)
+  Daempfungsprofil Faktor 2.0, m=3: |R| = 2.386e-01 (-12.4 dB)
+  Daempfungsprofil Faktor 0.5, m=2: |R| = 9.594e-02 (-20.4 dB)
+  Daempfungsprofil Faktor 0.5, m=4: |R| = 1.528e-01 (-16.3 dB)
