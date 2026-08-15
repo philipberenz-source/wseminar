@@ -1,6 +1,22 @@
 // Eigenes Import nötig: #include teilt keine Variablen mit main.typ.
 #import "../template.typ": *
 
+// ---------------------------------------------------------------
+// Zitierkonvention dieser Arbeit (durchgängig anwenden):
+//   1. Verweis auf ein Werk als Ganzes -> kein Zusatz, nur @Key.
+//      Beispiel: der sechsseitige Aufsatz @Yee1966.
+//   2. Verweis auf eine konkrete Aussage in einem umfangreichen Werk
+//      -> Fundstelle im Zusatz: @Key[S. 51] bzw. @Key[S. 186 f.].
+//      Enthält der Zusatz Kommata oder Klammern, die ausgeschriebene
+//      Form nehmen: #cite(<Key>, supplement: [S. 51, Gl. (2.7)]).
+//   3. Quellen mit eigener Abschnittszählung statt Paginierung
+//      (Maxwell 1865) -> [Abschn. 97].
+//   4. Internetquellen -> keine Seitenangabe; das Abrufdatum steht
+//      als urldate im Eintrag in literatur.bib.
+//   5. Sinngemäße Übernahme mit vorangestelltem "vgl.", wörtliche
+//      Übernahme in Anführungszeichen und ohne Zusatz.
+// ---------------------------------------------------------------
+
 = Einleitung
 
 == Relevanz und Motivation
@@ -40,7 +56,7 @@ muss.
 An Konfigurationen dieser Art scheitert die analytische Behandlung. Die
 klassische Elektrodynamik gilt zwar als abgeschlossene Theorie, denn die
 Maxwell-Gleichungen legen seit 1865 das Feld bei gegebenen Quellen,
-Materialeigenschaften und Randbedingungen eindeutig fest @Maxwell1865.
+Materialeigenschaften und Randbedingungen eindeutig fest @Maxwell1865[Abschn. 70].
 Geschlossene Lösungen sind jedoch nur für wenige idealisierte Konfigurationen
 bekannt, etwa für die ebene Welle im homogenen unbegrenzten Raum, für die
 Reflexion an einer unendlich ausgedehnten ebenen Grenzfläche, für den
@@ -113,13 +129,17 @@ Die Entwicklung von der Feldtheorie zum numerischen Standardverfahren lässt
 sich an drei Stationen nachzeichnen.
 
 James Clerk Maxwell führte 1865 in _A Dynamical Theory of the Electromagnetic
-Field_ @Maxwell1865 Elektrizität, Magnetismus und Optik in einem einheitlichen
-Gleichungssystem zusammen und sagte die Existenz sich mit Lichtgeschwindigkeit
-ausbreitender elektromagnetischer Wellen voraus. Der experimentelle Nachweis
+Field_ @Maxwell1865[Abschn. 70] Elektrizität, Magnetismus und Optik in einem
+einheitlichen Gleichungssystem zusammen und sagte die Existenz sich mit
+Lichtgeschwindigkeit ausbreitender elektromagnetischer Wellen voraus
+@Maxwell1865[Abschn. 97]. Der experimentelle Nachweis
 gelang Heinrich Hertz rund zwanzig Jahre später. Der so gesetzte theoretische
 Rahmen ist bis heute unverändert gültig und bildet die Grundlage der
 vorliegenden Arbeit.
 
+// Bewusst ohne Seitenzusatz (Regel 1 oben): der Verweis gilt dem sechs
+// Seiten kurzen Aufsatz als Ganzem, dessen Umfang S. 302--307 bereits im
+// Literaturverzeichnis steht.
 Kane S. Yee legte 1966 mit einer knappen Veröffentlichung @Yee1966 die
 Grundlage der numerischen Umsetzung. Sein Ansatz besteht darin, die
 elektrischen und magnetischen Feldkomponenten nicht am selben Ort und nicht zum
@@ -136,7 +156,11 @@ praktisch nutzbar. Allen Taflove prägte ab Mitte der 1970er Jahre die
 Bezeichnung FDTD und baute die Methode zu einem Standardwerkzeug der
 _Computational Electromagnetics_ aus, insbesondere durch die Entwicklung
 absorbierender Randbedingungen und die Erweiterung auf verlustbehaftete sowie
-dispersive Materialien @Taflove2005. Gegenwärtig ist FDTD in nahezu allen
+dispersive Materialien @Taflove2005[S. XX].
+#note[Die Seitenzahl XX ist ein Platzhalter und muss am Buch selbst
+geprüft werden --- der historische Überblick steht in Kapitel 1 von
+Taflove und Hagness. Vor der Abgabe ersetzen.]
+Gegenwärtig ist FDTD in nahezu allen
 kommerziellen Programmpaketen zur Feldsimulation vertreten --- unter anderem in
 den eingangs erwähnten, deren Innenleben dem Anwender verborgen bleibt.
 

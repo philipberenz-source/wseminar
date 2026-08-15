@@ -1,7 +1,12 @@
 % literatur.bib — Literaturverzeichnis
 % Zitieren im Text mit @KeyName, z. B. @Yee1966
+% Fundstelle im Zusatz: @Yee1966[S. 303] bzw. @Maxwell1865[Abschn. 97];
+% ausgeschrieben #cite(<Key>, supplement: [S. 51, Gl. (2.7)]), wenn der
+% Zusatz Kommata oder Klammern enthält.
 % Neue Quelle ergänzen: einfach einen weiteren Eintrag nach demselben
 % Schema anhängen (Feldnamen wie hier verwenden, das reicht für Typst).
+% Internetquellen: Abrufdatum immer als urldate = {JJJJ-MM-TT}, nicht als
+% Fließtext im note-Feld — sonst erscheint es nicht einheitlich.
 
 @article{Maxwell1865,
   author  = {Maxwell, James Clerk},
@@ -57,45 +62,48 @@
   year      = {2008},
 }
 
+% Der frühere Link auf easa.europa.eu/en/downloads/7628/en liefert
+% mittlerweile 404; ersetzt durch die Dokumentseite des Musterzulassungs-
+% datenblatts. Das Zulassungsdatum ist im dort verlinkten PDF zu prüfen.
 @misc{EASA_A380,
-  author = {{European Union Aviation Safety Agency (EASA)}},
-  title  = {Type Certificate Data Sheet No. EASA.A.110 — Airbus A380},
-  year   = {2020},
-  note   = {Musterzulassung erteilt am 12.12.2006},
-  url    = {https://www.easa.europa.eu/en/downloads/7628/en},
+  author  = {{European Union Aviation Safety Agency (EASA)}},
+  title   = {Type Certificate Data Sheet No. EASA.A.110 — Airbus A380},
+  year    = {2020},
+  url     = {https://www.easa.europa.eu/en/document-library/type-certificates/aircraft-cs-25-cs-22-cs-23-cs-vla-cs-lsa/easaa110-airbus-a380},
+  urldate = {2026-08-15},
 }
 
 @misc{Honeywell_RDR4000,
-  author = {{Honeywell Aerospace}},
-  title  = {IntuVue RDR-4000 3D Weather Radar System},
-  year   = {2024},
-  note   = {Produktdokumentation; Auftragsvergabe für den A380 im Jahr 2002},
-  url    = {https://aerospace.honeywell.com/us/en/pages/rdr-4000-weather-radar},
+  author  = {{Honeywell Aerospace}},
+  title   = {IntuVue RDR-4000 3D Weather Radar System},
+  year    = {2024},
+  url     = {https://aerospace.honeywell.com/us/en/pages/rdr-4000-weather-radar},
+  urldate = {2026-08-15},
 }
 
 @article{Radome2015,
-  author  = {Microwave Journal},
+  author  = {{Microwave Journal}},
   title   = {Efficient Design and Analysis of Airborne Radomes},
   journal = {Microwave Journal},
   year    = {2015},
-  note    = {Kenngrößen: transmission loss, boresight error, Nebenkeulenpegel},
   url     = {https://www.microwavejournal.com/articles/24227-efficient-design-and-analysis-of-airborne-radomes},
+  urldate = {2026-08-15},
 }
 
 @misc{AstroPi,
-  author = {{European Space Agency (ESA) Education Office}},
-  title  = {The European Astro Pi Challenge},
-  year   = {2026},
-  note   = {Abgerufen am 02.08.2026},
-  url    = {https://www.esa.int/Education/AstroPI/The_European_Astro_Pi_Challenge},
+  author  = {{European Space Agency (ESA) Education Office}},
+  title   = {The European Astro Pi Challenge},
+  year    = {2026},
+  url     = {https://www.esa.int/Education/AstroPI/The_European_Astro_Pi_Challenge},
+  urldate = {2026-08-02},
 }
 
 @misc{CSTStudio,
-  author = {{Dassault Syst\`emes SIMULIA}},
-  title  = {CST Studio Suite — Electromagnetic Simulation Solvers},
-  year   = {2026},
-  note   = {Abgerufen am 01.08.2026},
-  url    = {https://www.3ds.com/products/simulia/cst-studio-suite/electromagnetic-simulation-solvers},
+  author  = {{Dassault Syst\`emes SIMULIA}},
+  title   = {CST Studio Suite — Electromagnetic Simulation Solvers},
+  year    = {2026},
+  url     = {https://www.3ds.com/products/simulia/cst-studio-suite/electromagnetic-simulation-solvers},
+  urldate = {2026-08-01},
 }
 
 % Platzhalter für weitere Quellen, z. B. konkretes Fachbuch/Skript zur

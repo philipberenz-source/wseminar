@@ -35,4 +35,13 @@
 #include "kapitel/06_fazit.typ"
 
 #pagebreak()
-#bibliography("literatur.bib", title: "Literaturverzeichnis", style: "iso-690-numeric")
+// Zitierstil: "ieee" — numerische Verweise in eckigen Klammern, [1, S. 303].
+// Begründung: das ist die Konvention der Physik und der Elektrotechnik; die
+// hier zitierten Arbeiten (Yee, Taflove/Hagness, Bérenger, Sullivan) sind
+// selbst so gesetzt. Eckige Klammern kollidieren zudem nicht mit der
+// Gleichungsnummerierung (34) und den Klammern im Fließtext, wie es die
+// runden Klammern von "iso-690-numeric" taten.
+// Umstellen auf Fußnoten (deutsche Zitierweise) erfordert nur den Austausch
+// des style-Arguments gegen "chicago-notes"; die Zitate im Text
+// (@Key bzw. @Key[S. 51]) bleiben dabei unverändert.
+#bibliography("literatur.bib", title: "Literaturverzeichnis", style: "ieee")
