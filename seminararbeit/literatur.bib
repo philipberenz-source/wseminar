@@ -1,12 +1,4 @@
-% literatur.bib — Literaturverzeichnis
-% Zitieren im Text mit @KeyName, z. B. @Yee1966
-% Fundstelle im Zusatz: @Yee1966[S. 303] bzw. @Maxwell1865[Abschn. 97];
-% ausgeschrieben #cite(<Key>, supplement: [S. 51, Gl. (2.7)]), wenn der
-% Zusatz Kommata oder Klammern enthält.
-% Neue Quelle ergänzen: einfach einen weiteren Eintrag nach demselben
-% Schema anhängen (Feldnamen wie hier verwenden, das reicht für Typst).
-% Internetquellen: Abrufdatum immer als urldate = {JJJJ-MM-TT}, nicht als
-% Fließtext im note-Feld — sonst erscheint es nicht einheitlich.
+
 
 @article{Maxwell1865,
   author  = {Maxwell, James Clerk},
@@ -54,6 +46,21 @@
   year      = {1999},
 }
 
+% Deutsche Ausgabe — wird in der Einleitung woertlich zitiert, deshalb ist die
+% Uebersetzung anzugeben und nicht das englische Original.
+% ACHTUNG: Auflage und Erscheinungsjahr gehen aus dem vorliegenden Scan nicht
+% hervor und sind am Buch selbst zu pruefen (Pearson Studium fuehrt eine 3.
+% und eine 4. deutsche Auflage). Die Seitenzahlen 18/19 stammen aus dem Scan
+% der "Vorbemerkungen".
+@book{GriffithsDE,
+  author    = {Griffiths, David J.},
+  title     = {Elektrodynamik: Eine Einf\"uhrung},
+  publisher = {Pearson Studium},
+  address   = {M\"unchen},
+  year      = {2011},
+  note      = {Deutsche Ausgabe; Auflage und Erscheinungsjahr vor der Abgabe am Buch pruefen},
+}
+
 @book{Fleisch2008,
   author    = {Fleisch, Daniel},
   title     = {A Student's Guide to Maxwell's Equations},
@@ -61,6 +68,19 @@
   address   = {Cambridge},
   year      = {2008},
 }
+
+@misc{BfS_SAR,
+  author  = {{Bundesamt f\"ur Strahlenschutz (BfS)}},
+  title   = {SAR-Werte von Handys},
+  year    = {2026},
+  url     = {https://www.bfs.de/DE/themen/emf/mobilfunk/vorsorge/sar-handy/sar-handy_node.html},
+  urldate = {2026-08-19},
+}
+
+% --- Ab hier: Quellen des frueheren Radom-Beispiels. Sie werden in der
+% --- Einleitung nicht mehr zitiert und erscheinen deshalb auch nicht im
+% --- Literaturverzeichnis (Typst druckt nur zitierte Eintraege). Sie bleiben
+% --- vorerst stehen, falls das Beispiel doch noch gebraucht wird.
 
 % Der frühere Link auf easa.europa.eu/en/downloads/7628/en liefert
 % mittlerweile 404; ersetzt durch die Dokumentseite des Musterzulassungs-

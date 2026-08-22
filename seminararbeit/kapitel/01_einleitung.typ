@@ -13,184 +13,146 @@
 //      (Maxwell 1865) -> [Abschn. 97].
 //   4. Internetquellen -> keine Seitenangabe; das Abrufdatum steht
 //      als urldate im Eintrag in literatur.bib.
-//   5. Sinngemäße Übernahme mit vorangestelltem "vgl.", wörtliche
-//      Übernahme in Anführungszeichen und ohne Zusatz.
+//   5. Ein blanker @Key bezeichnet eine sinngemäße Übernahme;
+//      wörtliche Übernahmen stehen in Anführungszeichen. Ein
+//      vorangestelltes "vgl." wird nicht verwendet, da es zur
+//      deutschen Fußnotenzitierweise gehört und nicht zum hier
+//      gesetzten numerischen IEEE-Stil.
 // ---------------------------------------------------------------
 
 = Einleitung
 
 == Relevanz und Motivation
 
-Als der Airbus A380 im Dezember 2006 die gemeinsame Musterzulassung von EASA
-und FAA erhielt und zehn Monate später den Liniendienst aufnahm @EASA_A380, lag
-die Vergabe des Auftrags für sein Wetterradar bereits mehr als vier Jahre
-zurück @Honeywell_RDR4000. Wesentlicher Bestandteil des Radars ist die Antenne, die in der Bugspitze hinter dem
-Radom sitzt, welches sie vor Fahrtwind und Niederschlag schützt. Über den gesamten
-Zeitraum der Entwicklung hinweg existierte diese Antenne in ihrer endgültigen
-Einbausituation nicht, und dennoch musste sie konzepiert und für den Airbus optimiert werden. Möglich war das nur mittels Computern.
+Wer telefoniert, hält einen Sender wenige Zentimeter neben den Kopf. Ein Teil
+der abgestrahlten Leistung dringt dabei in das Gewebe ein und wird dort in
+Wärme umgesetzt. Wie groß dieser Anteil ist, beschreibt die spezifische
+Absorptionsrate (SAR), also die je Masse absorbierte Leistung, gemittelt über
+eine festgelegte Gewebemasse; am Kopf gilt in Deutschland ein Grenzwert von
+2 W/kg @BfS_SAR. Belastbar ist ein solcher Grenzwert allerdings nur so weit wie
+das Verfahren, mit dem die zugehörige Größe bestimmt wird.
+#note[Mittelungsmasse (nach ICNIRP 10 g) an der Richtlinie prüfen und
+anstelle von "eine festgelegte Gewebemasse" einsetzen.]
 
-Anspruchsvoll wird eine solche Simulation durch das Bauteil, das der Antenne
-vorgelagert ist. Das Wetterradar arbeitet im X-Band bei etwa 9,4 GHz, und das
-Radom davor ist keine einfache Trennwand, sondern eine gekrümmte,
-mehrschichtige und verlustbehaftete Kunststoffschale. Deren Aufbau schwächt die
-durchtretende Welle und verschiebt ihre Phase über die Fläche hinweg
-unterschiedlich stark, sodass die Phasenfront verkippt und die Antennenkeule
-gegenüber der mechanischen Achse abgelenkt wird. Diesen Winkelfehler bezeichnet
-man in der Radartechnik als _boresight error_; er bildet zusammen mit der
-Transmissionsdämpbfung und dem Nebenkeulenpegel die zentrale Entwurfsgröße eines
-Radoms @Radome2015. Eine Gewitterzelle erscheint dann unter einer leicht
-falschen Richtung. Da der Fehler erst aus dem Zusammenspiel von Antenne,
-Radomgeometrie und Materialaufbau entsteht, lässt er sich an der Antenne allein
-nicht bestimmen.
+Ein Kopf ist nämlich kein homogener Körper. Haut, Schädelknochen, Liquor und
+Hirngewebe unterscheiden sich in Permittivität und Leitfähigkeit deutlich
+voneinander, ihre Grenzflächen verlaufen gekrümmt und unregelmäßig, und die
+Antenne steht so nah, dass sich das einfallende Feld nicht als ebene Welle
+behandeln lässt. Gesucht ist zudem die Feldstärke im Gewebe selbst, denn erst
+aus ihr folgt die absorbierte Leistung.
 
-Dieser Fall ist jedoch keinesfalls lediglich Sonderfall der Luftfahrt, sondern steht stellvertretend
-für eine ganze Klasse technischer Problemstellungen. Zu ihr gehören der Entwurf
-von Antennenarrays hinter dielektrischen Abdeckungen, die Auslegung von Filtern
-und Wellenleitern der integrierten Photonik sowie die Konstruktion von Sende-
-und Empfangsspulen in Magnetresonanztomographen. Ihnen allen ist gemeinsam,
-dass mehrere Materialien unterschiedlicher Permittivität und Leitfähigkeit auf
-unregelmäßigen, häufig gekrümmten oder geschichteten Grenzflächen
-zusammentreffen und dass das Feld gerade an diesen Übergängen bestimmt werden
-muss.
+Behandelt wird der Fall deshalb numerisch. Taflove und Hagness führen ihn als
+Standardbeispiel der _Computational Electromagnetics_ an: Ein Mobiltelefon wird
+bis auf Zellweiten von 0,1 mm aufgelöst und neben ein aus
+Magnetresonanzaufnahmen gewonnenes Kopfmodell aus 15 Gewebetypen gesetzt, in
+dem sich anschließend die Spitzenwerte der SAR bestimmen lassen
+@Taflove2005[S. 11]. Ein Sonderfall ist das nicht: Ob Antennen hinter
+dielektrischen Abdeckungen, Wellenleiter der integrierten Photonik oder Spulen
+in Magnetresonanztomographen --- stets treffen Materialien unterschiedlicher
+Permittivität und Leitfähigkeit auf unregelmäßigen Grenzflächen zusammen, und
+stets muss das Feld gerade dort bestimmt werden.
 
-An Konfigurationen dieser Art scheitert die analytische Behandlung. Die
-klassische Elektrodynamik gilt zwar als abgeschlossene Theorie, denn die
-Maxwell-Gleichungen legen seit 1865 das Feld bei gegebenen Quellen,
-Materialeigenschaften und Randbedingungen eindeutig fest @Maxwell1865[Abschn. 70].
-Geschlossene Lösungen sind jedoch nur für wenige idealisierte Konfigurationen
-bekannt, etwa für die ebene Welle im homogenen unbegrenzten Raum, für die
-Reflexion an einer unendlich ausgedehnten ebenen Grenzfläche, für den
-rechteckigen Hohlraumresonator oder für die Streuung an einer Kugel. Allen
-diesen Fällen ist gemeinsam, dass das Material homogen und die Geometrie
-hochsymmetrisch und idealsiert ist. Sobald diese Voraussetzungen entfallen, sobald also
-inhomogene, geschichtete oder verlustbehaftete Materialien mit beliebig
-geformten Grenzflächen zusammentreffen, ist das entstehende System partieller
-Differentialgleichungen geschlossen nicht mehr lösbar. Die entscheidende Grenze
-verläuft damit nicht zwischen bekannter und unbekannter Physik, sondern
-zwischen lösbaren und unlösbaren Randwertproblemen(gemeint sind Differentialgleichungen, die durch Randbedingungen näher beschrieben werden).
+An Konfigurationen dieser Art scheitert die analytische Behandlung --- nicht
+aus Unkenntnis der Physik. Die klassische Elektrodynamik gilt als abgeschlossene
+und in ihrem Geltungsbereich vollständige Theorie @GriffithsDE[S. 18]: Die
+Maxwell-Gleichungen legen das Feld bei gegebenen Quellen, Materialeigenschaften
+und Randbedingungen eindeutig fest @Maxwell1865[Abschn. 70]. Geschlossene
+Lösungen sind jedoch nur für wenige Konfigurationen bekannt, in denen das
+Material homogen und die Geometrie hochsymmetrisch ist. Die entscheidende
+Grenze verläuft damit nicht zwischen bekannter und unbekannter Physik, sondern
+zwischen lösbaren und unlösbaren Randwertproblemen (also
+Differentialgleichungen mit vorgegebenen Randbedingungen).
 
-Sämtliche genannten Anwendungen liegen jenseits dieser Grenze, sodass das Feld
-dort auf anderem Weg bestimmt werden muss. Naheliegend wäre, es zu messen statt
-es zu berechnen. Dieser Weg scheitert jedoch an drei Punkten. Erstens setzt
-jede Messung ein gefertigtes Exemplar voraus, das in den frühen
-Entwurfsphasen gerade nicht zur Verfügung steht. Zweitens erfordert jede
-Entwurfsänderung einen neuen Prototyp, gleich ob die Wandstärke, der
-Schichtaufbau oder die Krümmung verändert wird, sodass sich mehrere Varianten
-weder in vertretbarer Zeit noch zu vernünftigen Kosten systematisch vergleichen
-lassen. Drittens liefert eine Messung das Feld nur dort, wo sich eine Sonde
-anbringen lässt, die es zudem selbst stört, während der Verlauf innerhalb des
-Materials unzugänglich bleibt. Gerade dort aber entsteht der gesuchte Effekt.
-Die numerische Lösung ist deshalb kein bequemer Ersatz für das Experiment,
-sondern in vielen Fällen der einzige gangbare Weg. In weiten Teilen der
-Hochfrequenztechnik ist die Simulation an die Stelle des Prototyps getreten,
-und Entwurfe werden konzepiert, bevor ein Bauteil überhaupt gefertigt wird.
-
-Rechnerisch zugänglich werden diese Probleme durch Diskretisierung. Dabei wird
-das Kontinuum durch ein endliches Gitter ersetzt und die
-Differentialquotienten werden durch Differenzenquotienten approximiert. Das
+Messen statt rechnen scheitert hier ebenfalls: Eine Sonde stört das Feld und
+lässt sich in lebendem Gewebe ohnehin nicht anbringen, und jede
+Entwurfsänderung erforderte ein neues gefertigtes Exemplar, sodass sich
+Varianten weder in vertretbarer Zeit noch zu vernünftigen Kosten vergleichen
+ließen. Rechnerisch zugänglich wird das Problem erst durch Diskretisierung,
+also dadurch, dass das Kontinuum durch ein endliches Gitter ersetzt wird. Das
 verbreitetste Verfahren dieser Art ist die _Finite-Difference
-Time-Domain_-Methode (FDTD), die die zeitliche Entwicklung des Feldes
-schrittweise auf einem diskreten Raumgitter berechnet.
+Time-Domain_-Methode (FDTD).
 
-Durchgeführt werden solche Rechnungen in der Praxis fast ausschließlich mit
-kommerzieller Software. Ein verbreitetes Paket ist CST Studio Suite (Dassault
-Systèmes/SIMULIA) @CSTStudio, dessen Quellcode nicht öffentlich zugänglich ist.
-Aus Sicht der Anwendung liegt damit ein Blackbox-System vor, denn Geometrie,
-Materialparameter und Anregung werden vorgegeben und eine Feldverteilung wird
-ausgegeben, ohne dass der Weg dazwischen von außen nachvollziehbar wäre.
-Methodisch ist das bedeutsam, weil ein Simulationsergebnis die exakte Lösung
-eines Systems von Differenzengleichungen darstellt und nicht die Lösung der
-Maxwell-Gleichungen. Beide stimmen erst im Grenzfall verschwindender
-Gitterweite überein. Auf einem endlichen Gitter treten deshalb systematische
-Abweichungen auf, die sich im Ergebnis nicht ohne Weiteres von physikalischen
-Effekten unterscheiden lassen.
+Durchgeführt werden solche Rechnungen fast ausschließlich mit kommerzieller
+Software wie CST Studio Suite @CSTStudio, deren Quellcode nicht offenliegt; aus
+Sicht der Anwendung liegt damit ein Blackbox-System vor. Methodisch bedeutsam
+ist dabei, dass ein Simulationsergebnis die exakte Lösung eines Systems von
+Differenzengleichungen darstellt und nicht die der Maxwell-Gleichungen; beide
+stimmen erst im Grenzfall verschwindender Gitterweite überein. Auf einem
+endlichen Gitter treten deshalb systematische Abweichungen auf, die sich nicht
+ohne Weiteres von physikalischen Effekten unterscheiden lassen.
 
-Umso auffälliger ist, wie selten die naheliegendste Rückfrage gestellt wird,
-nämlich inwiefern eine solche numerische Lösung die zugehörige analytische
-überhaupt reproduziert. Das hat einen strukturellen Grund. Für genau jene
-Konfigurationen, aufgrund derer simuliert wird, existiert definitionsgemäß keine
-analytische Vergleichslösung, sodass sich die Übereinstimmung nur dort
-überprüfen ließe, wo man gar nicht simulieren müsste. Die wenigen exakt
-lösbaren Fälle gelten in der Anwendung als uninteressant und bleiben daher
-unbeachtet. Gerade weil die Anzeige von Gewitterzellen sicherheitsrelevant und
-ein gefertigtes Radom nur noch begrenzt korrigierbar ist, liegt es nahe, diese
-Rückfrage einmal systematisch zu stellen. Die vorliegende Arbeit kehrt die
-übliche Herangehensweise daher um und behandelt die analytisch lösbaren Fälle
-nicht als Trivialfälle, sondern als die einzigen Anordnungen, an denen sich das
-Verfahren überhaupt prüfen lässt. Dazu wird ein eigener, vollständig
-dokumentierter FDTD-Löser in Python implementiert und gegen exakt berechenbare
-Konfigurationen gehalten --- nicht um bekannte Ergebnisse zu bestätigen,
-sondern um zu bestimmen, wie genau das Verfahren rechnet und wovon diese
-Genauigkeit abhängt.
+Wie groß diese Abweichungen ausfallen, bleibt in der Anwendung meist offen. Wie
+schwer das wiegt, zeigt der eingangs beschriebene Fall: An den ausgegebenen
+Zahlen hängt dort eine Aussage über die Belastung eines Menschen, und ob eine
+berechnete SAR knapp unter oder über dem Grenzwert liegt, ist ohne eine Angabe
+zur numerischen Genauigkeit nicht zu entscheiden. Die Lücke hat einen
+strukturellen Grund: Für jene Konfigurationen, aufgrund derer simuliert wird,
+existiert definitionsgemäß keine Vergleichslösung. Die vorliegende Arbeit kehrt
+die übliche Herangehensweise daher um und behandelt die analytisch lösbaren
+Fälle nicht als Trivialfälle, sondern als die einzigen Anordnungen, in denen
+das wahre Feld bekannt ist und sich das Verfahren deshalb überhaupt prüfen
+lässt.
 
 == Historischer Kontext
 
-Die Entwicklung von der Feldtheorie zum numerischen Standardverfahren lässt
-sich an drei Stationen nachzeichnen.
-
 James Clerk Maxwell führte 1865 in _A Dynamical Theory of the Electromagnetic
-Field_ @Maxwell1865[Abschn. 70] Elektrizität, Magnetismus und Optik in einem
-einheitlichen Gleichungssystem zusammen und sagte die Existenz sich mit
-Lichtgeschwindigkeit ausbreitender elektromagnetischer Wellen voraus
-@Maxwell1865[Abschn. 97]. Der experimentelle Nachweis
-gelang Heinrich Hertz rund zwanzig Jahre später. Der so gesetzte theoretische
-Rahmen ist bis heute unverändert gültig und bildet die Grundlage der
-vorliegenden Arbeit.
+Field_ Elektrizität, Magnetismus und Optik in einem einheitlichen
+Gleichungssystem zusammen und sagte die Existenz sich mit Lichtgeschwindigkeit
+ausbreitender elektromagnetischer Wellen voraus @Maxwell1865[Abschn. 97]; der
+experimentelle Nachweis gelang Heinrich Hertz rund zwanzig Jahre später. Damit
+wurde deutlich, "dass das sichtbare Licht nur ein winziges Fenster im breiten
+Spektrum der elektromagnetischen Strahlung darstellt, das sich vom Radiobereich
+über Mikrowellen, Infrarot und Ultraviolett bis zum Röntgen- und Gammabereich
+erstreckt" @GriffithsDE[S. 19] --- die Strahlung eines Mobiltelefons unterliegt
+also denselben Gleichungen wie das Licht einer Lampe. Dieser Rahmen gilt
+unverändert und bildet die Grundlage der vorliegenden Arbeit.
 
 // Bewusst ohne Seitenzusatz (Regel 1 oben): der Verweis gilt dem sechs
 // Seiten kurzen Aufsatz als Ganzem, dessen Umfang S. 302--307 bereits im
 // Literaturverzeichnis steht.
 Kane S. Yee legte 1966 mit einer knappen Veröffentlichung @Yee1966 die
-Grundlage der numerischen Umsetzung. Sein Ansatz besteht darin, die
-elektrischen und magnetischen Feldkomponenten nicht am selben Ort und nicht zum
-selben Zeitpunkt zu speichern, sondern räumlich und zeitlich gegeneinander
-versetzt auf einem sogenannten versetzten Gitter, dem Yee-Gitter, anzuordnen.
-Auf diese Weise lassen sich die gekoppelten Rotationsgleichungen durchgängig
-mit zentralen Differenzenquotienten approximieren, und beide Feldgrößen können
-alternierend fortgeschrieben werden (_leapfrog_-Schema). Die zum damaligen
-Zeitpunkt verfügbare Rechenleistung beschränkte die Anwendung allerdings auf
-sehr kleine Modellprobleme.
+Grundlage der numerischen Umsetzung. Er ordnet die elektrischen und
+magnetischen Feldkomponenten nicht gemeinsam an, sondern räumlich und zeitlich
+gegeneinander versetzt auf einem sogenannten Yee-Gitter. So lassen sich die
+gekoppelten Rotationsgleichungen durchgängig mit zentralen
+Differenzenquotienten approximieren, und beide Feldgrößen können alternierend
+fortgeschrieben werden (_leapfrog_-Schema). Die damals verfügbare
+Rechenleistung beschränkte die Anwendung allerdings auf sehr kleine
+Modellprobleme.
 
-Erst das Wachstum der verfügbaren Rechenkapazitäten machte das Verfahren
-praktisch nutzbar. Allen Taflove prägte ab Mitte der 1970er Jahre die
-Bezeichnung FDTD und baute die Methode zu einem Standardwerkzeug der
-_Computational Electromagnetics_ aus, insbesondere durch die Entwicklung
-absorbierender Randbedingungen und die Erweiterung auf verlustbehaftete sowie
-dispersive Materialien @Taflove2005[S. XX].
-#note[Die Seitenzahl XX ist ein Platzhalter und muss am Buch selbst
-geprüft werden --- der historische Überblick steht in Kapitel 1 von
-Taflove und Hagness. Vor der Abgabe ersetzen.]
-Gegenwärtig ist FDTD in nahezu allen
-kommerziellen Programmpaketen zur Feldsimulation vertreten --- unter anderem in
-den eingangs erwähnten, deren Innenleben dem Anwender verborgen bleibt.
+Praktisch nutzbar wurde das Verfahren erst mit wachsenden Rechenkapazitäten.
+Allen Taflove führte die Bezeichnung FDTD ein und baute es zu einem
+Standardwerkzeug der _Computational Electromagnetics_ aus, insbesondere durch
+absorbierende Randbedingungen und die Erweiterung auf verlustbehaftete
+Materialien. Getragen wurde diese Entwicklung zunächst von militärischen
+Anforderungen; erst seit etwa 1990 verschiebt sich das Feld zu kommerziellen
+Anwendungen in Kommunikation und Rechentechnik @Taflove2005[S. 1] --- zu denen
+das eingangs beschriebene Mobiltelefon zählt.
+#note[Jahr der Namensprägung und Seitenzahl des historischen Überblicks in
+Kapitel 1 von Taflove und Hagness am Buch prüfen.]
 
 == Persönliche Motivation
 
 Für Simulationen habe ich mich erstmals in der zehnten Jahrgangsstufe
 interessiert, als ich mich mit der numerischen Beschreibung mechanischer Wellen
-beschäftigt habe. In der elften Jahrgangsstufe kam die Programmierseite hinzu:
-Im Rahmen des Astro-Pi-Wettbewerbs der ESA#footnote[Die European Astro Pi
-Challenge ist ein Bildungsprogramm der ESA in Zusammenarbeit
-mit der Raspberry Pi Foundation. Ziel ist die Erstellung von
-Python-Programmen, die auf zwei mit Sensoren ausgestatteten
-Raspberry-Pi-Einheiten an Bord der Internationalen Raumstation ausgeführt
-werden @AstroPi.] habe ich eigenen Code geschrieben und dabei erfahren, wie
-viel Sorgfalt eine Aufgabenstellung verlangt, deren Ergebnis nicht im eigenen
-Ermessen liegt. Die vorliegende Arbeit setzt beides
-fort, denn sie führt von der mechanischen zur elektromagnetischen Welle und
-verbindet die physikalische Beschreibung mit der eigenen Implementierung.
+beschäftigt habe. In der elften kam die Programmierseite hinzu: Im Rahmen des
+Astro-Pi-Wettbewerbs der ESA#footnote[Die European Astro Pi Challenge ist ein
+Bildungsprogramm der ESA gemeinsam mit der Raspberry Pi Foundation; die
+eingereichten Python-Programme laufen auf zwei Raspberry-Pi-Einheiten an Bord
+der Internationalen Raumstation @AstroPi.] habe ich eigenen Code geschrieben
+und dabei erfahren, wie viel Sorgfalt eine Aufgabenstellung verlangt, deren
+Ergebnis nicht im eigenen Ermessen liegt. Die vorliegende Arbeit führt beides
+fort: von der mechanischen zur elektromagnetischen Welle und von der
+physikalischen Beschreibung zur eigenen Implementierung.
 
 Hinzu kommt mein Interesse an technischen Anwendungen. In der Schule und in der
-theoretischen Physik werden Szenarien weitgehend idealisiert: Man rechnet mit
-homogenen Medien, unendlich ausgedehnten Grenzflächen, punktförmigen Quellen
-und reibungsfreien Vorgängen. Didaktisch ist das notwendig, denn nur so werden
-die zugrunde liegenden Gesetzmäßigkeiten überhaupt sichtbar. Zugleich entsteht
-dabei der Eindruck, physikalische Probleme seien stets in geschlossener Form
-lösbar, obwohl die Idealisierung in realen Anwendungen gerade dort entfällt, wo
-es interessant wird. Ein Verfahren wie FDTD setzt an genau dieser Stelle an,
-weil es beliebige Geometrien und Materialverteilungen behandeln kann. Diese
-Arbeit bot mir daher die Gelegenheit, einmal ein Problem zu bearbeiten, das
-sich nicht durch Vereinfachung auflösen lässt.
+theoretischen Physik werden Szenarien weitgehend idealisiert: homogene Medien,
+unendlich ausgedehnte Grenzflächen, punktförmige Quellen. Didaktisch ist das
+notwendig, denn nur so werden die Gesetzmäßigkeiten sichtbar; zugleich entsteht
+der Eindruck, physikalische Probleme seien stets geschlossen lösbar, obwohl die
+Idealisierung gerade dort entfällt, wo es interessant wird. Ein Verfahren wie
+FDTD setzt genau dort an, und diese Arbeit bot mir die Gelegenheit, einmal ein
+Problem zu bearbeiten, das sich nicht durch Vereinfachung auflösen lässt.
 
 == Zentrale Fragestellung und Aufbau der Arbeit
 
@@ -204,45 +166,30 @@ Aus den dargestellten Überlegungen ergibt sich die folgende Leitfrage:
   ]
 ]
 
-Um sie zu beantworten, wird die FDTD-Methode zunächst aus den
-Maxwell-Gleichungen hergeleitet und in ein Python-Programm überführt. Dieses
-Programm wird anschließend an drei Konfigurationen geprüft, deren Lösung sich
+Um sie zu beantworten, wird ein eigener, vollständig dokumentierter FDTD-Löser
+in Python implementiert und an drei Konfigurationen geprüft, deren Lösung sich
 in geschlossener Form angeben lässt: an der ebenen Welle im freien Raum, an der
 Reflexion an einer ebenen Grenzfläche und am rechteckigen Hohlraumresonator.
-Die drei Anordnungen sind so gewählt, dass jede von ihnen einen anderen der
-drei Diskretisierungsschritte in den Vordergrund rückt --- die des Raums, die
-des Materials und die der Zeit ---, sodass sich im Fehlerfall benennen lässt,
-welcher der drei versagt hat.
-
-Der Gegenstand der Arbeit ist damit ausdrücklich das Verfahren und nicht ein
-bestimmtes Bauteil. Ihr Ergebnis sind keine physikalischen Erkenntnisse ---
-die Vergleichsgrößen sind seit Langem bekannt --- sondern quantitative
-Fehlergrenzen in Abhängigkeit der Diskretisierung, zusammen mit der Angabe,
-woher die verbleibenden Abweichungen jeweils stammen. Beantwortet wird damit
-genau jene Rückfrage, die in der Praxis gewöhnlich offenbleibt.
+Sie sind so gewählt, dass jede einen anderen der drei Diskretisierungsschritte
+in den Vordergrund rückt --- die des Raums, die des Materials und die der
+Zeit ---, sodass sich im Fehlerfall benennen lässt, welcher versagt hat.
+Gegenstand ist damit das Verfahren und nicht ein bestimmtes Bauteil: Das
+Ergebnis sind keine physikalischen Erkenntnisse, sondern Fehlergrenzen in
+Abhängigkeit der Diskretisierung samt der Herkunft der verbleibenden
+Abweichungen.
 
 Aus der Leitfrage ergeben sich zwei Teilfragen:
 
 + Mit welcher relativen Abweichung gibt die Simulation die analytisch bekannten
-  Größen wieder, namentlich die Ausbreitungsgeschwindigkeit und die Wellenlänge
-  im freien Raum, das Reflexionsverhalten an einer Grenzfläche und die
-  Resonanzfrequenzen eines Hohlraums?
+  Größen wieder --- Ausbreitungsgeschwindigkeit und Wellenlänge im freien Raum,
+  Reflexionsverhalten an einer Grenzfläche, Resonanzfrequenzen eines Hohlraums?
 + Wie hängen diese Abweichungen von den Diskretisierungsparametern ab,
   insbesondere von der Anzahl der Gitterzellen pro Wellenlänge, und welche
   prinzipiellen Grenzen des Verfahrens folgen daraus?
 
-Im Einzelnen stellt Kapitel 2 die theoretischen Voraussetzungen bereit: die
-Maxwell-Gleichungen in differentieller Form, die Herleitung der
-Wellengleichung, die ebene Welle als analytische Referenzlösung sowie die
-Ursachen für das Versagen analytischer Verfahren bei realistischen Geometrien.
-Aus diesen Grundlagen entwickelt Kapitel 3 die FDTD-Methode, vom
-Differenzenquotienten über das Yee-Gitter bis zu den Update-Gleichungen des
-zweidimensionalen $"TM"_z$-Falls, und ergänzt sie um die
-Courant-Friedrichs-Lewy-Bedingung sowie die verwendeten Randbedingungen. Wie
-sich diese Gleichungen in ein lauffähiges Programm übersetzen lassen,
-dokumentiert Kapitel 4. Kapitel 5 unterzieht dieses Programm den drei
-Testfällen und bestimmt die gesuchten Fehlergrenzen, bevor Kapitel 6 die
-Ergebnisse zusammenführt und einen Ausblick darauf gibt, wie sich das
-charakterisierte Verfahren auf Problemstellungen anwenden ließe, für die keine
-analytische Lösung mehr existiert --- etwa auf den eingangs beschriebenen
-Radomdurchgang.
+Kapitel 2 stellt dazu die theoretischen Voraussetzungen bereit, Kapitel 3
+entwickelt daraus die FDTD-Methode bis zu den Update-Gleichungen des
+zweidimensionalen $"TM"_z$-Falls, Kapitel 4 dokumentiert die Implementierung
+und Kapitel 5 die drei Testfälle. Kapitel 6 führt die Ergebnisse zusammen und
+gibt einen Ausblick auf Problemstellungen ohne analytische Lösung --- etwa auf
+die eingangs beschriebene Absorption im Kopfgewebe.

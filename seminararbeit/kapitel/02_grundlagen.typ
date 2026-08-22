@@ -3,220 +3,183 @@
 
 = Theoretische Grundlagen
 
-Dieses Kapitel stellt die Gleichungen bereit, aus denen die späteren Kapitel
-hervorgehen. Es beginnt mit den Maxwell-Gleichungen, ergänzt sie um die
-Materialgleichungen und die Bedingungen an Materialgrenzen, leitet daraus die
-Wellengleichung her und gibt schließlich die ebene Welle als deren einfachste
-Lösung an. Sämtliche Aussagen gelten dabei zunächst im dreidimensionalen Raum;
-die Beschränkung auf zwei Dimensionen, mit der die vorliegende Arbeit rechnet,
-wird erst in Abschnitt 3.4 eingeführt und begründet.
+Dieses Kapitel stellt knapp die Gleichungen bereit, aus denen in Kapitel 3 die
+FDTD-Methode abgeleitet und mit denen in Kapitel 5 ihr Ergebnis überprüft wird:
+die Maxwell-Gleichungen, die Materialgleichungen, die Reduktion auf zwei
+Dimensionen, die Randbedingungen an Grenzflächen sowie die Wellengleichung und
+ihre einfachste Lösung, die ebene Welle. Da es sich um Grundlagen und nicht um
+den eigentlichen Gegenstand der Arbeit handelt, bleiben die Herleitungen kurz.
 
-== Die Maxwell-Gleichungen
+== Die Maxwell-Gleichungen <sec-maxwell>
 
-James Clerk Maxwell hat 1865 gezeigt, dass sich elektrische und magnetische
-Erscheinungen durch ein einziges Gleichungssystem beschreiben lassen
-@Maxwell1865. In differentieller Form lauten die vier Gleichungen
+Maxwell zeigte 1865, dass sich alle elektrischen und magnetischen
+Erscheinungen durch ein Gleichungssystem beschreiben lassen @Maxwell1865, das
+zusammen mit der Lorentz-Kraft den gesamten theoretischen Inhalt der
+klassischen Elektrodynamik zusammenfasst @GriffithsDE[S. 417f.]. Auf die freien
+Ladungen und Ströme bezogen @GriffithsDE[S. 420] lauten sie in differentieller
+Form @GriffithsDE[eq(7.56)]
 
 $ nabla dot bold(D) = rho_"frei" $ <gauss-e>
-
 $ nabla dot bold(B) = 0 $ <gauss-b>
-
 $ nabla times bold(E) = - (partial bold(B))/(partial t) $ <faraday>
-
 $ nabla times bold(H) = bold(J)_"frei" + (partial bold(D))/(partial t) $ <ampere>
 
-Darin bezeichnen $bold(E)$ die elektrische Feldstärke, $bold(D)$ die elektrische
-Flussdichte, $bold(H)$ die magnetische Feldstärke, $bold(B)$ die magnetische
-Flussdichte, $rho_"frei"$ die Dichte der freien Ladungen und $bold(J)_"frei"$
-die der freien Ströme. Die beiden Rechenoperationen sind die _Divergenz_
-$nabla dot$, die angibt, wie stark ein Feld an einer Stelle entspringt oder
-mündet, und die _Rotation_ $nabla times$, die angibt, wie stark es dort
-umläuft. Jede der vier Gleichungen besitzt eine anschauliche Bedeutung
-@Fleisch2008:
+mit der elektrischen Feldstärke $bold(E)$, der elektrischen Flussdichte
+$bold(D)$, der magnetischen Feldstärke $bold(H)$, der magnetischen Flussdichte
+$bold(B)$ sowie der Dichte $rho_"frei"$ und $bold(J)_"frei"$ der freien
+Ladungen und Ströme. @gauss-e und @gauss-b sind das Gaußsche Gesetz und sein
+magnetisches Gegenstück; da nach allem, was bekannt ist, keine magnetischen
+Ladungen existieren @GriffithsDE[S. 419], gilt @gauss-b uneingeschränkt. Beide
+enthalten keine Zeitableitung und treten in der weiteren Rechnung nicht mehr
+auf. Gegenstand der Arbeit ist allein die Kopplung von @faraday (Faradaysches
+Induktionsgesetz: ein sich änderndes $bold(B)$ erzeugt ein umlaufendes
+$bold(E)$) und @ampere (Ampère-Maxwell-Gesetz: ein umlaufendes $bold(H)$
+entsteht durch einen Strom _oder_ ein sich änderndes $bold(D)$). Der Term
+$partial bold(D)\/partial t$ ist Maxwells eigentliche Ergänzung des zuvor
+bekannten Ampèreschen Gesetzes @GriffithsDE[S. 417] und heißt
+_Verschiebungsstrom_ @GriffithsDE[S. 422]; erst er schließt den Kreis, und bildet die Grundlage für die Aubreitung _elektromagnetischer_ Wellen
 
-@gauss-e ist das _Gaußsche Gesetz_. Es besagt, dass elektrische Ladungen
-Quellen des elektrischen Flusses sind: Wo eine positive Ladung sitzt, tritt
-Fluss aus, wo eine negative sitzt, tritt er ein. Feldlinien beginnen und enden
-also an Ladungen.
+== Materialgleichungen <sec-material>
 
-@gauss-b ist das entsprechende Gesetz für den Magnetismus, und dass rechts null
-steht, ist die eigentliche Aussage: Es gibt keine magnetischen Ladungen.
-Magnetische Feldlinien haben weder Anfang noch Ende, sondern sind stets
-geschlossen.
-
-@faraday ist das _Faradaysche Induktionsgesetz_. Ein sich zeitlich änderndes
-Magnetfeld erzeugt ein umlaufendes elektrisches Feld --- der Vorgang, auf dem
-jeder Generator beruht. Das Minuszeichen drückt aus, dass das entstehende Feld
-der Änderung entgegenwirkt.
-
-@ampere ist das _Ampère-Maxwell-Gesetz_. Ein umlaufendes Magnetfeld entsteht
-nicht nur um einen Strom, sondern ebenso um ein sich änderndes elektrisches
-Feld. Dieser zweite Anteil $partial bold(D) \/ partial t$ heißt
-_Verschiebungsstrom_ und ist Maxwells eigentliche Ergänzung. Erst er schließt
-den Kreis: Ein veränderliches $bold(E)$ erzeugt ein $bold(H)$, dieses wiederum
-nach @faraday ein $bold(E)$, und so kann sich eine Störung ohne Ladungen und
-ohne Ströme durch den leeren Raum fortpflanzen. Genau diese Kopplung von
-@faraday und @ampere ist der Gegenstand der gesamten Arbeit; die beiden
-Divergenzgleichungen treten in der Rechnung nicht mehr auf.
-
-== Materialgleichungen
-
-Die vier Gleichungen verknüpfen sechs Feldgrößen und sind damit unterbestimmt.
-Was fehlt, ist die Angabe, wie ein Material auf ein Feld antwortet. Für die hier
-betrachteten Medien gilt
+Die vier Gleichungen verknüpfen sechs Feldgrößen und sind unterbestimmt; es
+fehlt die Angabe, wie ein Material auf ein Feld reagiert. Diese
+_Materialgleichung_ folgt nicht aus den Maxwell-Gleichungen und hängt vom
+Material ab; in ihrer einfachsten, für _lineare_ Medien gültigen Form
+@GriffithsDE[S. 422] wird hier durchgehend angesetzt
 
 $ bold(D) = epsilon bold(E), quad bold(B) = mu bold(H), quad
   bold(J) = sigma bold(E) $ <material>
 
-mit der Permittivität $epsilon = epsilon_0 epsilon_r$, der Permeabilität
-$mu = mu_0 mu_r$ und der elektrischen Leitfähigkeit $sigma$. Die
-Naturkonstanten $epsilon_0$ und $mu_0$ beschreiben das Vakuum, die
-dimensionslosen Faktoren $epsilon_r$ und $mu_r$ geben an, um welchen Faktor ein
-Material die jeweilige Flussdichte gegenüber dem Vakuum verändert. Der letzte
-Ausdruck ist das Ohmsche Gesetz in lokaler Form und beschreibt, dass in einem
-leitfähigen Material ein Feld einen Strom antreibt.
+mit $epsilon = epsilon_0 epsilon_r$ und $mu = mu_0 mu_r$
+sowie der Leitfähigkeit $sigma$ ; der letzte Ausdruck ist das Ohmsche Gesetz in
+lokaler Form @GriffithsDE[S. 368].
 
-Dass @material in dieser einfachen Gestalt gilt, ist eine Annahme und keine
-Selbstverständlichkeit. Sie setzt voraus, dass $epsilon$, $mu$ und $sigma$ nicht
-von der Feldstärke abhängen, dass sie Zahlen und nicht richtungsabhängige
-Größen sind und dass sie nicht von der Frequenz abhängen. Die drei
-Voraussetzungen werden in Abschnitt 3.4 als Modellannahmen ausdrücklich
-festgehalten.
 
-== Randbedingungen an Grenzflächen
+Dass @material in dieser Form gilt, ist eine Annahme, die vier Vereinfachungen @Taflove2005[S. 52f.] vorrausetzt:
 
-An der Grenze zweier Medien ändern sich $epsilon$, $mu$ und $sigma$ sprunghaft.
-Die Maxwell-Gleichungen enthalten Ableitungen und sind an einer solchen Stelle
-nicht unmittelbar anwendbar; stattdessen folgen aus ihnen Bedingungen, die die
-Felder auf beiden Seiten verknüpfen. Für die vorliegende Arbeit sind zwei davon
-maßgeblich.
+/ Linearität: $epsilon,mu,sigma$ unabhängig von der Feldstärke.
+/ Isotropie: $epsilon,mu$ Zahlen statt Tensoren --- $bold(D) parallel bold(E)$.
+/ Nichtdispersivität: $epsilon,mu,sigma$ unabhängig von der Frequenz.
+/ Zeitinvarianz: $epsilon,mu,sigma$ ändern sich während der Simulation nicht.
 
-Erstens sind die zur Grenzfläche _parallelen_ Anteile von $bold(E)$ und
-$bold(H)$ stetig. Bezeichnet man sie mit dem Index $parallel$, so gilt beim
-Übergang von Medium 1 nach Medium 2
+Hinzu kommt die Festlegung auf _nichtmagnetische_ Materialien ($mu_r=1$,
+$mu=mu_0$ überall); das Programm in Kapitel 4 kennt entsprechend nur eine
+ortsabhängige Permittivität $epsilon_r(x,y)$ und Leitfähigkeit $sigma(x,y)$,
+innerhalb einer Gitterzelle jedoch konstant (_stückweise homogen_).
 
-$ bold(E)_(1,parallel) = bold(E)_(2,parallel), quad
-  bold(H)_(1,parallel) = bold(H)_(2,parallel) $ <stetig>
+== Reduktion auf zwei Dimensionen: der TM#sub[z]-Fall <sec-zweidimensional>
 
-sofern an der Grenze kein Flächenstrom fließt. Anschaulich folgt das aus
-@faraday und @ampere: Ein Umlaufintegral um einen flachen Weg, der die
-Grenzfläche umschließt, umfasst im Grenzfall verschwindender Dicke keine Fläche
-mehr und damit auch keinen Fluss, sodass die parallelen Anteile auf beiden
-Seiten übereinstimmen müssen. Auf @stetig beruht die Berechnung der Reflexion an
-einer Grenzfläche in Abschnitt 5.3.
+Die Arbeit rechnet nicht im dreidimensionalen Raum, sondern in einer Ebene, da
+der Gesamtaufwand (Zellen mal Zeitschritte, Kapitel 3) bei $N$ Zellen je
+Richtung in 2D bei $N^3$ liegt statt bei $N^4$ in 3D. Diese Reduktion ist
+keine Näherung, sondern _exakt_, sofern weder Felder noch Materialverteilung
+von der dritten Koordinate abhängen:
 
-Zweitens folgt daraus der Sonderfall eines _ideal leitenden_ Materials, in der
-englischen Bezeichnung _perfect electric conductor_ und abgekürzt PEC. In einem
-Leiter mit $sigma arrow.r infinity$ würde jedes Feld augenblicklich einen
-unendlich großen Strom antreiben; im Inneren muss $bold(E)$ daher verschwinden.
-Mit @stetig ergibt sich für die Grenzfläche
+$ partial/(partial z) equiv 0 $ <zinvarianz>
 
-$ bold(E)_parallel = 0 $
+Unter @zinvarianz  zerfallen @faraday und @ampere in zwei vollständig
+entkoppelte, unabhängig lösbare Gruppen: den _TM#sub[z]-Fall_ (transversal
+magnetisch, Komponenten $E_z,H_x,H_y$) und den _TE#sub[z]-Fall_ (transversal
+elektrisch, $E_x,E_y,H_z$) @GriffithsDE[S.516].
+// LITERATURLUECKE: Die Bezeichnungen TM_z/TE_z und die Entkopplung kommen bei
+// Griffiths nicht vor. Als Beleg der Nomenklatur waeren Schneider2010
+// (Abschn. 8.3, S. 185, und 8.7, S. 220) sowie Sullivan2013 (Kap. 3, S. 54 f.)
+// geeignet -- Seitenangaben vor Zitat am Buch/Volltext pruefen.
+Beide Fälle sind strukturell gleich gebaut; die Arbeit verwendet durchgehend
+den TM#sub[z]-Fall, weil er mit nur einer elektrischen Feldkomponente Anregung
+und Randbedingung auf eine skalare Größe zurückführt. Mit $mu=mu_0$ und unter Verwendung der in 2.2 angesprochenen Vereinfachungen vereinfachen sich die Gleichungen @Taflove2005[eq(3.13)] zu
 
-Ein ideal leitender Rand erzwingt also, dass das elektrische Feld tangential zu
-ihm null ist. Diese Bedingung bestimmt die Eigenfrequenzen des Hohlraums in
-Abschnitt 5.2 und wird im Programm dadurch umgesetzt, dass die betreffenden
-Feldwerte in jedem Zeitschritt auf null gesetzt werden.
+$ mu_0 (partial H_x)/(partial t) = - (partial E_z)/(partial y) $ <tmz-hx>
+$ mu_0 (partial H_y)/(partial t) = (partial E_z)/(partial x) $ <tmz-hy>
+$ epsilon (partial E_z)/(partial t) + J
+  = (partial H_y)/(partial x) - (partial H_x)/(partial y) $ <tmz-ez>
 
-== Die elektromagnetische Wellengleichung
 
-Aus den gekoppelten Gleichungen @faraday und @ampere folgt eine einzelne
-Gleichung für $bold(E)$ allein. Betrachtet wird dazu ein Gebiet ohne freie
-Ladungen und ohne freie Ströme, also $rho_"frei" = 0$ und
-$bold(J)_"frei" = 0$, mit räumlich konstantem $epsilon$ und $mu$.
+== Randbedingungen an Grenzflächen <sec-randbedingungen>
 
-Der erste Schritt besteht darin, auf beiden Seiten von @faraday die Rotation zu
-bilden:
+An der Grenze zweier Medien ändern sich $epsilon,mu,sigma$ sprunghaft; aus der
+Integralform der Maxwell-Gleichungen folgen dafür _Randbedingungen_
+@GriffithsDE[S. 424]. Maßgeblich ist die Stetigkeit der zur Grenzfläche
+_parallelen_ Feldanteile: Eine sehr dünne, die Grenzfläche durchstoßende
+Ampèresche Schleife liefert für $bold(E)$, da @faraday keinen Quellterm
+enthält, uneingeschränkt
 
-$ nabla times (nabla times bold(E)) = - partial/(partial t) (nabla times bold(B)) $
+$ bold(E)_(1,parallel) = bold(E)_(2,parallel) $ <stetig>
 
-Auf der linken Seite lässt sich die Vektoridentität
+während dieselbe Konstruktion, angewandt auf @ampere, für $bold(H)$ nur dann
+Stetigkeit liefert, wenn kein freier Flächenstrom fließt @GriffithsDE[S. 424]
+--- was für die in Abschnitt 5.3 betrachteten Dielektrika zutrifft.
+
+
+Ein wichtiger Sonderfall ist der eines _ideal leitenden_ Randes (_perfect
+electric conductor_, PEC): Mit $sigma arrow.r infinity$ würde im Leiter ein
+unendlich großer Strom fließen, weshalb im Inneren $bold(E)$ verschwinden muss
+@GriffithsDE[S.368]; mit @stetig folgt daraus für die Grenzfläche
+$bold(E)_parallel = 0$.
+Im TM#sub[z]-Fall verkürzt sich das auf $E_z=0$.
+
+== Die elektromagnetische Wellengleichung <sec-wellengleichung>
+
+Aus @faraday und @ampere folgt für ein quellfreies Gebiet
+($rho_"frei"=bold(J)_"frei"=0$) mit konstantem $epsilon,mu$ eine einzelne
+Gleichung für $bold(E)$ @GriffithsDE[S.481f.]: Bildet man die Rotation von
+@faraday, nutzt die Vektoridentität @GriffithsDE[S.482]
 
 $ nabla times (nabla times bold(E)) = nabla (nabla dot bold(E)) - nabla^2 bold(E) $
 
-anwenden. Wegen $rho_"frei" = 0$ und konstantem $epsilon$ folgt aus @gauss-e
-zunächst $nabla dot bold(E) = 0$, sodass der erste Term entfällt. Auf der
-rechten Seite wird $bold(B) = mu bold(H)$ eingesetzt und anschließend @ampere
-verwendet, das im quellfreien Fall zu
-$nabla times bold(H) = epsilon thin partial bold(E) \/ partial t$ wird. Damit
-bleibt
-
-$ - nabla^2 bold(E) = - mu epsilon (partial^2 bold(E))/(partial t^2) $
-
-und nach Umstellen die _Wellengleichung_
+und setzt @gauss-e sowie @ampere ein, ergibt sich die _Wellengleichung_
+@GriffithsDE[eq.(9.41)]
 
 $ nabla^2 bold(E) - mu epsilon (partial^2 bold(E))/(partial t^2) = 0 $ <welle>
 
-Eine völlig gleichartige Rechnung, die bei @ampere statt bei @faraday ansetzt,
-liefert dieselbe Gleichung für $bold(H)$. Beide Felder gehorchen also derselben
-Wellengleichung, was ihre gemeinsame Ausbreitung beschreibt.
-
-@welle ist bemerkenswert, weil in ihr keine Ladungen und keine Ströme mehr
-vorkommen. Eine einmal erzeugte Störung des Feldes bewegt sich fort, ohne dass
-Materie daran beteiligt wäre --- und der Vorfaktor
-$mu epsilon$ legt fest, wie schnell. Für das Vakuum ergibt sich
+Dieselbe Gleichung folgt für $bold(H)$, wenn man stattdessen bei @ampere
+ansetzt. In @welle kommen keine Ladungen oder Ströme mehr vor: Eine einmal
+erzeugte Störung breitet sich mit der durch $mu epsilon$ festgelegten
+Geschwindigkeit aus, im Vakuum @GriffithsDE[S.482]
 
 $ c = 1/sqrt(mu_0 epsilon_0) approx 2,998 dot 10^8 " m/s" $
 
-also die Lichtgeschwindigkeit. Aus diesem Zusammentreffen schloss Maxwell, dass
-Licht selbst eine elektromagnetische Welle ist.
+also der Lichtgeschwindigkeit --- woraus Maxwell schloss, dass Licht selbst
+eine elektromagnetische Welle ist.
 
-== Die ebene Welle als analytische Referenzlösung
+== Die ebene Welle als analytische Referenzlösung <sec-ebenewelle>
 
-Die einfachste Lösung von @welle ist die ebene Welle. Sie dient in Kapitel 5
-als Vergleichsgröße und wird deshalb hier vollständig angegeben. Der Ansatz
-lautet
+Die einfachste Lösung von @welle, die in Kapitel 5 als Vergleichsgröße dient,
+ist die ebene Welle
 
-$ bold(E)(bold(r), t) = bold(E)_0 thin e^(i(omega t - bold(k) dot bold(r))) $ <ansatz>
+$ bold(E)(bold(r), t) = E_0 thin e^(i(omega t - bold(k) dot bold(r))) hat(z) $ <ansatz>
 
-mit der Kreisfrequenz $omega = 2 pi f$ und dem _Wellenvektor_ $bold(k)$, dessen
-Richtung die Ausbreitungsrichtung angibt und dessen Betrag
-$beta = abs(bold(k))$ als _Phasenkonstante_ bezeichnet wird. Die Schreibweise
-mit der komplexen Exponentialfunktion ist eine Rechenerleichterung; gemeint ist
-jeweils der Realteil.
+Darin ist $E_0$ die (skalare) Amplitude, $hat(z)$ der Einheitsvektor in
+$z$-Richtung --- der Vektor $bold(E)$ hat im TM#sub[z]-Fall ja nur die
+Komponente $E_z$ ---, $bold(r) = (x,y,z)$ der (volle, dreidimensionale)
+Ortsvektor des betrachteten Punktes, $t$ die Zeit, $omega=2pi f$ die
+Kreisfrequenz und $bold(k)$ der Wellenvektor, dessen Richtung die
+Ausbreitungsrichtung angibt @GriffithsDE[mod. eq.(1.43)]. Wegen @zinvarianz
+muss $bold(k)$ dabei stets in der $x y$-Ebene liegen ($k_z=0$); an $bold(r)$
+selbst ändert das nichts, es bleibt der volle Ortsvektor, aber sein
+$z$-Anteil fällt im Skalarprodukt $bold(k) dot bold(r) = k_x x + k_y y$
+heraus, sodass das Feld --- wie von @zinvarianz gefordert --- tatsächlich
+nicht von $z$ abhängt. Da das Feld hier durch Verwendung der Eueleridentität komplex angesetzt ist,
+beschreibt der Realteil das physikalische Feld. Eine ebene Welle heißt so,
+weil zu jedem festen Zeitpunkt $t$ alle Orte $bold(r)$ gleicher Phase
+$omega t - bold(k) dot bold(r) = "const."$ eine zu $bold(k)$ senkrechte Ebene
+bilden, auf der Amplitude und Phase überall gleich sind @GriffithsDE[S.483].
 
-Setzt man @ansatz in @welle ein, so ergibt jede Ableitung nach dem Ort einen
-Faktor $-i bold(k)$ und jede nach der Zeit einen Faktor $i omega$. Es folgt
 
-$ -beta^2 + mu epsilon thin omega^2 = 0
-  quad ==> quad
-  omega = beta / sqrt(mu epsilon) = c beta $
-
-Diese Beziehung zwischen Frequenz und Phasenkonstante heißt
-_Dispersionsrelation_. Aus ihr folgen unmittelbar die drei Größen, mit denen
-Kapitel 5 arbeitet. Die _Phasengeschwindigkeit_, also die Geschwindigkeit, mit
-der ein Punkt fester Phase fortschreitet, beträgt
-
-$ c_p = omega/beta = c = 1/sqrt(mu_r epsilon_r) dot c_0 $
-
-und ist damit unabhängig von der Frequenz: Im Kontinuum laufen alle Frequenzen
-gleich schnell. Die _Wellenlänge_ ergibt sich zu
-
-$ lambda = (2 pi)/beta = c/f $
-
-Schließlich stehen die Beträge der beiden Felder in einem festen Verhältnis.
-Setzt man @ansatz in @faraday ein, so folgt
-$bold(k) times bold(E)_0 = omega mu bold(H)_0$ und daraus
-
-$ abs(bold(E)_0) / abs(bold(H)_0) = (omega mu)/beta = sqrt(mu/epsilon) = Z $
-
-Diese Größe heißt _Wellenwiderstand_; für das Vakuum beträgt sie
-$Z_0 = sqrt(mu_0 \/ epsilon_0) approx 377 thin Omega$. Sie wird in
-Abschnitt 5.3 benötigt, um aus den Stetigkeitsbedingungen @stetig die
-Reflexions- und Transmissionskoeffizienten einer Grenzfläche zu bestimmen.
-
-Damit sind alle analytischen Vergleichsgrößen der Arbeit bereitgestellt: die
-Ausbreitungsgeschwindigkeit, die Wellenlänge, das Verhältnis der Feldstärken
-sowie die Bedingungen an Grenzflächen und an ideal leitenden Rändern.
 
 == Grenzen analytischer Lösungsverfahren
+Die in @sec-ebenewelle gezeigte ebene Welle stellt eine der wenigen exakten
+Lösungen der Maxwell-Gleichungen dar. Analytische Lösungsverfahren stoßen in der
+Praxis schnell an ihre Grenzen: Geschlossene mathematische Ausdrücke existieren
+lediglich für stark symmetrische Spezialfälle --- etwa den unendlichen,
+homogenen Raum, ebene Grenzflächen (Fresnelsche Formeln), ideale Zylinder oder
+Kugeln (Mie-Streuung) sowie einfache Hohlleitergeometrien.
 
-#todo[
-  Argumentieren: Geschlossene Lösungen existieren nur bei hoher
-  geometrischer Symmetrie (unendlicher homogener Raum, ebene Grenzfläche,
-  Zylinder, Kugel, Hohlleiter mit konstantem Querschnitt). Sobald mehrere
-  Objekte mit unterschiedlichen Materialeigenschaften und unregelmäßiger
-  Form auftreten, ist keine geschlossene Lösung mehr angebbar, woraus die
-  Notwendigkeit eines numerischen Verfahrens folgt --- Überleitung zu
-  Kapitel 3.
-]
+Sobald ein Problem reale Randbedingungen aufweist --- etwa komplexe,
+unregelmäßige Objektgeometrien, mehrschichtige oder ortsabhängige Materialien
+($epsilon_r(x,y)$, $sigma(x,y)$) --- ist eine geschlossene analytische
+Berechnung nicht mehr möglich. Um die Feldverteilung für solche realistischen
+Szenarien dennoch präzise zu bestimmen, muss das kontinuierliche System der
+Maxwell-Gleichungen diskretisiert und numerisch gelöst werden. Dies motiviert den
+Übergang zur _Finite-Difference Time-Domain_-Methode (FDTD), die im folgenden
+Kapitel hergeleitet wird.

@@ -6,21 +6,20 @@ Tinymist kompiliert standardmäßig **die gerade geöffnete Datei**. Wenn du
 `kapitel/03_fdtd_methode.typ` offen hast, wird nur diese Datei allein
 gebaut — ohne Titelseite, ohne Literaturverzeichnis. Deshalb schlagen
 Zitate wie `@Maxwell1865` dort fehl ("failed to resolve reference"), und
-der Compiler bricht ab.
+jedes `@Zitat` wird im Editor rot unterkringelt.
 
-**Lösung, einmal pro VS-Code-Sitzung:**
+**Das ist bereits fest eingestellt:** `.vscode/settings.json` im
+Workspace-Root setzt `tinymist.typstExtraArgs` auf
+`["seminararbeit/main.typ"]`, sodass Tinymist immer `main.typ` kompiliert
+— unabhängig davon, welche Kapitel-Datei gerade offen ist. Damit
+verschwinden die roten Fehler unter den Zitaten dauerhaft, ganz ohne
+manuelles Pinnen.
 
-1. `main.typ` öffnen
-2. Befehlspalette: `Cmd+Shift+P`
-3. `Typst Pin Main` eingeben und ausführen (Befehl: `tinymist.pinMainToCurrent`)
-
-Ab dann wird immer `main.typ` kompiliert, egal welche Kapitel-Datei du
-gerade bearbeitest. Die Vorschau (`Cmd+K V`) zeigt dann das ganze Dokument.
-
-Hinweis: Tinymist merkt sich das Pinning nicht über einen Neustart hinweg
-— nach dem Neuöffnen von VS Code also erneut ausführen. Wenn dich das
-stört, kannst du in den VS-Code-Einstellungen `tinymist.typstExtraArgs`
-auf `["main.typ"]` setzen.
+Falls die rote Unterkringelung trotzdem auftaucht (z. B. nach einem
+Extension-Update): VS Code neu laden (`Cmd/Ctrl+Shift+P` →
+`Developer: Reload Window`). Alternativ manuell pinnen: `main.typ`
+öffnen, Befehlspalette, `Typst Pin Main` (`tinymist.pinMainToCurrent`) —
+gilt dann aber nur bis zum nächsten Neustart von VS Code.
 
 ## Fehler eingrenzen
 

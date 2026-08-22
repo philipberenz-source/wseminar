@@ -80,10 +80,21 @@ einen Eintrag weniger besitzen, folgt aus dem Versatz des Gitters (Abschnitt
 3.2). `_pec_mask` merkt sich, welche Zellen ideal leitend sind.
 
 In Kapitel 3 tragen die Feldgrößen halbzahlige Indizes wie
-$H_x^(n+1\/2)(i, j+1\/2)$. Ein Array lässt sich nur ganzzahlig ansprechen;
-`Hx[i, j]` bezeichnet daher denjenigen Wert, der dort bei $(i, j+1\/2)$ steht.
-Der Versatz ist im Programm also nicht mehr sichtbar, sondern steckt darin, in
-welchem Array ein Wert liegt.
+$H_x^(n+1\/2)(i, j+1\/2)$. Solche Indizes verschwinden im Programm vollständig,
+denn ein Array lässt sich ausschließlich ganzzahlig ansprechen: Es gibt keinen
+Platz `Hx[i, j+0.5]`. `Hx[i, j]` bezeichnet deshalb denjenigen Wert, der in der
+Schreibweise des vorigen Kapitels bei $(i, j+1\/2)$ liegt. Der räumliche Versatz
+ist damit nicht verschwunden, sondern nur unsichtbar geworden: Er steckt nicht
+mehr im Index, sondern darin, in _welchem_ Array ein Wert steht.
+
+Für den Zeitindex gilt dasselbe, und dort hat es eine Folge. Ein halber
+Zeitschritt lässt sich so wenig zählen wie ein halber Arrayplatz, weshalb
+`self.Hx` schlicht den zuletzt berechneten Stand des Magnetfelds enthält ---
+gleichgültig, ob dieser in der Schreibweise aus Kapitel 3 auf $n - 1\/2$ oder
+auf $n + 1\/2$ liegt. Der zeitliche Versatz steckt folglich weder im Index noch
+im Array, sondern allein in der Reihenfolge, in der die beiden Felder
+fortgeschrieben werden. Eben deshalb ist diese Reihenfolge nicht beliebig,
+worauf Abschnitt 4.8 zurückkommt.
 
 == Ableitungen als Array-Ausschnitte
 
@@ -261,9 +272,28 @@ def run(self, n_steps, callback=None):
 ```
 
 `step` führt einen vollständigen Zeitschritt aus: erst das Magnetfeld, dann die
-Stromquelle, dann das elektrische Feld, dann die additive Quelle; anschließend
-werden Zeit und Zähler erhöht und die Messgrößen aufgezeichnet. Die Zeit wird
-aus dem Zähler berechnet und nicht aufaddiert, damit sich keine Rundungsfehler
+Stromquelle, dann das elektrische Feld, dann die additive Quelle. Diese Abfolge
+ist keine Setzung des Programms, sondern liegt bereits in der Zuordnung aus
+Abschnitt 3.3 fest, die $E$ auf die ganzzahligen und $bold(H)$ auf die
+halbzahligen Zeitpunkte legt. Da diese Halbschritte im Programm nur noch als
+Reihenfolge vorliegen, muss sie genau das leisten, was dort die halbzahligen
+Zeitindizes leisten: Das $H$-Update benötigt $E$ zum ganzzahligen Zeitpunkt $n$, das
+anschließende $E$-Update benötigt $H$ zum dazwischenliegenden Zeitpunkt
+$n + 1\/2$. Jeder der beiden Schritte greift also auf denjenigen Stand des
+anderen Feldes zu, den der unmittelbar vorangegangene Schritt gerade erzeugt
+hat. Vertauscht man beide, so rechnet das $E$-Update mit einem $H$, das einen
+vollen Zeitschritt alt ist; die Differenz wäre dann nicht mehr um den
+auszuwertenden Zeitpunkt zentriert, und mit der Zentrierung entfiele gerade die
+Eigenschaft, aus der in Abschnitt 3.1 die zweite Fehlerordnung folgte.
+
+Aus demselben Grund stehen die beiden Quellen an verschiedenen Stellen. Die
+Stromdichte `Jz` wird innerhalb von `_update_E` gelesen und muss deshalb vorher
+gesetzt sein. Die additive Quelle addiert dagegen unmittelbar auf `Ez` und steht
+folglich hinter dem Update --- käme sie davor, ginge ihr Beitrag als _alter_
+Feldwert in die Rechnung ein und würde dabei zusätzlich mit `Ca` multipliziert.
+Erst danach werden Zeit und Zähler erhöht und die Messgrößen aufgezeichnet, die
+somit stets ein vollständig fortgeschriebenes Feld sehen. Die Zeit wird aus dem
+Zähler berechnet und nicht aufaddiert, damit sich keine Rundungsfehler
 ansammeln. `run` wiederholt den Schritt und ruft dabei eine optionale Funktion
 `callback` auf, über die sich von außen auf den Zustand zugreifen lässt.
 

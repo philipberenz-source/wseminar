@@ -10,7 +10,7 @@
 
 #show: doc => project(
   title: "Die FDTD-Methode zur numerischen Lösung der Maxwell-Gleichungen",
-  subtitle: "Theoretische Herleitung, analytische Validierung und numerische Fallstudie",
+  subtitle: "Theoretische Herleitung und analytische Validierung  ",
   author: "Philip Berenz",
   school: "Oskar-von-Miller-Gymnasium",
   course: "Wissenschaftspropädeutisches Seminar im Leitfach Physik",
