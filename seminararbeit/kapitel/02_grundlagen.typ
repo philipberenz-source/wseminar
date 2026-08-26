@@ -37,7 +37,8 @@ $bold(E)$) und @ampere (Ampère-Maxwell-Gesetz: ein umlaufendes $bold(H)$
 entsteht durch einen Strom _oder_ ein sich änderndes $bold(D)$). Der Term
 $partial bold(D)\/partial t$ ist Maxwells eigentliche Ergänzung des zuvor
 bekannten Ampèreschen Gesetzes @GriffithsDE[S. 417] und heißt
-_Verschiebungsstrom_ @GriffithsDE[S. 422]; erst er schließt den Kreis, und bildet die Grundlage für die Aubreitung _elektromagnetischer_ Wellen
+_Verschiebungsstrom_ @GriffithsDE[S. 422]; erst er schließt den Kreis und bildet damit die Grundlage für die Ausbreitung
+_elektromagnetischer_ Wellen.
 
 == Materialgleichungen <sec-material>
 
@@ -147,7 +148,7 @@ eine elektromagnetische Welle ist.
 Die einfachste Lösung von @welle, die in Kapitel 5 als Vergleichsgröße dient,
 ist die ebene Welle
 
-$ bold(E)(bold(r), t) = E_0 thin e^(i(omega t - bold(k) dot bold(r))) hat(z) $ <ansatz>
+$ bold(E)(bold(r), t) = E_0 thin e^(upright(i)(omega t - bold(k) dot bold(r))) hat(z) $ <ansatz>
 
 Darin ist $E_0$ die (skalare) Amplitude, $hat(z)$ der Einheitsvektor in
 $z$-Richtung --- der Vektor $bold(E)$ hat im TM#sub[z]-Fall ja nur die
@@ -159,8 +160,11 @@ muss $bold(k)$ dabei stets in der $x y$-Ebene liegen ($k_z=0$); an $bold(r)$
 selbst ändert das nichts, es bleibt der volle Ortsvektor, aber sein
 $z$-Anteil fällt im Skalarprodukt $bold(k) dot bold(r) = k_x x + k_y y$
 heraus, sodass das Feld --- wie von @zinvarianz gefordert --- tatsächlich
-nicht von $z$ abhängt. Da das Feld hier durch Verwendung der Eueleridentität komplex angesetzt ist,
-beschreibt der Realteil das physikalische Feld. Eine ebene Welle heißt so,
+nicht von $z$ abhängt. Da das Feld hier unter Verwendung der Eulerschen Identität komplex angesetzt
+ist, beschreibt der Realteil das physikalische Feld; $upright(i)$ bezeichnet
+dabei --- hier und im gesamten weiteren Text --- die imaginäre Einheit, die
+damit von den kursiv gesetzten Gitterindizes $i$ und $j$ aus Kapitel 3
+unterschieden ist. Eine ebene Welle heißt so,
 weil zu jedem festen Zeitpunkt $t$ alle Orte $bold(r)$ gleicher Phase
 $omega t - bold(k) dot bold(r) = "const."$ eine zu $bold(k)$ senkrechte Ebene
 bilden, auf der Amplitude und Phase überall gleich sind @GriffithsDE[S.483].

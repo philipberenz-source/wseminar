@@ -76,14 +76,14 @@ der Parameter `courant` aus Abschnitt 4.2; sofern nichts anderes angegeben ist,
 gilt $S$ = 0,99. Alle Zahlen stammen aus eigenen Läufen von `fdtd_core.py`;
 Skripte und Rohdaten liegen im Anhang.
 
-== Testfall 1 --- Ausbreitung im Vakuum
+== Testfall 1 --- Ausbreitung im Vakuum <sec-tf1>
 
 === Anordnung und Sollgrößen
 
 Im Vakuum breitet sich eine Welle mit Lichtgeschwindigkeit aus, und zwar in jede
 Richtung gleich schnell. Formal folgt das aus der Dispersionsrelation des
 Kontinuums, die für eine ebene Welle mit den Komponenten $beta_x$, $beta_y$ der
-Phasenkonstante lautet @Griffiths1999
+Phasenkonstante lautet
 
 $ mu epsilon omega^2 = beta_x^2 + beta_y^2 $ <dispkont>
 
@@ -103,13 +103,16 @@ Problem löst. Die zugehörige exakte Lösung geben Taflove und Hagness
 @Taflove2005 an; da eine Kreiswelle in alle Richtungen gleich aussieht, hängt
 das Feld nur vom Abstand ab:
 
-$ E_z (r, t) = "Re"{ A dot H_0^((1))(k r) dot e^(-i omega t) } $ <hankel>
+$ E_z (r, t) = "Re"{ A dot H_0^((1))(k r) dot e^(-upright(i) omega t) } $ <hankel>
 
+@hankel ist dabei in der zu @ansatz konjugierten Zeitkonvention
+$e^(-upright(i) omega t)$ geschrieben, unter der $H_0^((1))$ die auslaufende
+Welle beschreibt; das reelle Feld ist in beiden Konventionen dasselbe.
 Die _Hankel-Funktion_ $H_0^((1))$ übernimmt darin die Rolle des Kosinus im
 eindimensionalen Fall, nur dass ihre Amplitude zugleich nach außen hin abnimmt:
 Für große Abstände geht sie in $r^(-1\/2) cos(k r - pi\/4)$ über und liefert
 damit das genannte Gesetz. Sie ist eigens programmiert, unter anderem nach einer
-Polynomnäherung von Abramowitz und Stegun @AbramowitzStegun1964.
+Polynomnäherung von Abramowitz und Stegun .
 
 Die beiden Sollgrößen verlangen verschiedene Geometrien. Die
 Phasengeschwindigkeit wird an einer *ebenen Welle* gemessen: Eine Linienquelle
@@ -160,8 +163,8 @@ gewinnt Schneider @Schneider2010, indem er dieselbe ebene Welle in die diskreten
 Update-Gleichungen einsetzt. Ausgangspunkt ist, dass eine zentrale Differenz auf
 eine ebene Welle wie eine Multiplikation wirkt; für die Zeitableitung etwa gilt
 
-$ tilde(partial)_t e^(i omega q Delta t) = i 2/(Delta t)
-  sin((omega Delta t)/2) e^(i omega q Delta t) $ <schiebung>
+$ tilde(partial)_t e^(upright(i) omega q Delta t) = upright(i) 2/(Delta t)
+  sin((omega Delta t)/2) e^(upright(i) omega q Delta t) $ <schiebung>
 
 und für die Ortsrichtungen dasselbe mit $Delta x$ beziehungsweise $Delta y$. Mit
 den Abkürzungen
@@ -170,12 +173,12 @@ $ Omega = 2/(Delta t) sin((omega Delta t)/2), quad
   K_x = 2/(Delta x) sin((tilde(beta)_x Delta x)/2), quad
   K_y = 2/(Delta y) sin((tilde(beta)_y Delta y)/2) $ <ersetzung>
 
-bedeutet eine Zeitableitung eine Multiplikation mit $i Omega$ und eine
-Ortsableitung eine mit $-i K$. Jede Richtung bekommt dabei ihren eigenen
+bedeutet eine Zeitableitung eine Multiplikation mit $upright(i) Omega$ und eine
+Ortsableitung eine mit $-upright(i) K$. Jede Richtung bekommt dabei ihren eigenen
 Ausdruck mit der Zellweite _dieser_ Richtung --- daher rührt die
 Richtungsabhängigkeit. Mehr wird nicht gebraucht: Im Kontinuum wird aus jeder
-Zeitableitung ein Faktor $i omega$ und aus jeder Ortsableitung ein Faktor
-$-i beta$, und genau so entsteht @dispkont. Die diskreten Gleichungen haben
+Zeitableitung ein Faktor $upright(i) omega$ und aus jeder Ortsableitung ein
+Faktor $-upright(i) beta$, und genau so entsteht @dispkont. Die diskreten Gleichungen haben
 denselben Bau, nur mit $Omega$ und $K$ an diesen Stellen. Dieselbe Rechnung
 liefert deshalb dieselbe Gleichung mit den ersetzten Größen:
 
@@ -305,7 +308,7 @@ anders sichtbar gemacht.
 Da an einer ideal leitenden Wand nach Abschnitt 3.6 das elektrische Feld
 verschwindet, können nur solche Wellen bestehen, die an allen vier Wänden einen
 Knoten besitzen --- wie bei einer eingespannten Saite, nur in zwei Richtungen
-zugleich. Daraus folgen die von Griffiths @Griffiths1999 hergeleiteten
+zugleich. Daraus folgen die von Griffiths  hergeleiteten
 Eigenfrequenzen
 
 $ f_(m n) = c/2 sqrt((m/L_x)^2 + (n/L_y)^2), quad m, n >= 1 $ <eigenf>
@@ -453,7 +456,7 @@ feineres Gitter hätte nichts genützt, eine längere Simulation dagegen alles.
 === Anordnung und Sollgröße
 
 Trifft eine Welle senkrecht auf die Grenze zweier Medien, so folgt der
-reflektierte Anteil aus der Fresnel-Formel, die Griffiths @Griffiths1999 daraus
+reflektierte Anteil aus der Fresnel-Formel, die Griffiths  daraus
 herleitet, dass elektrisches und magnetisches Feld an einer Grenzfläche keinen
 Sprung machen dürfen:
 
@@ -461,7 +464,7 @@ $ r = (n_1 - n_2)/(n_1 + n_2), quad "mit" quad n = sqrt(epsilon_r) $ <fresnel>
 
 Darin ist $r$ das Verhältnis der reflektierten zur einfallenden Feldamplitude.
 Ist das zweite Medium leitfähig, so tritt an die Stelle der Permittivität die
-komplexe Größe $underline(epsilon)_(r,2) = epsilon_(r,2) - i sigma \/ (omega
+komplexe Größe $underline(epsilon)_(r,2) = epsilon_(r,2) - upright(i) sigma \/ (omega
 epsilon_0)$, mit der Sullivan @Sullivan2013 verlustbehaftete Medien beschreibt,
 und @fresnel gilt unverändert weiter. Der Quotient $sigma \/ (omega epsilon_0
 epsilon_r)$ heißt _Verlusttangens_ und misst, wie stark ein Material dämpft.
