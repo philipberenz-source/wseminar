@@ -1,3 +1,16 @@
+// Eigenes Import nötig: #include teilt keine Variablen mit main.typ.
+#import "../template.typ": *
+
+= Quelltext des Moduls `fdtd_core.py` <anhang-quelltext>
+
+Nachstehend das Modul in der Fassung, mit der sämtliche Rechnungen der
+Kapitel 5 und 6 durchgeführt wurden. Die einzelnen Stellen sind in Kapitel 4
+erläutert. Nicht abgedruckt ist der angehängte
+`if __name__ == "__main__":`-Block mit den drei Selbsttests
+(Energieerhaltung, Vakuum-Laufzeit, Restreflexion der Schicht); er gehört
+nicht zum Modul selbst und wird in Kapitel 5 aufgegriffen.
+
+```python
 import numpy as np
 
 EPS0 = 8.8541878128e-12
@@ -7,35 +20,21 @@ C0 = 1.0 / np.sqrt(EPS0 * MU0)
 
 class FDTD2D:
     """2D-FDTD-Loeser fuer den TM_z-Fall (Ez, Hx, Hy) auf einem quadratischen
-    Yee-Gitter (dx = dy = d). Es gilt mu = mu0 ueberall; eps und sigma sind
+    Yee-Gitter mit der einen Zellweite d (Kapitel 3 setzt dx = dy = d voraus).
+    Es gilt mu = mu0 ueberall; eps und sigma sind
     ortsabhaengig und werden ueber set_material_box() gesetzt. Der Rand wird
     durch eine PML in gestreckten Koordinaten (rekursive Faltung) absorbiert."""
 
-    def __init__(self, nx, ny, dx, dy, courant=0.99,
+    def __init__(self, nx, ny, d, courant=0.99,
                  eps_r=None, sigma=None, npml=10, pml_m=3, r0=1e-6):
-        if dx <= 0 or dy <= 0:
-            raise ValueError("dx und dy muessen positiv sein.")
-        if dx != dy:
-            raise ValueError("Das Gitter muss quadratisch sein: dx muss gleich dy sein.")
-        if not (0.0 < courant < 1.0):
-            raise ValueError("courant (Courant-Zahl S) muss im Intervall (0, 1) liegen.")
-        if nx <= 2 * npml + 2 or ny <= 2 * npml + 2:
-            raise ValueError(
-                "nx/ny sind zu klein fuer die gewaehlte PML-Dicke npml "
-                "(mindestens 2*npml + 3 Gitterpunkte je Richtung noetig)."
-            )
 
         self.nx, self.ny = nx, ny
-        self.d = dx
-        self.dx, self.dy = dx, dy  # Aliase, weil Auswertungsskripte sie lesen
+        self.d = d
 
         self.dt = courant * self.d / (C0 * np.sqrt(2.0))
 
         self.eps_r = np.ones((nx, ny)) if eps_r is None else np.asarray(eps_r, dtype=float).copy()
         self.sigma = np.zeros((nx, ny)) if sigma is None else np.asarray(sigma, dtype=float).copy()
-        if np.any(self.eps_r < 1.0) or np.any(self.sigma < 0.0):
-            raise ValueError("eps_r muss groesser als eins sein und sigma muss groesser als null sein.")
-
         self.Ez = np.zeros((nx, ny))
         self.Hx = np.zeros((nx, ny - 1))
         self.Hy = np.zeros((nx - 1, ny))
@@ -120,34 +119,47 @@ class FDTD2D:
         self.psi_ez_y = np.zeros((nx - 2, ny - 2))
 
     def add_soft_source(self, i, j, waveform):
-        """Additive Quelle: Ez(i,j) += waveform(t) nach jedem Zeitschritt."""
+        """Additive Quelle: Ez(i,j) += waveform(t) nach jedem Zeitschritt.
+
+        Der Zuschlag wird auf den bereits aktualisierten Wert Ez^(n+1) addiert
+        und die Wellenform deshalb bei t^(n+1) ausgewertet."""
         self._soft_sources.append((i, j, waveform))
 
     def add_current_source(self, i, j, waveform, amplitude=1.0):
-        """Reale Stromquelle: Jz(i,j) = amplitude * waveform(t) im Ampere-Maxwell-Gesetz."""
+        """Reale Stromquelle: Jz(i,j) = amplitude * waveform(t) im Ampere-Maxwell-Gesetz.
+
+        Jz geht als Jz^(n+1/2) in das Ez-Update ein; die Wellenform wird deshalb
+        bei t^(n+1/2) ausgewertet."""
         self._current_sources.append((i, j, waveform, amplitude))
 
-    def add_probe(self, i, j, freqs=None):
-        """Registriert eine Sonde bei (i,j). Optional: freqs (Hz) fuer eine laufende DFT,
-        z. B. sim.add_probe(i, j, freqs=[2.4e9, 5.0e9]) fuer WLAN-Frequenzen."""
-        probe = {"i": i, "j": j, "t": [], "Ez": []}
-        if freqs is not None:
-            probe["freqs"] = np.asarray(freqs, dtype=float)
-            probe["dft"] = np.zeros(probe["freqs"].shape, dtype=complex)
-        self._probes.append(probe)
+    def add_probe(self, i, j):
+        """Registriert eine Sonde bei (i,j), die Zeit und Ez aufzeichnet."""
+        self._probes.append({"i": i, "j": j, "t": [], "Ez": []})
         return len(self._probes) - 1
 
     def add_snapshot(self, steps):
         """Speichert das volle Ez-Feld bei den angegebenen Zeitschritt-Nummern."""
         self._snapshot_steps.update(steps)
 
-    def get_spectrum(self, probe_index):
-        """Gibt (freqs, dft) der Sonde probe_index zurueck; die Sonde muss mit
-        freqs angelegt worden sein."""
+    def get_spectrum(self, probe_index, pad=1):
+        """Spektrum einer Sonde ueber die schnelle Fourier-Transformation.
+
+        Die aufgezeichnete Zeitreihe wird mit numpy.fft.rfft transformiert; das
+        Ergebnis liegt auf dem festen Raster f_k = k / (pad*N*dt), wobei pad >= 1
+        Nullen anhaengt und das Raster verfeinert, ohne die Aufloesung 1/(N*dt)
+        zu verbessern. Der Faktor dt normiert die Summe auf das Zeitintegral,
+        der Exponentialfaktor beruecksichtigt, dass der erste Abtastwert zu
+        t = dt und nicht zu t = 0 gehoert. Rueckgabe: (f, Y)."""
         p = self._probes[probe_index]
-        if "freqs" not in p:
-            raise ValueError("Diese Sonde wurde ohne freqs angelegt.")
-        return p["freqs"], p["dft"]
+        y = np.asarray(p["Ez"], dtype=float)
+        if y.size == 0:
+            raise ValueError("Diese Sonde hat noch keinen Wert aufgezeichnet.")
+        if pad < 1:
+            raise ValueError("pad muss mindestens 1 sein.")
+        n = int(pad) * y.size
+        f = np.fft.rfftfreq(n, self.dt)
+        Y = np.fft.rfft(y, n) * self.dt
+        return f, Y * np.exp(-2j * np.pi * f * p["t"][0])
 
     @staticmethod
     def gaussian_pulse(t, t0, tau):
@@ -191,32 +203,36 @@ class FDTD2D:
         if self._pec_mask.any():
             self.Ez[self._pec_mask] = 0.0
 
-    def _inject_current_sources(self):
+    def _inject_current_sources(self, t):
+        """Setzt Jz zum Zeitpunkt t (aufgerufen mit t^(n+1/2))."""
         self.Jz[:, :] = 0.0
         for i, j, waveform, amplitude in self._current_sources:
-            self.Jz[i, j] = amplitude * waveform(self.t)
+            self.Jz[i, j] += amplitude * waveform(t)
 
-    def _inject_soft_sources(self):
+    def _inject_soft_sources(self, t):
+        """Addiert die Wellenform zum Zeitpunkt t auf Ez (aufgerufen mit t^(n+1))."""
         for i, j, waveform in self._soft_sources:
-            self.Ez[i, j] += waveform(self.t)
+            self.Ez[i, j] += waveform(t)
 
     def _record_probes(self):
         for p in self._probes:
             ez = self.Ez[p["i"], p["j"]]
             p["t"].append(self.t)
             p["Ez"].append(ez)
-            if "freqs" in p:
-                p["dft"] += ez * np.exp(-1j * 2.0 * np.pi * p["freqs"] * self.t) * self.dt
 
     def _record_snapshots(self):
         if self.time_step in self._snapshot_steps:
             self._snapshots[self.time_step] = {"t": self.t, "Ez": self.Ez.copy()}
 
     def step(self):
+
+        t_halb = self.t + 0.5 * self.dt
+        t_neu = self.t + self.dt
+
         self._update_H()
-        self._inject_current_sources()
+        self._inject_current_sources(t_halb)
         self._update_E()
-        self._inject_soft_sources()
+        self._inject_soft_sources(t_neu)
         self.time_step += 1
         self.t = self.time_step * self.dt
         self._record_probes()
@@ -244,116 +260,5 @@ class FDTD2D:
         for p in self._probes:
             p["t"].clear()
             p["Ez"].clear()
-            if "freqs" in p:
-                p["dft"][:] = 0.0
         self._snapshots.clear()
-
-
-if __name__ == "__main__":
-    # Drei einfache Selbsttests: Energieerhaltung in der geschlossenen,
-    # verlustlosen Box, Laufzeit im Vakuum und Restreflexion an der PML.
-    # Kein Testframework, nur Zahlen und ein bestanden/nicht bestanden.
-
-    def test_energieerhaltung():
-        nx = ny = 80
-        d = 1.0e-3
-        sim = FDTD2D(nx, ny, d, d, courant=0.99, npml=0)  # ohne PML: Rand ist
-        # bereits PEC, da die aeusserste Zeile/Spalte von Ez nie aktualisiert wird.
-
-        tau = 40 * sim.dt
-        t0 = 8 * tau
-        ic, jc = nx // 2, ny // 2
-        sim.add_soft_source(ic, jc, lambda t: FDTD2D.gaussian_pulse(t, t0, tau))
-
-        n_start = int(round((t0 + 10 * tau) / sim.dt))  # Puls dann abgeklungen
-        n_nach = 2400
-        energie = np.empty(n_start + n_nach)
-        for n in range(len(energie)):
-            sim.step()
-            energie[n] = sim.total_energy()
-
-        # total_energy() mischt Ez^n mit H^(n-1/2): dieser halbe Zeitschritt
-        # Versatz erzeugt eine kleine, aber nicht abklingende Welligkeit der
-        # Momentanenergie (mehrere Prozent), die keine echte Drift ist. Um
-        # trotzdem eine echte Drift (z. B. durch einen Fehler im Update) zu
-        # erkennen, wird ueber je eine Haelfte des Beobachtungsfensters
-        # gemittelt; die Welligkeit mittelt sich dabei heraus.
-        fenster = energie[n_start:]
-        haelfte = len(fenster) // 2
-        e_anfang = fenster[:haelfte].mean()
-        e_ende = fenster[haelfte:].mean()
-        drift = abs(e_ende - e_anfang) / ((e_anfang + e_ende) / 2)
-        bestanden = drift < 1.0e-3
-        print(f"Testfall 1 - Energieerhaltung: Drift zwischen erster und zweiter "
-              f"Haelfte des Beobachtungsfensters {drift * 100:.4f} % "
-              f"({'bestanden' if bestanden else 'NICHT bestanden'})")
-        return bestanden
-
-    def test_ausbreitung():
-        nx = ny = 220
-        d = 1.0e-3
-        sim = FDTD2D(nx, ny, d, d, courant=0.99, npml=10)
-
-        tau = 5 * sim.dt
-        t0 = 8 * tau
-        ic, jc = nx // 2, ny // 2
-        sim.add_soft_source(ic, jc, lambda t: FDTD2D.gaussian_pulse(t, t0, tau))
-
-        m = 90
-        probe = sim.add_probe(ic + m, jc)
-        r = m * d
-
-        n_steps = int(round((t0 + r / C0 + 30 * tau) / sim.dt))
-        sim.run(n_steps)
-
-        # Die Punktquelle strahlt in 2D kreisfoermig ab; Laufzeit wird deshalb
-        # am Maximum des Pulses gemessen (nicht an einer Amplitudenschwelle,
-        # die durch die Abklingform der Zylinderwelle verzerrt waere).
-        ez = np.abs(np.array(sim._probes[probe]["Ez"]))
-        t_arr = np.array(sim._probes[probe]["t"])
-        t_maximum = t_arr[np.argmax(ez)]
-
-        laufzeit_gemessen = t_maximum - t0
-        laufzeit_theorie = r / C0
-        abweichung = abs(laufzeit_gemessen - laufzeit_theorie) / laufzeit_theorie
-        bestanden = abweichung < 0.02
-        print(f"Testfall 2 - Vakuum-Ausbreitung: Laufzeit gemessen "
-              f"{laufzeit_gemessen * 1e9:.3f} ns, Theorie {laufzeit_theorie * 1e9:.3f} ns, "
-              f"Abweichung {abweichung * 100:.2f} % "
-              f"({'bestanden' if bestanden else 'NICHT bestanden'})")
-        return bestanden
-
-    def test_pml_reflexion():
-        d = 1.0e-3
-        fp = C0 / (40 * d)  # Wellenlaenge = 40 d, damit die Schicht (10 Zellen) gut aufgeloest ist
-        t0 = 3.0 / fp
-        npml = 10
-
-        def bauen(n):
-            sim = FDTD2D(n, n, d, d, courant=0.99, npml=npml)
-            c_ = n // 2
-            sim.add_soft_source(c_, c_, lambda t: FDTD2D.ricker_wavelet(t, t0, fp))
-            probe = sim.add_probe(c_ + 15, c_ + 15)  # diagonal versetzt
-            return sim, probe
-
-        n_steps = 900
-        sim_klein, p_klein = bauen(60)
-        sim_gross, p_gross = bauen(260)
-        sim_klein.run(n_steps)
-        sim_gross.run(n_steps)
-
-        ez_klein = np.array(sim_klein._probes[p_klein]["Ez"])
-        ez_gross = np.array(sim_gross._probes[p_gross]["Ez"])
-        amp_referenz = np.abs(ez_gross).max()
-        abweichung = np.abs(ez_klein - ez_gross).max() / amp_referenz
-        bestanden = abweichung < 0.10
-        print(f"Testfall 3 - PML-Restreflexion: max. Abweichung {abweichung * 100:.2f} % "
-              f"der Referenzamplitude ({'bestanden' if bestanden else 'NICHT bestanden'})")
-        return bestanden
-
-    print("Selbsttest fuer fdtd_core.py\n")
-    ok1 = test_energieerhaltung()
-    ok2 = test_ausbreitung()
-    ok3 = test_pml_reflexion()
-    print()
-    print("Alle Tests bestanden." if (ok1 and ok2 and ok3) else "Mindestens ein Test NICHT bestanden.")
+```

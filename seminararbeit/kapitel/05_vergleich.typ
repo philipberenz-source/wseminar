@@ -72,7 +72,7 @@ worin $lambda$ die Wellenlänge _im jeweiligen Medium_ ist; Standardwert sind 20
 Zellen. Die Frequenz von 1 GHz ist ohne Belang, weil alle Ergebnisse über
 $N_lambda$ angegeben und damit übertragbar sind. Zweiter Parameter ist die
 Courant-Zahl $S$, so normiert, dass die Stabilitätsgrenze bei $S = 1$ liegt ---
-der Parameter `courant` aus Abschnitt 4.2; sofern nichts anderes angegeben ist,
+der Parameter `courant` aus @sec-materialkoeff; sofern nichts anderes angegeben ist,
 gilt $S$ = 0,99. Alle Zahlen stammen aus eigenen Läufen von `fdtd_core.py`;
 Skripte und Rohdaten liegen im Anhang.
 
@@ -517,7 +517,7 @@ alle fünf Kurven nach rechts hin auf ihre punktierte Fresnel-Linie zulaufen.
 
 Bisher waren alle Materialien verlustfrei, sodass die Leitfähigkeit im Programm
 gar nicht beansprucht wurde. Die dritte Messreihe holt das nach und prüft damit
-zugleich die Koeffizienten `Ca` und `Cb` aus Abschnitt 4.5.
+zugleich die Koeffizienten `Ca` und `Cb` aus @sec-materialkoeff.
 
 #figure(
   table(
@@ -555,7 +555,7 @@ zweiter Ordnung und erzeugen gemeinsam die gemessene Konvergenz.
 
 === Anordnung und Sollgröße
 
-Die absorbierende Schicht aus Abschnitt 4.5 soll den Rand des Rechengebiets
+Die absorbierende Schicht aus @sec-randschicht soll den Rand des Rechengebiets
 unsichtbar machen; der Sollwert ist also null. Wie gut ihr das gelingt, ist
 nicht vorab bekannt, denn das Modul verbindet die Formulierung von Sullivan
 @Sullivan2013 mit einem Dämpfungsparameter nach Taflove und Hagness

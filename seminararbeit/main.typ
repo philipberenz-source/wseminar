@@ -45,3 +45,9 @@
 // des style-Arguments gegen "chicago-notes"; die Zitate im Text
 // (@Key bzw. @Key[S. 51]) bleiben dabei unverändert.
 #bibliography("literatur.bib", title: "Literaturverzeichnis", style: "ieee")
+
+// ---------------- Anhang ----------------
+// Vorbereitet, aber derzeit leer: Der Quelltext steht wieder in Kapitel 4.
+// Fuer weitere Anhaenge die drei Zeilen einkommentieren und #include ergaenzen.
+// #counter(heading).update(0)
+// #set heading(numbering: "A.1", supplement: [Anhang])

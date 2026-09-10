@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 
-sim = FDTD2D(300, 300, 0.00001, 0.00001)
+sim = FDTD2D(300, 300, 0.00001)
 
 # Viele Punktquellen mit gleicher Phase entlang einer Linie ueberlagern sich
 # zu einer ebenen Welle, die sich in i-Richtung ausbreitet.
@@ -27,6 +27,7 @@ def update(_frame):
     ax.set_xlabel("i")
     ax.set_ylabel("j")
     ax.set_title(f"t = {sim.t:.3e} s")
+    print(sim.bx_i)
     # rstride/cstride: nur jeden 4. Gitterpunkt zeichnen, sonst ist ein
     # Redraw von 300x300 Punkten pro Frame zu langsam fuer eine Animation.
     return ax.plot_surface(X, Y, sim.Ez, cmap="RdBu", vmin=-1.0, vmax=1.0,

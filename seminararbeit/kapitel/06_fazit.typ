@@ -48,7 +48,7 @@
   gekrümmten Fläche die Treppenstufennäherung und die numerische Anisotropie
   zusammenwirken und beide einen scheinbaren Winkelfehler erzeugen.
 - *Verlustbehaftete Materialien.* Ein vierter Testfall zur Eindringtiefe in
-  einem leitfähigen Medium würde die in Abschnitt 4.1 eingeführten
+  einem leitfähigen Medium würde die in @sec-materialkoeff eingeführten
   Materialkoeffizienten auch außerhalb ihres verlustfreien Grenzfalls prüfen.
 - *Erweiterung auf drei Dimensionen*, mit dem vollen Feldsatz und deutlich
   höherem Rechenaufwand.

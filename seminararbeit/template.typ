@@ -74,9 +74,9 @@
     fill: luma(247),
     stroke: 0.5pt + luma(215),
     radius: 3pt,
-    inset: (x: 9pt, y: 8pt),
+    inset: (x: 6pt, y: 5pt),
     width: 100%,
-    text(size: 8.5pt, it),
+    text(size: 7.4pt, it),
   )
 
   // ---------------- Titelseite ----------------
