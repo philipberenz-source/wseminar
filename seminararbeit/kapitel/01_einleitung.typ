@@ -5,87 +5,35 @@
 
 == Relevanz und Motivation
 
-Als der Airbus A380 im Dezember 2006 die gemeinsame Musterzulassung von EASA und
-FAA erhielt, war seine Wetterradarantenne bereits Jahre zuvor ausgelegt worden
---- zu einem Zeitpunkt, an dem ihre spätere Einbausituation als Hardware noch gar
-nicht existierte. Möglich war das nur mittels computergestützter Simulationen,
-und anspruchsvoll werden diese durch das Bauteil, das der Antenne vorgelagert
-ist. Bei dem Radom, das sie in der Bugspitze vor Niederschlag und mechanischer
-Belastung schützt, handelt es sich nämlich nicht um eine einfache Trennwand,
-sondern um eine gekrümmte, mehrschichtige und verlustbehaftete Kunststoffschale.
-Da Wandstärke und lokaler Einfallswinkel über die Apertur hinweg variieren, wird
-die durchtretende Welle örtlich unterschiedlich stark verzögert. Der daraus
-entstehende Phasengradient verkippt die Phasenfront und lenkt so die Hauptkeule
-ab; eine über die gesamte Apertur konstante Verzögerung bliebe dagegen ohne
-Wirkung auf die Richtung. Diesen Winkelfehler bezeichnet man in der Radartechnik
-als _boresight error_ --- eine Gewitterzelle erscheint dann unter Umständen in
-einer falschen Richtung. Da er erst aus dem Zusammenspiel von Antenne,
-Radomgeometrie und Materialaufbau entsteht, lässt er sich an der Antenne allein
-nicht bestimmen.
+---
 
-Der Fall steht dabei stellvertretend für eine ganze Klasse technischer
-Problemstellungen --- vom Antennenarray hinter dielektrischer Abdeckung über die
-integrierte Photonik bis zur Spulenauslegung in Magnetresonanztomographen. Ihnen
-allen ist gemeinsam, dass Materialien unterschiedlicher Permittivität
-$epsilon_r$ und Leitfähigkeit $sigma$ auf unregelmäßigen, häufig gekrümmten oder
-geschichteten Grenzflächen zusammentreffen, und an Konfigurationen dieser Art
-scheitern analytische Lösungsansätze. Die Maxwell-Gleichungen beschreiben das
-Feld bei gegebenen Quellen und Materialeigenschaften zwar seit 1865 vollständig
-@Maxwell1865, geschlossene Lösungen sind aber nur für wenige hochsymmetrische
-Idealfälle bekannt: die ebene Welle im homogenen Raum, die Reflexion an einer
-unendlich ausgedehnten ebenen Grenzfläche, die Streuung an einer Kugel. Entfällt
-diese Symmetrie, ist das entstehende System partieller Differentialgleichungen
-geschlossen nicht mehr lösbar.
+Als Apple im September 2023 das iPhone 15 Pro vorstellte, dessen Antennen in den umlaufenden Titanrahmen des Gehäuses integriert sind, war dieses Antennendesign bereits lange Gegenstand der Entwicklung. Möglich ist dies mittels computergestützter Simulationen, die die elektromagnetischen Eigenschaften des Geräts bereits im Voraus simulierten, wodurch der eigentliche Prototyp bereits ein optimiertes Abstrahlverhalten besaß.
 
-An die Stelle der Analytik tritt deshalb die Numerik: Das Kontinuum wird durch
-ein endliches Gitter ersetzt und die Differentialquotienten werden durch
-Differenzenquotienten approximiert. Eines der verbreitetsten Verfahren dieser Art
-ist die _Finite-Difference Time-Domain_-Methode (FDTD), die in der Praxis meist
-über kommerzielle Software wie die CST Studio Suite @CSTStudio angewandt wird,
-deren Quellcode nicht zugänglich ist. Zwar existieren mit MEEP oder gprMax auch
-quelloffene Implementierungen, sodass die eigentliche Lücke weniger in der
-Verfügbarkeit des Codes als im Nachvollzug der Herleitung liegt: Auf einem
-endlichen Gitter treten systematische Abweichungen gegenüber dem physikalischen
-Kontinuum auf, deren Ursachen sich weder aus einer Blackbox noch aus fremdem
-Quelltext ohne Weiteres erschließen.
+Die Schwierigkeit liegt dabei in der Bandbreite: Auf wenigen Zentimetern Gehäuserand müssen Mobilfunkbänder von etwa 600 MHz bis 6 GHz, WLAN bei 2,4, 5 und 6 GHz, Bluetooth, GNSS und NFC bei 13,56 MHz gleichzeitig untergebracht werden. Ein Teil der abgestrahlten Leistung wird dabei nicht nach außen abgegeben, sondern an den inneren Grenzflächen von Display, Platine, Akku und Rückglas reflektiert, im Material absorbiert und in Wärme umgewandelt oder in ungewollte Richtungen gestreut. Da diese Reflexions- und Absorptionseigenschaften stark von der Materialzusammensetzung, den Schichtdicken und der jeweiligen Frequenz abhängen, entsteht ein hochgradig gekoppeltes System. Eine tatsächliche Anfertigung verschiedener Prototypen mit jeweils unterschiedlichen Geometrien und Materialkonfigurationen ist somit aufgrund des finanziellen und zeitlichen Aufwands praktisch nicht realisierbar.
 
-Ziel dieser Arbeit ist es daher, einen eigenen, vollständig dokumentierten
-FDTD-Löser in Python zu implementieren und gegen exakt berechenbare
-Konfigurationen zu halten --- nicht um bekannte Ergebnisse zu bestätigen, sondern
-um zu bestimmen, wie genau das Verfahren rechnet und welche Fehlerquellen seine
-Genauigkeit begrenzen. Die Simulation beschränkt sich dabei bewusst auf zwei
-Raumdimensionen: Die Zahl der Gitterzellen sinkt von $O(N^3)$ auf $O(N^2)$,
-sodass Parameterstudien auf einem einzelnen Rechner durchführbar bleiben, während
-die für die Fragestellung wesentlichen physikalischen Mechanismen erhalten
-bleiben. Physikalisch entspricht das Modell einem in $z$-Richtung unendlich
-ausgedehnten Querschnitt; Aussagen über die lokale Wechselwirkung der Welle mit
-der Radomwand sind darin quantitativ belastbar, solche über die
-Richtcharakteristik der Gesamtanordnung dagegen nur qualitativ.
+Der Fall steht dabei stellvertretend für eine ganze Klasse technischer Problemstellungen --- vom Antennenarray hinter dielektrischer Abdeckung über die integrierte Photonik bis zur Spulenauslegung in Magnetresonanztomographen. Ihnen allen ist gemeinsam, dass Materialien unterschiedlicher Permittivität $epsilon_r$ und Leitfähigkeit $sigma$ auf unregelmäßigen, häufig gekrümmten oder geschichteten Grenzflächen zusammentreffen. Zwar beschreiben die Maxwell-Gleichungen das Feld bei gegebenen Quellen und Materialeigenschaften vollständig @Maxwell1865, geschlossene Lösungen sind aber nur für wenige hochsymmetrische Idealfälle bekannt: die ebene Welle im homogenen Raum, die Reflexion an einer unendlich ausgedehnten ebenen Grenzfläche, die Streuung an einer Kugel. Entfällt diese Symmetrie, wie in den genannten Testfällen, so ist für das entstehende System partieller Differentialgleichungen im Allgemeinen keine geschlossene analytische Lösung verfügbar.
+
+Wo eine analytische Lösung nicht verfügbar ist, treten deshalb numerische Verfahren an ihre Stelle: Das Kontinuum wird in ein endliches Gitter überführt und Differentialquotienten durch Differenzenquotienten angenähert.
+
+Eines der verbreitetsten Verfahren in diesem Zusammenhang ist die _Finite-Difference Time-Domain_-Methode (FDTD), welche in der Praxis meist über kommerzielle Software angewandt wird. Am weitesten verbreitet ist dabei die Software CST Studio Suite, deren Quellcode jedoch nicht öffentlich zugänglich ist @CSTStudio. Durch Bibliotheken wie MEEP oder gprMax gibt es jedoch _Open-Source_-Implementierungen, was bedeutet, dass die eigentliche Lücke weniger in der Verfügbarkeit des Codes als im Nachvollzug der Herleitung liegt:
+
+Gegenüber dem physikalischen Kontinuum treten auf einem diskreten Gitter systematische Abweichungen auf, deren Ursachen bei der alleinigen Verwendung kommerzieller Blackbox-Programme oder fremder Quelltexte nur eingeschränkt nachvollzogen werden können.
+
+Demnach verfolgt diese Arbeit den Ansatz, die Maxwell-Gleichungen in ein System diskreter Gleichungen zu überführen und daraus einen eigenen FDTD-Löser in Python zu implementieren, welcher anschließend gegen analytisch beschriebene Testfälle gehalten wird. Ziel ist es, die numerische Genauigkeit des Verfahrens zu bestimmen und zu untersuchen, welche Fehlerquellen aus der Diskretisierung hervorgehen.
 
 == Historischer Kontext
 
-Maxwell führte 1865 Elektrizität, Magnetismus und Optik in einem einheitlichen
-Gleichungssystem zusammen und sagte die Existenz sich mit Lichtgeschwindigkeit
-ausbreitender elektromagnetischer Wellen voraus @Maxwell1865; der experimentelle
-Nachweis gelang Hertz rund zwanzig Jahre später. Die numerische Umsetzung
-begründete Kane S. Yee 1966 @Yee1966, indem er die elektrischen und magnetischen
-Feldkomponenten räumlich und zeitlich gegeneinander versetzt auf einem
-sogenannten Yee-Gitter anordnete. Dadurch lassen sich die gekoppelten
-Rotationsgleichungen durchgängig mit zentralen Differenzenquotienten
-approximieren und beide Feldgrößen alternierend fortschreiben
-(_leapfrog_-Schema).
+Maxwell führte 1865 Elektrizität, Magnetismus und Optik in einem einheitlichen Gleichungssystem zusammen und sagte die Existenz sich mit Lichtgeschwindigkeit ausbreitender elektromagnetischer Wellen voraus @Maxwell1865; der experimentelle Nachweis gelang Hertz rund zwanzig Jahre später. Damit waren die grundlegenden Gesetzmäßigkeiten der klassischen Elektrodynamik in einem einheitlichen theoretischen Rahmen formuliert. Die Beschreibung komplexer elektromagnetischer Konfigurationen stellte jedoch weiterhin insbesondere aufgrund der zu lösenden Randwertprobleme eine Herausforderung dar.
 
-Praktisch nutzbar wurde das Verfahren allerdings erst mit wachsender
-Rechenkapazität. Allen Taflove prägte 1980 die Bezeichnung FDTD und baute die
-Methode zu einem Standardwerkzeug der _Computational Electromagnetics_ aus
-@Taflove2005. Für offene Streuprobleme brauchbar machten sie jedoch erst die
-absorbierenden Randbedingungen --- zunächst die Formulierung von Mur,
-später die deutlich reflexionsärmere _Perfectly Matched Layer_ von Bérenger
-@Berenger1994.
+Die numerische Umsetzung begründete Kane S. Yee 1966 @Yee1966, indem er die elektrischen und magnetischen Feldkomponenten räumlich und zeitlich gegeneinander versetzt auf einem sogenannten Yee-Gitter anordnete. Dadurch lassen sich die gekoppelten Rotationsgleichungen durchgängig mit zentralen Differenzenquotienten approximieren und beide Feldgrößen alternierend fortschreiben (_leapfrog_-Schema).
 
-== Persönliche Motivation 
-Meine Motivation für die Auseinandersetzung mit der FDTD-Methode liegt in meinem grundsätzlichen Interesse an der Computerphysik und insbesondere an der Verbindung von physikalischer Theorie und numerischer Modellierung. Durch meine Teilnahme am Astro-Pi-Projekt konnte ich bereits erfahren, wie sich naturwissenschaftliche Fragestellungen mithilfe von Programmierung untersuchen und modellieren lassen. Dabei ist mir besonders aufgefallen, dass Mathematik, Informatik und Physik im schulischen Kontext häufig getrennt voneinander vermittelt werden, obwohl gerade ihre Verbindung die Grundlage vieler moderner wissenschaftlicher Methoden bildet. Die FDTD-Methode bietet für mich daher eine interessante Möglichkeit, diese Disziplinen anhand eines konkreten physikalischen Problems miteinander zu verknüpfen und theoretische Zusammenhänge unmittelbar in einer eigenen Simulation umzusetzen.
+Praktisch nutzbar wurde das Verfahren allerdings erst mit wachsender Rechenkapazität. Allen Taflove trug Ende des 20. Jahrhunderts maßgeblich zur Etablierung und Verbreitung der FDTD-Methode bei und baute die Methode zu einem Standardwerkzeug der _Computational Electrodynamics_ aus @Taflove2005.
 
+In der heutigen Zeit findet das Verfahren in vielen Bereichen Verwendung: Sei es bei der Entwicklung von Flugzeugen, medizinischer Technik, dem Design von Halbleitern und Antennenarrays oder in der experimentellen Physik, wie in der Photonik oder der Optik, die FDTD-Methode wird in zahlreichen Bereichen zur Simulation elektromagnetischer Vorgänge eingesetzt.
+
+== Persönliche Motivation
+
+Schon vor meiner Beschäftigung mit FDTD hat mich die Verbindung von Physik, Mathematik und Informatik besonders interessiert. Während meiner Teilnahme am Astro-Pi-Projekt der ESA konnte ich selbst erleben, wie sich physikalische Fragestellungen mit Programmierung und mathematischen Methoden bearbeiten lassen. Gerade diese Art des Arbeitens hat mir gezeigt, wie viel spannender ein Thema werden kann, wenn man nicht nur theoretische Zusammenhänge betrachtet, sondern sie auch selbst mit einem Programm untersuchen und sichtbar machen kann. Deshalb finde ich FDTD für meine Seminararbeit besonders interessant: Die Methode verbindet genau diese drei Bereiche und ermöglicht es mir, physikalische Vorgänge mathematisch herzuleiten und anschließend selbst numerisch zu simulieren. Gleichzeitig bietet mir die Arbeit die Möglichkeit, die in der Schule meist getrennt behandelten Fächer einmal in einer konkreten wissenschaftlichen Anwendung zusammenzuführen.
 
 == Zentrale Fragestellung und Aufbau der Arbeit
 
@@ -95,22 +43,9 @@ Aus den dargestellten Überlegungen ergibt sich die folgende Leitfrage:
   #block(width: 92%)[
     _Wie lassen sich die Maxwell-Gleichungen in eine zweidimensionale
     FDTD-Simulation überführen und in Python implementieren, und wovon hängt die
-    Zuverlässigkeit des daraus entwickelten FDTD-Solvers bei der Reproduktion
+    numerische Genauigkeit des daraus entwickelten FDTD-Solvers bei der Reproduktion
     analytisch bekannter Eigenschaften elektromagnetischer Wellen ab?_
   ]
 ]
 
-Kapitel 2 stellt dazu die theoretischen Voraussetzungen bereit: die
-Maxwell-Gleichungen in differentieller Form, die Herleitung der Wellengleichung,
-die ebene Welle als analytische Referenzlösung sowie die Grenzen analytischer
-Verfahren. Aus diesen Grundlagen entwickelt Kapitel 3 die FDTD-Methode, vom
-Differenzenquotienten über das Yee-Gitter bis zu den Update-Gleichungen des
-zweidimensionalen $"TM"_z$-Falls, und ergänzt sie um die
-Courant-Friedrichs-Lewy-Bedingung sowie die verwendeten Randbedingungen. Die
-Übersetzung in ein lauffähiges Programm dokumentiert Kapitel 4. Kapitel 5
-unterzieht dieses vier Testfällen, deren Lösung sich jeweils in geschlossener
-Form angeben lässt, und leitet aus dem Vergleich die Fehlerquellen und Grenzen
-des Verfahrens ab. Kapitel 6 wendet den so geprüften Löser auf das eingangs
-geschilderte Radomproblem an und ordnet die Ergebnisse im Licht der
-zweidimensionalen Modellierung ein, bevor Kapitel 7 die Arbeit zusammenfasst und
-einen Ausblick gibt.
+Kapitel 2 stellt dazu die theoretischen Voraussetzungen bereit: die Maxwell-Gleichungen in differentieller Form, die Herleitung der Wellengleichung, die ebene Welle als analytische Referenzlösung sowie die Grenzen analytischer Verfahren. Aus diesen Grundlagen entwickelt Kapitel 3 die FDTD-Methode, vom Differenzenquotienten über das Yee-Gitter bis zu den Update-Gleichungen des zweidimensionalen $"TM"_z$-Falls, und ergänzt sie um die Courant-Friedrichs-Lewy-Bedingung sowie die verwendeten Randbedingungen. Die Übersetzung in ein lauffähiges Programm dokumentiert Kapitel 4. Kapitel 5 unterzieht den entwickelten Solver vier Testfällen, deren Lösungen sich jeweils in geschlossener Form angeben lassen, und leitet aus dem Vergleich die Fehlerquellen und Grenzen des Verfahrens ab. Kapitel 6 fasst die Erkenntnisse der Arbeit abschließend zusammen und gibt einen Ausblick.

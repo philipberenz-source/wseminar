@@ -58,7 +58,7 @@ $x_i = i Delta x$, $y_j = j Delta y$ und $t_n = n Delta t$ abgetastet, wobei
 $Delta x$ und $Delta y$ die Kantenlängen einer Gitterzelle und $Delta t$ einen
 Zeitschritt beschreiben. Ausgehend von dieser Diskretisierung löste Yee die
 oben beschriebene Schwierigkeit mit einer einzigen Festlegung darüber, _wo_
-innerhalb dieses Gitters die einzelnen Feldkomponenten abgelegt werden
+innerhalb dieses Gitters die einzelnen Feldkomponenten gespeichert werden
 @Yee1966: Sie liegen nicht am selben Ort, sondern räumlich um
 eine halbe Zelle gegeneinander _versetzt_ (englisch _staggered_) --- und zwar
 so, dass jede Komponente genau dort liegt, wo die Ableitung der jeweils anderen
@@ -149,7 +149,7 @@ noch offen sind. So wird die dort auftretende Stromdichte aufgeteilt in
 einen von außen eingeprägten Quellstrom $J_z$ und den vom Feld selbst
 getriebenen Leitungsstrom nach dem Ohmschen Gesetz @material:
 
-$ J = J_z + sigma E_z $ <stromaufteilung>
+$ J_z^"ges" = J_z + sigma E_z $ <stromaufteilung>
 
 Damit tritt $E_z$ in @tmz-ez zweimal auf --- einmal unter der Zeitableitung,
 einmal im Verlustterm. Die Zeitableitung ist nach @zentraldifferenz-halb dem
@@ -189,6 +189,31 @@ Mit @update-hx bis @update-ez ist die Feldentwicklung vollständig festgelegt,
 sobald ein Anfangszustand vorliegt. Dieser ist in allen folgenden Rechnungen das
 feldfreie Gebiet, $E_z = H_x = H_y = 0$ zum Zeitpunkt $n = 0$.
 
+== Anregung des Feldes <sec-quellen>
+
+Ein solches Gitter bleibt unter @update-hx bis @update-ez für alle Zeiten
+feldfrei; Energie muss deshalb während der Zeitschleife eingebracht werden.
+Verwendet werden dafür durchgehend _additive_ Quellen @Schneider2010[S. 46f.],
+die eine Quellfunktion $f$ an einem Gitterpunkt aufaddieren --- entweder als
+_weiche Quelle_ unmittelbar auf $E_z$ oder als eingeprägte Stromdichte $J_z$,
+die nach @stromaufteilung über @update-ez wirkt:
+
+$ "weich:" quad E_z bar.v_(i\,j)^(n+1) arrow.l
+  E_z bar.v_(i\,j)^(n+1) + f^(n+1)
+  quad quad quad
+  "Strom:" quad J_z bar.v_(i\,j)^(n+1/2) = f^(n+1/2) $ <quellen>
+
+Nur die zweite Form ist physikalisch deutbar; beiden gemeinsam ist, dass der
+Quellpunkt regulär weiter aktualisiert wird und eine zurücklaufende Welle ihn
+daher ungehindert passiert.
+
+Beide wirken an einem einzigen Gitterpunkt und erzeugen damit eine
+Zylinderwelle. Für eine ebene Welle wird eine das Gebiet durchspannende
+Gitterlinie senkrecht zur Ausbreitungsrichtung mit identischen Quellen besetzt:
+Nach dem _Huygensschen Prinzip_ überlagern sich deren Elementarwellen zu einer
+ebenen Front, sodass das Feld längs dieser Linie konstant ist. Beide strahlen nach zwei
+Seiten ab; ausgewertet wird in Kapitel 5 jeweils eine davon.
+
 == Stabilität: die Courant-Friedrichs-Lewy-Bedingung (CFL) <sec-cfl>
 
 Damit die Simulation numerisch stabil bleibt, ist die Wahl des Zeitschrittes nicht frei, sondern muss einem Kriterium folgen.
@@ -210,7 +235,9 @@ kleiner, sodass @cfl stets die schärfere Forderung stellt.
 
 Wie nahe die Rechnung an dieser Grenze geführt wird, gibt die _Courant-Zahl_
 $S = sqrt(2) c Delta t \/ Delta$ an, die hier so normiert ist, dass die
-Stabilitätsgrenze @cfl gerade bei $S = 1$ liegt. In den folgenden Kapiteln wird der Zeitschritt stets durch diese bestimmt. Welchen Einfluss die _Courant-Zahl_ auf die Simulationsergebnisse hat, wird in Kapitel 5 näher untersucht. 
+Stabilitätsgrenze @cfl gerade bei $S = 1$ liegt. Die in der Literatur übliche
+Courant-Zahl $S_c = c Delta t\/Delta$ mit der Stabilitätsgrenze
+$S_c <= 1\/sqrt(2)$ hängt damit über $S_c = S\/sqrt(2)$ zusammen. In den folgenden Kapiteln wird der Zeitschritt stets durch diese bestimmt. Welchen Einfluss die _Courant-Zahl_ auf die Simulationsergebnisse hat, wird in Kapitel 5 näher untersucht. 
 
 == Randbedingungen <sec-rand>
 
@@ -218,7 +245,7 @@ Stabilitätsgrenze @cfl gerade bei $S = 1$ liegt. In den folgenden Kapiteln wird
 
 Für den ideal leitenden Rand gilt nach @sec-randbedingungen
 $bold(E)_parallel = 0$. Im TM#sub[z]-Fall ist $E_z$ die einzige elektrische
-Komponente und liegt für jede in der $x y$-Ebene verlaufende Wand stets
+Komponente und liegt für jede senkrecht zur $x y$-Ebene verlaufende Wand stets
 _parallel_ zu ihr; die Bedingung verkürzt sich damit auf $E_z = 0$. Bezeichnet
 $M$ die Menge der als leitend markierten Gitterpunkte, so werden deren
 $E_z$-Werte nach jeder Auswertung von @update-ez wieder auf null gesetzt
@@ -231,8 +258,8 @@ fortgeschrieben.
 
 === Absorbierender Rand (PML) <sec-pml>
 
-Während @sec-pec beschreibt, wie man bewusst eine Totalreflexion herbeiruft, findet eine solche an den Rändern des Simulationsgebietes ebenfalls statt. In vielen Fällen ist dieser Effekt jedoch unerwünscht, da so die Energie vollständig in den Simulationsraum zurückgeworfen wird, statt sich weiter im unendlichen Raum auszubreiten.
-Die nahestehendeste Lösung wäre es deshalb den eigentlichen Rändern eine Schicht vorzulagern, welche die auslaufende Welle dämpft, sodass keine Energie zurück in das eigentliche Simulationsgebiet geworfen wird (@abb:pml-schema).
+Während @sec-pec beschreibt, wie man bewusst eine Totalreflexion herbeiführt, findet eine solche an den Rändern des Simulationsgebietes ebenfalls statt. In vielen Fällen ist dieser Effekt jedoch unerwünscht, da so die Energie vollständig in den Simulationsraum zurückgeworfen wird, statt sich weiter im unendlichen Raum auszubreiten.
+Die naheliegendste Lösung wäre es deshalb, den eigentlichen Rändern eine Schicht vorzulagern, welche die auslaufende Welle dämpft, sodass keine Energie zurück in das eigentliche Simulationsgebiet geworfen wird (@abb:pml-schema).
 
 #figure(
   placement: auto,
@@ -246,8 +273,12 @@ Die nahestehendeste Lösung wäre es deshalb den eigentlichen Rändern eine Schi
 Eine gewöhnliche verlustbehaftete Schicht leistet das jedoch nicht: Sie dämpft in alle
 Richtungen gleich, während eine reflexionsfreie Anpassung verlangt, dass
 ausschließlich die Ausbreitung _senkrecht_ zur Grenzfläche gedämpft wird ---
-weshalb sie nur bei senkrechtem Einfall reflexionsfrei bleibt und bei jedem
-schrägen Einfall zurückwirft @Schneider2010[Abschn. 11.2 bis 11.4].
+weshalb sie selbst dann, wenn ihr zusätzlich ein magnetischer Verlust $sigma_m$
+mit $sigma\/epsilon = sigma_m\/mu_0$ zugeordnet wird, nur bei senkrechtem
+Einfall reflexionsfrei bleibt und bei jedem schrägen Einfall zurückwirft; ohne
+einen solchen magnetischen Verlust, wie er hier durchgehend vorausgesetzt ist,
+reflektiert sie auch bei senkrechtem Einfall
+@Schneider2010[Abschn. 11.2 bis 11.4].
 
 *Komplexe Koordinatenstreckung.* Der Ausweg besteht darin, nicht das Material
 zu verändern, sondern die Koordinate. Bérenger erreichte dies 1994 zunächst,
@@ -294,7 +325,7 @@ werden, und im Rechengebiet selbst sind beide Streckfaktoren gleich eins, sodass
 @pml-tmz dort wieder in @tmz-hx bis @tmz-ez übergeht. Die Ausbreitung längs der
 Grenzfläche bleibt damit unverändert, gedämpft
 wird allein die dazu senkrechte @Schneider2010[eq(11.72) und eq(11.73)]. Der
-Reflexionsfaktor verschwindet dadurch für _jeden_ Einfallswinkel und _jede_
+Reflexionsfaktor verschwindet dadurch im Kontinuum für _jeden_ Einfallswinkel und _jede_
 Frequenz. Setzt man @pml-sw in eine unter $theta$ einlaufende ebene Welle nach
 @ansatz ein, so tritt an die Stelle von $k_x$ das Produkt $S_x k_x$, und der
 Ortsanteil der Welle zerfällt in zwei Faktoren
@@ -337,7 +368,11 @@ $sigma_max d\/(m+1)$, sodass @pml-restreflexion die geschlossene Form
 $ abs(R(theta)) = exp(-(2 eta_0 sigma_max d cos theta)/(m+1)) $ <pml-restreflexion-profil>
 
 annimmt @Taflove2005[S. 292, eq(7.61)]. Die Dämpfung liegt damit nicht durch
-$sigma_max$ allein fest, sondern erst im Zusammenspiel mit $m$ und $d$.
+$sigma_max$ allein fest, sondern erst im Zusammenspiel mit $m$ und $d$. Ferner
+folgt aus @pml-restreflexion-profil unmittelbar
+$abs(R(theta)) = abs(R(0))^(cos theta)$: Die Restreflexion nimmt mit
+zunehmend streifendem Einfall zu; dieser Zusammenhang wird in Kapitel 5
+quantitativ geprüft.
 Logarithmiert man @pml-restreflexion-profil für senkrechten Einfall
 ($theta = 0$) und löst nach der Leitfähigkeit auf, so folgt umgekehrt
 @Taflove2005[S. 293, eq(7.62)]
@@ -346,7 +381,6 @@ $ sigma_max = -((m+1) ln abs(R(0)))/(2 eta_0 d) $ <pml-sigmamax>
 
 Vorzugeben ist damit nicht die Leitfähigkeit, sondern die Zielreflexion
 $abs(R(0))$; $sigma_max$ ergibt sich aus ihr, sobald $m$ und $d$ gewählt sind.
-Beides geschieht in Kapitel 4.
 
 *Rückkehr in den Zeitbereich.* @pml-tmz steht im Frequenzbereich, das
 FDTD-Verfahren rechnet jedoch im Zeitbereich, und einem Produkt im
@@ -385,7 +419,7 @@ also die gewohnte Gleichung, ergänzt um genau einen Faltungsterm; für die
 übrigen Komponenten gilt dasselbe mit dem jeweils zugehörigen $zeta_w$.
 
 *Rekursive Auswertung der Faltung.* Eine Faltung über die gesamte
-Vorgeschichte des Feldes wäre in der Zeitschleife nicht zu bezahlen --- sie
+Vorgeschichte des Feldes würde in der Zeitschleife mit einem hohen Rechenaufwand einhergehen --- sie
 würde je Gitterpunkt und Zeitschritt einen mit $n$ wachsenden Aufwand
 verursachen und den in @sec-yee gewonnenen Vorteil des expliziten Verfahrens
 zunichtemachen. Der Kern in @pml-zeta ist jedoch eine reine
@@ -470,9 +504,7 @@ Zeitschritts ist damit festgelegt: zuerst @pml-psi-hx und @pml-psi-hy, dann
 Die Größen $b_w$ und $C_w$ hängen nach @pml-bc allein von $sigma_w$ am Ort der
 jeweiligen Komponente ab. Sie sind daher --- wie $C_a$ und $C_b$ --- vor Beginn
 der Zeitschleife einmalig zu berechnen, und zwar als eindimensionale Profile,
-da $sigma_x$ nur von $x$ und $sigma_y$ nur von $y$ abhängt; für die um eine
-halbe Zelle versetzten magnetischen Komponenten sind sie bei $i + 1\/2$
-beziehungsweise $j + 1\/2$ auszuwerten. Im Inneren des Rechengebiets ist
+da $sigma_x$ nur von $x$ und $sigma_y$ nur von $y$ abhängt. Im Inneren des Rechengebiets ist
 $sigma_w = 0$ und damit $b_w = 1$ und $C_w = 0$: Die Hilfsgrößen bleiben, vom
 feldfreien Anfangszustand aus, dauerhaft null, und @pml-psi-hx bis
 @pml-update-ez gehen exakt in @update-hx bis @update-ez über. Die Schicht wirkt
@@ -482,13 +514,9 @@ Schichten beider Richtungen; dort sind $sigma_x$ und $sigma_y$ gleichzeitig von
 null verschieden. Auch das erfordert keine Sonderbehandlung, da @pml-update-ez
 ohnehin beide Hilfsgrößen enthält.
 
-Der Preis der Schicht ist gering: je Ortsableitung --- also viermal --- eine
+Der gesamte Rechenaufwand je Schicht ist somit gering: je Ortsableitung --- also viermal --- eine
 zusätzliche Zahl je Gitterpunkt sowie je Zeitschritt zwei zusätzliche
 Multiplikationen und zwei Additionen. Die Bezeichnung _perfectly matched_ darf allerdings nicht darüber
 hinwegtäuschen, dass die Anpassung nur im Kontinuum exakt ist. Auf dem
-diskreten Gitter bleiben zwei Fehlerquellen: die stufenweise Änderung von
-$sigma_w$ nach @pml-profil und die numerische Dispersion, derentwegen die
-diskrete Welle der Dispersionsbeziehung des Kontinuums, aus der die Anpassung
-folgt, nicht exakt gehorcht. Beide sind analytisch nicht zugänglich; wie groß
-die verbleibende Reflexion tatsächlich ausfällt, muss deshalb gemessen werden
---- Testfall 4 in Kapitel 5 tut das.
+diskreten Gitter kommt es gegenüber dem Kontinuum zu systematischen Abweichungen, die im Rahmen der Validierung in Kapitel 5 
+erfasst werden.

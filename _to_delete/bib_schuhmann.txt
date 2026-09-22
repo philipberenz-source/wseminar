@@ -1,0 +1,9 @@
+
+@article{Schuhmann2001,
+  author  = {Schuhmann, Rolf and Weiland, Thomas},
+  title   = {Conservation of Discrete Energy and Related Laws in the Finite Integration Technique},
+  journal = {Progress In Electromagnetics Research},
+  volume  = {32},
+  pages   = {301--316},
+  year    = {2001},
+}

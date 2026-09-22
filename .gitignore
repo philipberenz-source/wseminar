@@ -1,0 +1,8 @@
+# Build-Artefakte von PyInstaller (die exe ist ~39 MB und gehoert nicht ins Repo)
+dist/
+build/
+*.spec
+
+# Python
+__pycache__/
+*.pyc
