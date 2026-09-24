@@ -23,10 +23,10 @@ bei der dann jeweils spezifische Testgrößen erfasst und ausgwertet werden:
       [Phasengeschwindigkeit],
     [2 --- PEC-Hohlraumresonator], [Randbedingung, Langzeitverhalten],
       [Eigenfrequenzen, Energieerhaltung],
-    [3 --- Materialgrenzfläche], [Materialkoeffizienten],
-      [Fresnel-Koeffizienten],
-    [4 --- Absorbierender Rand], [Randschicht],
+    [3 --- Absorbierender Rand], [Randschicht],
       [Reflexionsfreiheit],
+    [4 --- Materialgrenzfläche], [Materialkoeffizienten],
+      [Fresnel-Koeffizienten],
   ),
   caption: [Die vier Testfälle und die jeweils geprüften Bestandteile.],
 )
@@ -254,23 +254,181 @@ Für $S <= 1$ steigt die Energie anfangs aufgrund der Arbeit der Quelle an und b
 
 Oberhalb von $S=1$ ändert sich diese Stabilität fundamental. Mit dem Fortschreiten der Zeit wächst die Energie exponetiell an -- im logarithmischen Diagramm als Gerade -- und übertrifft die eingespeiste Energie nach nur kurzer Laufdauer um mehrere Größenordnungen. 
 
-=== Deutung
 
 === Deutung
 
-Dass $W_Q$ bei $S = 0,5$ knapp $1 %$ über dem Wert bei $S = 0,99$ liegt, ist
-eine Folge der diskreten Quelle: Der Puls wird nur zu den Zeitpunkten
-$n + 1\/2$ abgetastet und wirkt auf das Gitterfeld statt auf das
-Kontinuumsfeld. Für die Bilanz @tf2-soll spielt das keine Rolle. Dass die
-eingespeiste Energie danach erhalten bleibt, zeigen Schuhmann und Weiland: Unter
-der Courant-Bedingung $abs(Delta t thin omega_i) <= 2$ haben alle Eigenwerte
-des Zeitschritts den Betrag $1$, jede Gitterschwingung wird also weder gedämpft
-noch verstärkt @Schuhmann2001[S. 310, Gl. (44)--(46)]; für das quadratische
-Gitter entspricht das $S <= 1$ (eigene Umrechnung). Die verbleibenden
-$10^(-15)$ sind Rundungsfehler der rund $16$-stelligen Gleitkommarechnung
-(vgl. @sec-vorgehen). Für $S > 1$ wird für die kürzesten Gitterwellen ein
-Eigenwert betragsmäßig größer als $1$ (eigene Folgerung aus Gl. (44)); diese
-von Rundungsfehlern angeregten Wellen wachsen mit jedem Zeitschritt um einen
-festen Faktor, also exponentiell @Taflove2005[S. 107]. Die Grenze @cfl ist damit
-scharf, und der Fehler aus Testfall 1 betrifft für $S <= 1$ allein die Phase,
-nicht die Energie.
+Für $S <= 1$ ist die Energiebilanz @tf2-soll bis auf $10^(-15)$ erfüllt, was
+auf einer Eigenschaft des Yee-Verfahrens selbst beruht. Das Feld im Hohlraum
+lässt sich als Überlagerung von _Eigenschwingungen_ mit festen Kreisfrequenzen
+$omega_ell$ auffassen. Ein Zeitschritt multipliziert jede von ihnen lediglich
+mit einem Faktor $lambda$, der nur von $omega_ell Delta t$ abhängt
+@Schuhmann2001[S. 309 f., Gl. (39)--(44)]:
+
+$ lambda = (2 - (omega_ell Delta t)^2)/2
+  plus.minus sqrt(((2 - (omega_ell Delta t)^2)/2)^2 - 1) . $ <tf2-eigenwert>
+
+Für $|omega_ell Delta t| <= 2$ ist der Ausdruck unter der Wurzel negativ und
+$|lambda| = 1$: Jeder Schritt verschiebt nur die Phase, die Amplitude und damit
+die Energie bleiben exakt erhalten @Schuhmann2001[S. 310, Gl. (45)--(47)]. Mit
+der höchsten Eigenkreisfrequenz des Gitters
+$omega_max = 2 sqrt(2) thin c\/Delta$ (aus @num-dispersion mit
+$tilde(k)_x Delta = tilde(k)_y Delta = pi$, eigene Rechnung) entspricht diese
+Bedingung genau $S <= 1$, also @cfl. Die Restabweichung von $10^(-15)$ geht
+allein auf Rundungsfehler zurück (vgl. @sec-vorgehen).
+
+Für $S > 1$ gilt für die höchsten Frequenzen $omega_ell Delta t > 2$; die Wurzel
+wird reell und ein Eigenwert erfüllt $|lambda| > 1$ (Folgerung aus
+@Schuhmann2001[Gl. (44)]). Diese Schwingungen werden, schon durch Rundungsfehler
+angeregt, in jedem Schritt um denselben Faktor verstärkt --- die Energie wächst
+exponentiell, im logarithmischen Diagramm als Gerade (@abb:tf2-energie,
+aufgetragen als Summe der Feldquadrate).
+
+Ein systematischer Fehler zeigt sich allein in der eingespeisten Energie: Bei
+$S = 0,5$ liegt $W_Q$ um knapp $1 %$ über dem Wert bei $S = 0,99$. Die Differenz
+fällt mit $N_lambda^(-2)$ (eigene Kontrollrechnung für $N_lambda = 10$ bis $40$),
+was wie in Testfall 1 auf den Abbruchfehler zweiter Ordnung
+(@sec-finite-differenzen) hindeutet. Das Feld selbst wird im verlustfreien
+Vakuum somit nur durch den Phasenfehler aus Testfall 1 verfälscht.
+
+
+== Testfall 4 --- Reflexion und Transmission an einer dielektrischen Grenzfläche <sec-tf4>
+
+In diesem Testfall wird durch ein Dielektrikum eine Reflexion hervorgerufen. Dabei wird insbesondere geprüft ob die Reflexions - und Transmissionskoeffizienten mit dem Kontinuum übereinstimmen. 
+
+=== Aufbau und Messgröße
+
+Eine ebene Welle trifft aus dem Vakuum ($n_1 = 1$) senkrecht auf einen
+verlustfreien Halbraum mit $epsilon_r in {2, 4, 9}$. Mit $mu = mu_0$ und
+@impedanz ergeben sich die beiden Fresnel-Formeln für senkrechten Einfall
+@Schneider2010[S. 136, Gl. (5.94), (5.95)], die jeweils die anteilige _Reflexion_ bzw. _Transmission_ angeben:
+
+$ Gamma = (n_1 - n_2)/(n_1 + n_2) ,
+  quad
+  T = (2 n_1)/(n_1 + n_2)  $ <tf4-fresnel>
+
+In der Versuchsanordnung wird das Dielektrikum mit `set_material_box` ab der Spalte
+$i_G$ gesetzt. In beiden Materialien befindet sich jeweils eine Messsonde.
+Ergänzend wird eine weitere Simulation durchgeführt, die sich nur darin unterscheidet, dass diesmal kein Dielektrikum vorhanden ist, die Impedanz also durchweg gleich bleibt. 
+
+Nach @Schneider2010[S.136 f.] wird zweimal gerechnet: Aus Lauf A ohne Dielektrikum ergibt sich die einfallende Welle, während aus Lauf B mit Dielektrikum das Gesamtfeld folgt. 
+Da $Gamma$ und $T$ im
+Frequenzbereich definiert sind, werden die Spektren (@sec-auswertung)
+frequenzweise geteilt @Schneider2010[S. 137]. Aus den beiden Testläufen folgt so in Abhängigkeit der Frequenz für die Fresnel-Koeffizienten @Schneider2010[vgl. S. 144]:
+
+
+
+$ abs(Gamma_"Sim") = abs(hat(E)_B - hat(E)_A)/abs(hat(E)_A) bar.v_(P_r) ,
+  quad
+  T_"Sim" = abs(hat(E)_B)/abs(hat(E)_A) bar.v_(P_t) . $ <tf4-messung>
+
+
+=== Ergebnis
+
+#figure(
+  image("../abbildungen/testfall_d_courant.pdf", width: 100%),
+  caption: [Reflexions- und Transmissionsfaktor für $epsilon_r = 4$ bei
+    verschiedenen Courant-Zahlen. Links: $abs(Gamma_"Sim")$ und $T_"Sim"$ mit
+    den Fresnel-Werten @tf4-fresnel (punktiert). Rechts: relative Abweichung
+    von @tf4-fresnel mit einer Vergleichsgeraden der Steigung $-2$.],
+) <abb:tf4-courant>
+
+Beide Faktoren liegen über den Fresnel-Werten, bei $N_lambda = 10$ etwa
+$abs(Gamma_"Sim") approx 0,42$ statt $1\/3$, wie auch bei @Schneider2010[S.
+173, Abb. 7.4]. Mit wachsender Auflösung nähern sie sich @tf4-fresnel an; im
+doppelt-logarithmischen Diagramm verlaufen die Abweichungen parallel zu einer
+Geraden der Steigung $-2$, fallen also mit $N_lambda^(-2)$ (@abb:tf4-courant).
+Die Courant-Zahl hat darauf, anders als in Testfall 1, kaum Einfluss. Mit der
+Permittivität wächst die Abweichung dagegen deutlich
+(@abb:tf4-material).
+
+#figure(
+  image("../abbildungen/testfall_d_material.pdf", width: 100%),
+  caption: [Links: $abs(Gamma_"Sim")$ bezogen auf den Fresnel-Wert für
+    verschiedene $epsilon_r$, punktiert $tilde(Gamma)\/Gamma$ nach
+    @tf4-gitter. Rechts: Weg-Zeit-Diagramm von $E_z$ auf der Mittellinie des
+    Gitters für $epsilon_r = 4$ (rot positiv, blau negativ, gestrichelt die
+    Grenzfläche). Jeweils $S = 0,99$.],
+) <abb:tf4-material>
+
+Das Weg-Zeit-Diagramm (@abb:tf4-material, rechts) zeigt den Vorgang als
+Ganzes. Die Steigung der Streifen ist der Kehrwert der
+Ausbreitungsgeschwindigkeit; im Dielektrikum ist sie doppelt so groß, die Welle
+läuft dort mit $c\/n_2$. Der reflektierte Puls hat das umgekehrte Vorzeichen,
+entsprechend $Gamma < 0$ in @tf4-fresnel. Hinter dem transmittierten Puls
+bildet sich ein Nachlauf, da der Puls im Dielektrikum gröber aufgelöst ist und
+die numerische Dispersion aus @sec-tf1 dort stärker wirkt
+@Schneider2010[vgl. S. 167 f.].
+
+=== Deutung
+
+@Schneider2010[S. 169--172] leitet die Faktoren des Gitters für eine
+Grenzfläche auf einem $H_y$-Knoten im eindimensionalen Gitter her. Liegt die
+Grenzfläche bei $x = 0$, so befinden sich die benachbarten $E_z$-Knoten bei
+$x = minus.plus Delta\/2$. Links überlagern sich einfallende und reflektierte,
+rechts läuft die transmittierte Welle, jeweils mit der numerischen Wellenzahl
+$tilde(k)_ell$ des Mediums @Schneider2010[Gl. (7.47)--(7.49)]:
+
+$ E_z = e^(-upright(i) tilde(k)_1 x) + tilde(Gamma) e^(upright(i) tilde(k)_1 x)
+    quad (x < 0) ,
+  quad
+  E_z = tilde(T) e^(-upright(i) tilde(k)_2 x) quad (x > 0) . $ <tf4-ansatz>
+
+$tilde(k)_ell$ folgt aus der Dispersionsrelation
+@Schneider2010[S. 165, Gl. (7.36)], die für $n_ell = 1$ mit @num-dispersion-n
+bei $theta = 0$ übereinstimmt:
+
+$ sin((tilde(k)_ell Delta)/2) = n_ell/S_c sin((pi S_c)/N_lambda) . $ <tf4-dispersion>
+
+Im Kontinuum folgen $Gamma$ und $T$ aus der Stetigkeit von $E_z$ und $H_y$. Im
+Gitter liegt auf der Grenzfläche jedoch kein $E_z$-Knoten, sodass die
+Stetigkeit von $E_z$ nicht gefordert werden kann @Schneider2010[S. 170]. Die
+erste Bedingung liefert der $H_y$-Knoten, der beiden Halbräumen gemeinsam ist.
+Da die Impedanz im Gitter exakt ist @Schneider2010[Gl. (7.46)], gilt dort wie
+im Kontinuum $H_y = minus.plus E_z\/eta$ mit $eta prop 1\/n$, und es folgt
+@Schneider2010[Gl. (7.53)]
+
+$ n_1 (1 - tilde(Gamma)) = n_2 tilde(T) . $ <tf4-hstetig>
+
+Die zweite Bedingung liefert das Update @update-hy dieses Knotens, das die
+$E_z$-Werte bei $x = -Delta\/2$ und $x = +Delta\/2$ verknüpft. Mit
+$a = tilde(k)_1 Delta\/2$ und $b = tilde(k)_2 Delta\/2$ lässt es sich
+unter Verwendung von @tf4-dispersion umformen zu
+@Schneider2010[Gl. (7.58), (7.64)]
+
+$ e^(upright(i) a) + tilde(Gamma) e^(-upright(i) a)
+  = tilde(T) e^(upright(i) b) . $ <tf4-hupdate>
+
+Ersetzt man darin $tilde(Gamma)$ mithilfe von @tf4-hstetig, so fassen sich die
+Werte der einfallenden Welle an den beiden Nachbarknoten, $e^(upright(i) a)$
+bei $-Delta\/2$ und $e^(-upright(i) a)$ bei $+Delta\/2$, nach der
+Euler-Formel zu einem Kosinus zusammen:
+
+$ underbrace(e^(upright(i) a) + e^(-upright(i) a), 2 cos a)
+  = tilde(T) (n_1 e^(upright(i) b) + n_2 e^(-upright(i) a))/n_1 . $
+
+Der Imaginärteil des Klammerausdrucks, $n_1 sin b - n_2 sin a$, verschwindet,
+da $sin(tilde(k)_ell Delta\/2)$ nach @tf4-dispersion proportional zu $n_ell$
+ist @Schneider2010[Gl. (7.66)--(7.68)]. Übrig bleibt der Realteil
+$n_1 cos b + n_2 cos a$, und mit @tf4-hstetig ergeben sich die Faktoren des
+Gitters @Schneider2010[S. 172, Gl. (7.71), (7.72)]:
+
+$ tilde(Gamma) = (n_1 cos(tilde(k)_2 Delta\/2) - n_2 cos(tilde(k)_1 Delta\/2))
+    /(n_1 cos(tilde(k)_2 Delta\/2) + n_2 cos(tilde(k)_1 Delta\/2)) ,
+  quad
+  tilde(T) = (2 n_1 cos(tilde(k)_1 Delta\/2))
+    /(n_1 cos(tilde(k)_2 Delta\/2) + n_2 cos(tilde(k)_1 Delta\/2)) . $ <tf4-gitter>
+
+Die Kosinusfaktoren stammen also allein daraus, dass das Gitter die Welle nicht
+auf der Grenzfläche, sondern eine halbe Zelle daneben erfasst. Für eine feine
+Diskretisierung gehen sie gegen eins, und @tf4-gitter geht in @tf4-fresnel über
+@Schneider2010[S. 172].
+
+Die Messwerte stimmen mit @tf4-gitter überein (@abb:tf4-material,
+punktiert); das Programm setzt die Grenzfläche also so um, wie es das
+Yee-Verfahren vorgibt. Die Abweichung bei grober Auflösung erklärt sich daraus,
+dass $N_lambda$ auf die Vakuumwellenlänge bezogen ist: Im Dielektrikum ist die
+Wellenlänge um $n_2$ kürzer, bei $epsilon_r = 4$ und $N_lambda = 10$ entfallen
+dort nur fünf Zellen auf eine Wellenlänge. Diese grobe Auflösung verfälscht das
+Ergebnis im gesamten Gitter, weshalb die Diskretisierung im ganzen Rechengebiet
+ausreichend sein muss @Schneider2010[S. 173]; entsprechend wächst der Fehler in
+@abb:tf4-material mit $epsilon_r$.
