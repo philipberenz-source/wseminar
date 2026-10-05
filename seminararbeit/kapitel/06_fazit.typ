@@ -3,57 +3,65 @@
 
 = Fazit und Ausblick
 
-== Zusammenfassung
+== Fazit
 
-#todo[
-  Die Leitfrage aus Abschnitt 1.4 anhand der Ergebnisse aus Kapitel 5
-  beantworten. Kernpunkte, die hier zusammenlaufen sollten:
-  - Bei zwanzig Zellen pro Wellenlänge liegen alle geprüften Größen innerhalb
-    eines Prozents vom analytischen Wert.
-  - Der Fehler fällt mit dem Quadrat der Zellweite, und diese Abhängigkeit
-    ließ sich aus dem Abbruch der Taylorreihe herleiten, nicht nur messen.
-  - Er wächst linear mit der Laufstrecke und hängt von der Ausbreitungsrichtung
-    ab --- eine einzelne Fehlerangabe ist deshalb unvollständig.
-  - Die beiden größten beobachteten Abweichungen stammten gar nicht aus dem
-    Verfahren, sondern aus der Auswertung.
-  Wichtig: Hier nicht die Ergebnisse aus Kapitel 5 wiederholen, sondern sie auf
-  die Leitfrage beziehen und bewerten.
-]
+Die vier Testfälle aus Kapitel 5 zeigen, dass alle Abweichungen des Solvers vom
+Kontinuum systematisch sind und sich aus den diskreten Gleichungen selbst
+vorhersagen lassen. Die Phasengeschwindigkeit liegt unter $c$ und hängt von
+Frequenz und Richtung ab (@sec-tf1), die Reflexion an einer Grenzfläche fällt
+größer aus als nach Fresnel (@sec-tf3). Beide Abweichungen gehen auf den
+Abbruchfehler zweiter Ordnung der zentralen Differenz zurück und fallen daher mit
+$N_lambda^(-2)$. Da die Messwerte mit der numerischen Dispersionsrelation
+@num-dispersion-n und den Gitterkoeffizienten @tf3-gitter übereinstimmen, setzt
+der Solver das Yee-Verfahren korrekt um. Die Courant-Zahl bestimmt dagegen vor
+allem die Stabilität: Für $S <= 1$ bleibt die Energie bis auf Rundungsfehler
+erhalten, darüber wächst sie exponentiell (@sec-tf2). Am absorbierenden Rand
+entscheidet schließlich in erster Linie die Dicke der Schicht über die
+verbleibende Reflexion (@sec-tf4).
 
-== Grenzen der Arbeit
+Die numerische Genauigkeit hängt somit vor allem von der Auflösung $N_lambda$
+ab, wobei die Abweichung nach @tf3-naeherung zusätzlich mit der Brechzahl der
+beteiligten Medien wächst. Hinzu kommen die Ausbreitungsrichtung, die
+Courant-Zahl und am Rand die Dicke der PML. Da sich der Phasenfehler mit der
+Laufstrecke aufsummiert, genügt eine einzelne Fehlerangabe nicht; die Auflösung
+ist vielmehr nach Größe und Laufzeit des jeweiligen Problems zu wählen.
 
-#todo[
-  Ehrlich benennen, was die Validierung nicht abdeckt --- die Aufstellung aus
-  Abschnitt 5.5 lässt sich hier straffen:
-  - nur gitterparallele Grenzflächen, keine gekrümmten,
-  - keine verlustbehafteten und keine frequenzabhängigen Materialien,
-  - kein schräger Einfall, keine dritte Dimension,
-  - und grundsätzlich: Alle Testfälle sind einfach genug, um analytisch lösbar
-    zu sein. Das ist ihr Zweck, aber auch ihre Beschränkung.
-]
+Diese Fehler sind damit nicht grundsätzlich problematisch, entscheidend ist
+jedoch, sie zu kennen: Da ihre Größe vorhersagbar ist, lässt sich vorab
+abschätzen, wie verlässlich ein Ergebnis ist. Verringern lassen sie sich durch
+eine ausreichende Auflösung im optisch dichtesten Medium, eine Courant-Zahl nahe
+der Stabilitätsgrenze und, sofern wählbar, eine Ausbreitung entlang der
+Gitterdiagonalen, die für $S = 1$ sogar dispersionsfrei ist (@tf1-taylor). Am
+Rand ist zuerst die Dicke der PML zu erhöhen.
 
 == Ausblick
 
-#todo[
-  Folgende Punkte ausformulieren --- der erste ist der wichtigste, weil er die
-  Klammer zur Einleitung schließt:
-]
+Die gesamte Arbeit beschränkt sich auf den zweidimensionalen $"TM"_z$-Fall mit
+frequenzunabhängigen Materialien. Daraus ergeben sich drei naheliegende
+Erweiterungen.
 
-- *Anwendung auf ein analytisch unzugängliches Problem.* Der eingangs
-  beschriebene Radomdurchgang wäre der naheliegende nächste Schritt: ein
-  zweidimensionaler Schnitt durch Antennenapertur und gekrümmte Radomschale,
-  aus dem sich die Ablenkung der Hauptkeule bestimmen ließe. Erst die in
-  Kapitel 5 bestimmten Fehlergrenzen machen aus dem dabei berechneten Winkel
-  eine belastbare Angabe. Zu beachten wäre insbesondere, dass an einer
-  gekrümmten Fläche die Treppenstufennäherung und die numerische Anisotropie
-  zusammenwirken und beide einen scheinbaren Winkelfehler erzeugen.
-- *Verlustbehaftete Materialien.* Ein vierter Testfall zur Eindringtiefe in
-  einem leitfähigen Medium würde die in @sec-materialkoeff eingeführten
-  Materialkoeffizienten auch außerhalb ihres verlustfreien Grenzfalls prüfen.
-- *Erweiterung auf drei Dimensionen*, mit dem vollen Feldsatz und deutlich
-  höherem Rechenaufwand.
-- *Frequenzabhängige Medien*, etwa über ein Debye-Modell, womit sich auch
-  breitbandige Anregungen in realen Materialien behandeln ließen.
-- *Effizienzsteigerung* durch Parallelisierung oder GPU-Beschleunigung, um
-  feiner aufgelöste Gitter in vertretbarer Zeit rechnen zu können --- was nach
-  den Ergebnissen aus Kapitel 5 unmittelbar die Genauigkeit erhöht.
+*Dritte Dimension.* Das Yee-Gitter lässt sich unmittelbar auf drei Dimensionen
+mit allen sechs Feldkomponenten erweitern @Schneider2010[S. 246--253]. Damit
+entfiele die Annahme einer in $z$-Richtung unendlich ausgedehnten Anordnung,
+und $"TM"_z$- und $"TE"_z$-Anteile würden gemeinsam erfasst. Der Preis ist der
+Rechenaufwand: Die Zahl der Zellen wächst dann mit $N_lambda^3$ statt mit
+$N_lambda^2$.
+
+*Dispersive Medien.* Die in @sec-material getroffene Vereinfachung einer
+frequenzunabhängigen Permittivität trifft auf viele reale Stoffe, etwa
+wasserhaltige, nicht zu. Ein Debye-Modell beschreibt solche Medien und lässt
+sich im Zeitbereich über eine zusätzliche Differentialgleichung oder eine
+rekursive Faltung umsetzen @Schneider2010[Abschn. 10.3, 10.7]. Letztere arbeitet
+mit einem Dämpfungsfaktor $e^(-Delta t\/tau_d)$ @Schneider2010[S. 308,
+Gl. (10.120)] und folgt damit demselben Prinzip wie die Hilfsgrößen der PML in
+@pml-bc, sodass sie sich in die bestehende Struktur von `fdtd_core.py` einfügen
+ließe (eigene Einschätzung).
+
+*Beschleunigung auf Grafikprozessoren.* Jede Update-Gleichung benötigt nur die
+Werte benachbarter Gitterpunkte, sodass alle Zellen eines Zeitschritts
+gleichzeitig berechnet werden können. Parallelisierung über Threads und mehrere
+Prozesse behandelt @Schneider2010[Kap. 13]; auf einer GPU ließe sich dasselbe
+Prinzip auf tausende Rechenkerne übertragen. Für diese Arbeit ist das unmittelbar
+relevant: Halbiert man die Zellweite, so viertelt sich nach Kapitel 5 der
+Fehler, im zweidimensionalen Gitter steigt der Aufwand wegen der vierfachen
+Zellzahl und der nach @cfl doppelten Schrittzahl jedoch um den Faktor acht.

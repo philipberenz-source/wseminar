@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>FDTD – Maxwell Zelle für Zelle</title>
+  <meta name="description" content="Die FDTD-Methode zur numerischen Lösung der Maxwell-Gleichungen – kurz erklärt, interaktiv, mit FDTD Studio im Browser. W-Seminar Physik von Philip Berenz.">
+  <meta name="theme-color" content="#06080c">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%2339c2ff'/%3E%3Cstop offset='1' stop-color='%23ff7a3d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Crect x='6' y='6' width='20' height='20' rx='4' fill='%2306080c'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23ff7a3d'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ================================================================ NAV -->
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="brand-mark"></span>FDTD</a>
+    <nav class="nav-links">
+      <a href="#maxwell">Maxwell</a>
+      <a href="#idee">Differenzen</a>
+      <a href="#yee">Yee-Gitter</a>
+      <a href="#stabilitaet">Stabilität</a>
+      <a href="#dispersion">Dispersion</a>
+      <a href="#rand">Ränder</a>
+      <a href="#validierung">Validierung</a>
+      <a href="#code">Code</a>
+    </nav>
+    <div class="nav-cta">
+      <button class="btn btn-sm" id="motion-btn" aria-pressed="false" title="Animationen anhalten oder fortsetzen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5v14M15 5v14"/></svg><span>Animation aus</span>
+      </button>
+      <a class="btn btn-sm" href="https://github.com/philipberenz-source/wseminar" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+        <span>GitHub</span>
+      </a>
+      <a class="btn btn-sm btn-primary" href="studio.html">Studio <span class="arrow">→</span></a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<!-- =============================================================== HERO -->
+<section class="hero">
+  <canvas id="hero-canvas" aria-label="Live-FDTD-Simulation: Bewege die Maus, um eine Welle zu erzeugen"></canvas>
+  <div class="wrap hero-inner">
+    <span class="eyebrow reveal"><span class="dot"></span>W-Seminar Physik · Wellen und Teilchen</span>
+    <h1 class="reveal" style="--d:.1s">Maxwell-Gleichungen<br><em class="grad-text">numerisch gelöst</em></h1>
+    <p class="lead reveal" style="--d:.2s">
+      Die <strong>Finite-Difference Time-Domain</strong>-Methode (FDTD) berechnet elektromagnetische
+      Felder direkt im Zeitbereich, indem sie Raum und Zeit auf einem Gitter diskretisiert.
+      Diese Seite fasst Verfahren und Ergebnisse der Seminararbeit zusammen. Im FDTD Studio lassen sich eigene Anordnungen simulieren.
+    </p>
+    <div class="hero-ctas reveal" style="--d:.3s">
+      <a class="btn btn-primary" href="studio.html">FDTD Studio starten <span class="arrow">→</span></a>
+      <a class="btn" href="https://github.com/philipberenz-source/wseminar" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+        Quellcode auf GitHub
+      </a>
+    </div>
+    <div class="hero-hint reveal" style="--d:.45s">
+      Hintergrund: FDTD-Simulation in Echtzeit · <span class="k">Maus</span> bewegt die Quelle · <span class="k">Klick</span> erzeugt einen Puls
+    </div>
+    <div class="stats reveal" style="--d:.55s">
+      <div class="stat"><b data-count="1e-15">10⁻¹⁵</b><span>Energiefehler im Hohlraum</span></div>
+      <div class="stat"><b>∝ Δ²</b><span>Konvergenzordnung</span></div>
+      <div class="stat"><b>3</b><span>Feldkomponenten (TM<sub>z</sub>)</span></div>
+      <div class="stat"><b>13</b><span>Szenen im Studio</span></div>
+    </div>
+  </div>
+  <div class="scroll-cue" aria-hidden="true"></div>
+</section>
+
+<!-- =========================================================== MAXWELL -->
+<section class="sec" id="maxwell">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker"><span class="n">01</span> Grundlagen</div>
+      <h2>Maxwell-Gleichungen <em>und ebene Wellen</em></h2>
+      <p>Die Maxwell-Gleichungen beschreiben alle klassischen elektromagnetischen Erscheinungen. Die beiden Rotationsgleichungen koppeln die zeitliche Änderung des einen Feldes an die räumliche Änderung des anderen. Aus dieser Kopplung folgt die Existenz elektromagnetischer Wellen.</p>
+    </div>
+    <div class="grid-2" style="align-items:start">
+      <div class="reveal">
+        <div class="formula" style="margin:0">
+          <div class="tex" data-display>\begin{aligned}
+            \nabla\times\vec E &= -\mu\,\frac{\partial \vec H}{\partial t} &\qquad \nabla\cdot(\varepsilon\vec E) &= \rho\\[2pt]
+            \nabla\times\vec H &= \varepsilon\,\frac{\partial \vec E}{\partial t} + \sigma\vec E + \vec J &\qquad \nabla\cdot(\mu\vec H) &= 0
+          \end{aligned}</div>
+          <div class="cap">Faraday, Ampère-Maxwell und die beiden Divergenzgleichungen, mit linearen, isotropen Materialien (ε = ε<sub>0</sub>ε<sub>r</sub>, μ = μ<sub>0</sub>μ<sub>r</sub>).</div>
+        </div>
+        <p class="muted" style="font-size:16.5px;margin-top:26px">Kombiniert man die beiden Rotationsgleichungen, erhält man im quellfreien, verlustlosen Raum die Wellengleichung. Eine ihrer Lösungen ist die <b style="color:var(--text)">ebene Welle</b>, deren E- und H-Feld senkrecht zueinander und zur Ausbreitungsrichtung stehen:</p>
+        <div class="formula" style="margin:14px 0 0">
+          <div class="tex" data-display>\nabla^2\vec E = \mu\varepsilon\,\frac{\partial^2\vec E}{\partial t^2}, \qquad v = \frac{1}{\sqrt{\mu\varepsilon}} = \frac{c}{n}, \qquad \frac{|\vec E|}{|\vec H|} = \eta = \frac{\eta_0}{n}</div>
+        </div>
+        <p class="muted" style="font-size:16.5px;margin-top:26px">Trifft die Welle senkrecht auf eine Grenzfläche, müssen die Tangentialkomponenten von E und H dort stetig sein. Daraus folgen Reflexions- und Transmissionsfaktor (Fresnel):</p>
+        <div class="formula" style="margin:14px 0 0">
+          <div class="tex" data-display>\Gamma = \frac{n_1-n_2}{n_1+n_2}, \qquad T = \frac{2n_1}{n_1+n_2}</div>
+          <div class="cap">Diese analytische Lösung dient in der Arbeit als Referenz, an der die Simulation gemessen wird (Abschnitt 09).</div>
+        </div>
+      </div>
+      <div class="demo reveal" style="--d:.1s" id="wave-demo">
+        <div class="demo-bar"><span class="dots"><i></i><i></i><i></i></span> ebene_welle · senkrechter Einfall<span class="sp"></span><span>analytisch · zeitlich verlangsamt</span></div>
+        <canvas id="wave-canvas" width="1000" height="560"></canvas>
+        <div class="demo-body">
+          <div class="ctrl"><label for="w-f">f</label><input type="range" id="w-f" min="5" max="25" step="0.5" value="10"><output id="w-f-out">10 GHz</output></div>
+          <div class="ctrl"><label for="w-eps">ε<sub>r,2</sub></label><input type="range" id="w-eps" min="1" max="9" step="0.05" value="4"><output id="w-eps-out">4,00</output></div>
+          <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin:6px 0 4px">
+            <label class="chk"><input type="checkbox" id="w-e" checked> <span style="color:var(--warm)">E-Feld</span></label>
+            <label class="chk"><input type="checkbox" id="w-h" checked> <span style="color:var(--cool)">H-Feld (η<sub>0</sub>H)</span></label>
+            <label class="chk"><input type="checkbox" id="w-sep"> Anteile getrennt</label>
+          </div>
+          <dl class="kv">
+            <dt>Brechzahl n<sub>2</sub> = √ε<sub>r,2</sub></dt><dd id="w-n">–</dd>
+            <dt>Wellenlänge λ<sub>1</sub> / λ<sub>2</sub></dt><dd id="w-lam">–</dd>
+            <dt>Reflexionsfaktor Γ</dt><dd id="w-g">–</dd>
+            <dt>Transmissionsfaktor T</dt><dd id="w-t">–</dd>
+            <dt>Leistung reflektiert / transmittiert</dt><dd id="w-p">–</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================== TMZ -->
+<section class="sec" id="tmz">
+  <div class="wrap grid-2">
+    <div class="reveal">
+      <div class="kicker"><span class="n">02</span> Der TM<sub>z</sub>-Fall</div>
+      <h2>Reduktion <em>auf zwei Dimensionen</em></h2>
+            <p class="muted" style="font-size:17px">Ist die Anordnung in z-Richtung unveränderlich (∂/∂z = 0), zerfallen die Gleichungen in zwei unabhängige Fälle. Im <b style="color:var(--text)">TM<sub>z</sub>-Fall</b> bleiben nur noch <span style="color:var(--warm)">E<sub>z</sub></span>, <span style="color:var(--cool)">H<sub>x</sub></span> und <span style="color:var(--violet)">H<sub>y</sub></span> übrig. Mit diesen drei Feldern rechnet der Kern. Der zweite Fall (TE<sub>z</sub>) ist dazu dual und wird in der Arbeit nicht betrachtet.</p>
+    </div>
+    <div class="reveal" style="--d:.1s">
+      <div class="formula" style="margin:0">
+        <div class="tex" data-display>\begin{aligned}
+          \frac{\partial {\color{#39c2ff}H_x}}{\partial t} &= -\frac{1}{\mu}\,\frac{\partial {\color{#ff7a3d}E_z}}{\partial y}\\[2pt]
+          \frac{\partial {\color{#a58bff}H_y}}{\partial t} &= \phantom{-}\frac{1}{\mu}\,\frac{\partial {\color{#ff7a3d}E_z}}{\partial x}\\[2pt]
+          \varepsilon\,\frac{\partial {\color{#ff7a3d}E_z}}{\partial t} &= \frac{\partial {\color{#a58bff}H_y}}{\partial x}-\frac{\partial {\color{#39c2ff}H_x}}{\partial y}-\sigma E_z - J_z
+        \end{aligned}</div>
+        <div class="cap">Die TM<sub>z</sub>-Gleichungen. Genau diese drei Gleichungen werden im Kern diskretisiert.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================== IDEE -->
+<section class="sec" id="idee">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker"><span class="n">03</span> Finite Differenzen</div>
+      <h2>Diskretisierung <em>der Ableitungen</em></h2>
+      <p>Analytisch lösbar sind die Maxwell-Gleichungen nur für wenige, stark idealisierte Anordnungen wie die ebene Welle oben. FDTD ersetzt deshalb jede Ableitung durch eine Differenz benachbarter Gitterwerte. Aus den Differentialgleichungen werden so explizite Rechenvorschriften, die für jede Zelle und jeden Zeitschritt ausgewertet werden.</p>
+    </div>
+
+    <div class="grid-3">
+      <article class="card reveal">
+        <span class="glow" style="background:var(--cool)"></span>
+        <span class="num">01</span>
+        <h3>Raum zerlegen</h3>
+        <p>Der Raum wird in Zellen der Kantenlänge Δ zerlegt. Elektrisches und magnetisches Feld sitzen dabei um eine halbe Zelle versetzt: das <em>Yee-Gitter</em>.</p>
+      </article>
+      <article class="card reveal" style="--d:.1s">
+        <span class="glow" style="background:var(--violet)"></span>
+        <span class="num">02</span>
+        <h3>Zeit zerlegen</h3>
+        <p>Auch zeitlich sind E und H versetzt: E zu den Zeiten n·Δt, H genau dazwischen. Die beiden Felder berechnen sich abwechselnd gegenseitig („Leapfrog“).</p>
+      </article>
+      <article class="card reveal" style="--d:.2s">
+        <span class="glow" style="background:var(--warm)"></span>
+        <span class="num">03</span>
+        <h3>Nur Nachbarn</h3>
+        <p>Für den neuen Wert einer Zelle braucht man nur ihre direkten Nachbarn. Das Verfahren ist also explizit, ein Gleichungssystem muss nie gelöst werden.</p>
+      </article>
+    </div>
+
+    <div class="formula reveal">
+      <div class="tex" data-display>\frac{\partial f}{\partial x}\bigg|_{x} \;\approx\; \frac{f\!\left(x+\tfrac{\Delta}{2}\right)-f\!\left(x-\tfrac{\Delta}{2}\right)}{\Delta} \;+\; \mathcal{O}(\Delta^2)</div>
+      <div class="cap">Zentrale Differenz: Halbiert man die Zellweite, sinkt der Fehler auf ein Viertel. Genau diese Ordnung Δ² wird später in den Testfällen gemessen.</div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================== YEE -->
+<section class="sec" id="yee">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker"><span class="n">04</span> Das Yee-Gitter</div>
+      <h2>Versetzte Gitter <em>für E und H</em></h2>
+      <p>Yee (1966) ordnet die Feldkomponenten um eine halbe Zelle versetzt an. Jede Komponente liegt so genau dort, wo die zentralen Differenzen der anderen ausgewertet werden. Beim Überfahren eines Gitterpunkts werden die Nachbarn hervorgehoben, die in seine Aktualisierung eingehen.</p>
+    </div>
+    <div class="demo reveal">
+      <div class="demo-bar"><span class="dots"><i></i><i></i><i></i></span> yee_gitter · TM<sub>z</sub><span class="sp"></span>
+        <div class="legend"><span><i style="background:var(--warm)"></i>E<sub>z</sub></span><span><i style="background:var(--cool)"></i>H<sub>x</sub></span><span><i style="background:var(--violet)"></i>H<sub>y</sub></span></div>
+      </div>
+      <div class="yee-wrap">
+        <svg class="yee-svg" id="yee-svg" viewBox="0 0 560 420" role="img" aria-label="Interaktives Yee-Gitter"></svg>
+        <div class="yee-side">
+          <div class="mono muted" style="font-size:12.5px;letter-spacing:.06em" id="yee-title">UPDATE · E<sub>z</sub></div>
+          <div class="eq" id="yee-eq"></div>
+          <p class="muted" style="font-size:14.5px;margin:0" id="yee-text"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================== LEAPFROG -->
+<section class="sec" id="leapfrog">
+  <div class="wrap">
+    <div class="sec-head reveal">
+        <div class="kicker"><span class="n">05</span> Zeitschritt</div>
+        <h2>Das <em>Leapfrog-Verfahren</em></h2>
+        <p>E ist zu ganzzahligen Zeitpunkten n·Δt definiert, H zu den Zwischenzeitpunkten (n+½)·Δt. Beide Felder werden abwechselnd aus dem jeweils anderen berechnet. Dadurch ist auch die Zeitableitung eine zentrale Differenz zweiter Ordnung.</p>
+      </div>
+    <div class="grid-2" style="align-items:start">
+      <div>
+        <div class="demo leap reveal">
+        <div class="demo-bar"><span class="dots"><i></i><i></i><i></i></span> zeitachse<span class="sp"></span><span id="leap-label" class="mono" style="color:var(--text)">n = 0</span></div>
+        <svg id="leap" viewBox="0 0 560 190"></svg>
+      </div>
+        <div class="formula reveal" style="margin-top:18px">
+          <div class="tex" data-display>\frac{\partial E}{\partial t}\bigg|^{n+\frac12} \approx \frac{E^{n+1}-E^{n}}{\Delta t}</div>
+          <div class="cap">Die Zeitableitung wird genau in der Mitte zwischen zwei E-Werten gebildet, also dort, wo H liegt.</div>
+        </div>
+      </div>
+      <div class="reveal" style="--d:.1s">
+      <div class="code">
+        <div class="code-head"><span class="dots" style="display:flex;gap:6px"><i style="width:9px;height:9px;border-radius:50%;background:var(--line-2)"></i><i style="width:9px;height:9px;border-radius:50%;background:var(--line-2)"></i><i style="width:9px;height:9px;border-radius:50%;background:var(--line-2)"></i></span><span class="file">fdtd_core.py</span><span class="sp" style="flex:1"></span>Python · NumPy</div>
+<pre id="code-core"><span class="tok-k">def</span> <span class="tok-f">step</span>(self):
+    t_halb = self.t + <span class="tok-n">0.5</span> * self.dt
+    t_neu  = self.t + self.dt
+
+    self.<span class="tok-f">_update_H</span>()                  <span class="tok-c"># H: n-½ → n+½</span>
+    self.<span class="tok-f">_inject_current_sources</span>(t_halb)
+    self.<span class="tok-f">_update_E</span>()                  <span class="tok-c"># E: n → n+1</span>
+    self.<span class="tok-f">_inject_soft_sources</span>(t_neu)
+    self.time_step += <span class="tok-n">1</span>
+
+<span class="tok-k">def</span> <span class="tok-f">_update_E</span>(self):
+    dHy = self.Hy[<span class="tok-n">1</span>:, <span class="tok-n">1</span>:-<span class="tok-n">1</span>] - self.Hy[:-<span class="tok-n">1</span>, <span class="tok-n">1</span>:-<span class="tok-n">1</span>]
+    dHx = self.Hx[<span class="tok-n">1</span>:-<span class="tok-n">1</span>, <span class="tok-n">1</span>:] - self.Hx[<span class="tok-n">1</span>:-<span class="tok-n">1</span>, :-<span class="tok-n">1</span>]
+    <span class="tok-c"># … PML-Hilfsfelder psi_ez_x, psi_ez_y …</span>
+    self.Ez[<span class="tok-n">1</span>:-<span class="tok-n">1</span>, <span class="tok-n">1</span>:-<span class="tok-n">1</span>] = (self.Ca[<span class="tok-n">1</span>:-<span class="tok-n">1</span>, <span class="tok-n">1</span>:-<span class="tok-n">1</span>] * self.Ez[<span class="tok-n">1</span>:-<span class="tok-n">1</span>, <span class="tok-n">1</span>:-<span class="tok-n">1</span>]
+        + self.Cb[<span class="tok-n">1</span>:-<span class="tok-n">1</span>, <span class="tok-n">1</span>:-<span class="tok-n">1</span>] * (dHy - dHx
+            + d * (self.psi_ez_x - self.psi_ez_y)
+            - self.Jz[<span class="tok-n">1</span>:-<span class="tok-n">1</span>, <span class="tok-n">1</span>:-<span class="tok-n">1</span>] * d))</pre>
+      </div>
+      <p class="muted" style="font-size:14.5px;margin-top:14px">Ein Zeitschritt für das gesamte Gitter besteht aus wenigen vektorisierten NumPy-Operationen, ohne explizite Schleife über die Zellen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= STABILITÄT -->
+<section class="sec" id="stabilitaet">
+  <div class="wrap grid-2">
+    <div class="reveal">
+      <div class="kicker"><span class="n">06</span> Stabilität</div>
+      <h2>Die <em>CFL-Bedingung</em></h2>
+      <p class="muted" style="font-size:17px">Das explizite Verfahren ist nur stabil, wenn der Zeitschritt klein genug gegenüber der Zellweite ist. Die <b style="color:var(--text)">Courant-Friedrichs-Lewy-Bedingung</b> lautet für das zweidimensionale Gitter:</p>
+      <div class="formula" style="margin:18px 0 22px"><div class="tex" data-display>S \;=\; \frac{c\,\Delta t\,\sqrt{2}}{\Delta} \;\le\; 1</div></div>
+      <p class="muted" style="font-size:17px">Die Demo zeigt einen verlustfreien, von PEC-Wänden umschlossenen Hohlraum. Für S ≤ 1 bleibt die Feldenergie nach dem Abklingen der Quelle konstant. Für S &gt; 1 wächst die Mode höchster Ortsfrequenz aus dem Rundungsrauschen exponentiell an.</p>
+    </div>
+    <div class="demo reveal" style="--d:.1s" id="cfl-demo">
+      <div class="demo-bar"><span class="dots"><i></i><i></i><i></i></span> pec_hohlraum<span class="sp"></span><span class="badge good" id="cfl-badge">stabil</span></div>
+      <canvas id="cfl-canvas" width="400" height="300"></canvas>
+      <canvas id="cfl-energy" width="800" height="150" style="border-top:1px solid var(--line)"></canvas>
+      <div class="demo-body">
+        <div class="ctrl"><label for="cfl-s">S</label><input type="range" id="cfl-s" min="0.3" max="1.1" step="0.01" value="0.99"><output id="cfl-out">0,99</output></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-sm" data-s="0.5">S = 0,5</button>
+          <button class="btn btn-sm" data-s="0.99">S = 0,99</button>
+          <button class="btn btn-sm" data-s="1.02">S = 1,02</button>
+          <button class="btn btn-sm" id="cfl-reset">↻ Neu starten</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= DISPERSION -->
+<section class="sec" id="dispersion">
+  <div class="wrap grid-2">
+    <div class="demo reveal">
+      <div class="demo-bar"><span class="dots"><i></i><i></i><i></i></span> numerische_dispersion · v<sub>p</sub>(θ)/c<span class="sp"></span><span>überhöht dargestellt</span></div>
+      <div class="demo-body">
+        <canvas id="disp-canvas" class="disp-canvas" width="720" height="720"></canvas>
+        <div class="ctrl"><label for="disp-n">N<sub>λ</sub></label><input type="range" id="disp-n" min="4" max="40" step="1" value="10"><output id="disp-n-out">10</output></div>
+        <div class="ctrl"><label for="disp-s">S</label><input type="range" id="disp-s" min="0.1" max="1" step="0.01" value="0.99"><output id="disp-s-out">0,99</output></div>
+      </div>
+    </div>
+    <div class="reveal" style="--d:.1s">
+      <div class="kicker"><span class="n">07</span> Numerische Dispersion</div>
+      <h2>Phasenfehler <em>auf dem Gitter</em></h2>
+      <p class="muted" style="font-size:17px">Die Phasengeschwindigkeit auf dem Gitter ist kleiner als c. Die Abweichung hängt von der Auflösung N<sub>λ</sub> (Zellen je Wellenlänge) und von der Ausbreitungsrichtung ab. Längs der Gitterachsen ist sie am größten, diagonal am kleinsten.</p>
+      <div class="formula" style="margin:18px 0"><div class="tex" data-display>\frac{\sin^2\!\left(\frac{\omega\Delta t}{2}\right)}{(c\Delta t)^2} = \frac{\sin^2\!\left(\frac{\tilde k_x\Delta}{2}\right)+\sin^2\!\left(\frac{\tilde k_y\Delta}{2}\right)}{\Delta^2}</div></div>
+      <dl class="kv">
+        <dt>v<sub>p</sub>/c entlang der Achse (θ = 0°)</dt><dd id="disp-v0">–</dd>
+        <dt>v<sub>p</sub>/c diagonal (θ = 45°)</dt><dd id="disp-v45">–</dd>
+        <dt>Rückstand nach 100 Wellenlängen</dt><dd id="disp-lag">–</dd>
+      </dl>
+      <p class="muted" style="font-size:14.5px;margin-top:16px">Der Fehler fällt mit N<sub>λ</sub><sup>−2</sup>. Weil die Abweichung vom Kreis sehr klein ist, ist sie in der Darstellung überhöht.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================== RAND -->
+<section class="sec" id="rand">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker"><span class="n">08</span> Randbedingungen</div>
+      <h2>Absorbierende <em>Randschicht (PML)</em></h2>
+      <p>Das Rechengebiet ist endlich. Ein ideal leitender Rand (PEC) reflektiert einfallende Wellen vollständig. Eine <b style="color:var(--text)">Perfectly Matched Layer</b> ist eine künstliche, verlustbehaftete Randschicht, die auslaufende Wellen nahezu reflexionsfrei dämpft. Damit lässt sich ein unbegrenzter Raum nachbilden.</p>
+    </div>
+    <div class="grid-2" style="align-items:stretch">
+      <div class="demo reveal">
+        <div class="demo-bar"><span class="dots"><i></i><i></i><i></i></span> rand = PEC<span class="sp"></span><span class="badge bad">reflektiert</span></div>
+        <canvas id="pec-canvas" width="360" height="360"></canvas>
+      </div>
+      <div class="demo reveal" style="--d:.1s">
+        <div class="demo-bar"><span class="dots"><i></i><i></i><i></i></span> rand = CPML · 12 Zellen<span class="sp"></span><span class="badge good">absorbiert</span></div>
+        <canvas id="pml-canvas" width="360" height="360"></canvas>
+      </div>
+    </div>
+    <div class="formula reveal">
+      <div class="tex" data-display>\sigma(\rho) = \sigma_{\max}\,\rho^{\,m}, \qquad \sigma_{\max} = -\frac{(m+1)\,\ln R_0}{2\,\eta_0\,D}\qquad (m = 3,\; R_0 = 10^{-6})</div>
+      <div class="cap">Die Leitfähigkeit steigt in der Schicht polynomial an, sodass am Übergang keine sprunghafte Impedanzänderung entsteht. Im Kern ist das als Convolutional PML mit den Hilfsfeldern ψ umgesetzt.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== VALIDIERUNG -->
+<section class="sec" id="validierung">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker"><span class="n">09</span> Validierung</div>
+      <h2>Vergleich mit <em>analytischen Lösungen</em></h2>
+      <p>Die Leitfrage der Arbeit ist die Genauigkeit des Verfahrens. Dazu werden Simulationsergebnisse mit analytischen Lösungen verglichen. Die Abbildungen stammen aus der Seminararbeit (Anklicken vergrößert).</p>
+    </div>
+    <div class="fig-list">
+      <figure class="fig reveal" style="margin:0">
+        <div class="paper" data-zoom><img src="assets/img/testfall_a_dispersion.png" alt="Phasengeschwindigkeit über der Auflösung" loading="lazy"></div>
+        <figcaption class="body">
+          <span class="tag">Testfall · Ebene Welle</span>
+          <h3>Phasengeschwindigkeit</h3>
+          <div class="big grad-text">∝ N<sub>λ</sub><sup>−2</sup></div>
+          <p>Im Gitter läuft die Welle immer etwas zu langsam. Der relative Fehler fällt parallel zu einer Geraden der Steigung −2, bei doppelter Auflösung also auf ein Viertel.</p>
+        </figcaption>
+      </figure>
+      <figure class="fig reveal" style="margin:0;--d:.1s">
+        <div class="paper" data-zoom><img src="assets/img/testfall_b_energie.png" alt="Energie im PEC-Hohlraum" loading="lazy"></div>
+        <figcaption class="body">
+          <span class="tag">Testfall · PEC-Hohlraum</span>
+          <h3>Energieerhaltung</h3>
+          <div class="big grad-text">≤ 10<sup>−15</sup></div>
+          <p>Für S ≤ 1 weicht die Feldenergie über die gesamte Laufzeit höchstens um 10<sup>−15</sup> von der eingespeisten Energie ab. Für S &gt; 1 wächst sie dagegen exponentiell.</p>
+        </figcaption>
+      </figure>
+      <figure class="fig reveal" style="margin:0;--d:.2s">
+        <div class="paper" data-zoom><img src="assets/img/testfall_d_courant.png" alt="Reflexion und Transmission an dielektrischer Grenzfläche" loading="lazy"></div>
+        <figcaption class="body">
+          <span class="tag">Testfall · Grenzfläche</span>
+          <h3>Fresnel-Koeffizienten</h3>
+          <div class="big grad-text">|Γ| → 1/3</div>
+          <p>An einer Grenzfläche mit ε<sub>r</sub> = 4 liefert die Simulation bei N<sub>λ</sub> = 10 etwa |Γ| ≈ 0,42. Mit feinerem Gitter nähert sich der Wert dem Fresnel-Wert, wieder mit N<sub>λ</sub><sup>−2</sup>.</p>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ STUDIO -->
+<section class="sec" id="studio">
+  <div class="wrap">
+    <div class="studio-teaser reveal">
+      <div class="grid-2">
+        <div class="txt">
+          <div class="kicker"><span class="n">10</span> FDTD Studio</div>
+          <h2>Simulation <em>im Browser</em></h2>
+          <p class="muted" style="font-size:17px">Das FDTD Studio führt den Python-Kern <code>fdtd_core.py</code> aus der Arbeit unverändert im Browser aus. Dafür wird Pyodide verwendet, das Python und NumPy als WebAssembly lokal ausführt. Eine Installation ist nicht nötig.</p>
+          <ul class="feat">
+            <li>13 Szenen: Doppelspalt, Beugungsgitter, Linse, Totalreflexion, Bragg-Spiegel, Hohlleiter …</li>
+            <li>Hindernisse aus Dielektrikum oder PEC direkt mit der Maus ins Feld zeichnen</li>
+            <li>Sonden mit Oszilloskop, Spektrum (NumPy-FFT) und Energieverlauf</li>
+            <li>Python-Konsole mit Live-Zugriff auf <code>lauf.sim.Ez</code></li>
+            <li>Szenen im JSON-Format des Desktop-Studios speichern und laden</li>
+          </ul>
+          <div class="hero-ctas">
+            <a class="btn btn-primary" href="studio.html">Studio öffnen <span class="arrow">→</span></a>
+            <a class="btn" href="https://github.com/philipberenz-source/wseminar/blob/main/code%20snippets/fdtd_studio.py" target="_blank" rel="noopener">Desktop-Version (Tk)</a>
+          </div>
+        </div>
+        <div class="shot"><canvas id="teaser-canvas"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================== CODE -->
+<section class="sec" id="code">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker"><span class="n">11</span> Quellcode</div>
+      <h2>Quellcode <em>und Seminararbeit</em></h2>
+      <p>Auf GitHub liegen die Seminararbeit „Die FDTD-Methode zur numerischen Lösung der Maxwell-Gleichungen“, der komplette Python-Kern, das Studio und die Skripte zu allen Testfällen.</p>
+    </div>
+    <div class="repo">
+      <div class="card reveal">
+        <h3 style="display:flex;align-items:center;gap:10px">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+          philipberenz-source/wseminar
+        </h3>
+<ol class="toc">
+          <li><b>Einleitung</b><span>Relevanz, historischer Kontext, Fragestellung</span></li>
+          <li><b>Theoretische Grundlagen</b><span>Maxwell-Gleichungen, TM<sub>z</sub>-Fall, ebene Welle, Dispersionsrelation</span></li>
+          <li><b>Die FDTD-Methode</b><span>Finite Differenzen, Yee-Gitter, Update-Gleichungen, CFL, PEC &amp; PML</span></li>
+          <li><b>Implementierung in Python</b><span>Aufbau von <code>fdtd_core.py</code>, Randschicht, Zeitschritt</span></li>
+          <li><b>Validierung an analytisch lösbaren Anordnungen</b><span>Ebene Welle, Energieerhaltung, dielektrische Grenzfläche</span></li>
+          <li><b>Fazit und Ausblick</b><span>Zusammenfassung, Grenzen, Ausblick</span></li>
+        </ol>
+        <div style="margin-top:22px"><a class="btn btn-primary" href="https://github.com/philipberenz-source/wseminar" target="_blank" rel="noopener">Repository öffnen <span class="arrow">→</span></a></div>
+      </div>
+      <div class="card reveal" style="--d:.1s">
+        <h3>Lokal ausprobieren</h3>
+        <p style="margin-bottom:16px">Desktop-Studio mit Python starten:</p>
+<pre class="term"><span class="p">$ </span>git clone https://github.com/philipberenz-source/wseminar
+<span class="p">$ </span>cd "wseminar/code snippets"
+<span class="p">$ </span>pip install numpy matplotlib
+<span class="p">$ </span>python fdtd_studio.py</pre>
+        <p style="margin:18px 0 12px">Diese Website samt Web-Studio lokal:</p>
+<pre class="term"><span class="p">$ </span>cd wseminar/website
+<span class="p">$ </span>python -m http.server 8000
+<span class="c"># → http://localhost:8000</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><span class="brand-mark"></span><span>Die FDTD-Methode zur numerischen Lösung der Maxwell-Gleichungen</span></div>
+    <div>Philip Berenz · Oskar-von-Miller-Gymnasium · W-Seminar Physik 2026</div>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox"><img alt=""></div>
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="assets/js/fdtd.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
