@@ -15,7 +15,7 @@ müssen die in @tmz-hx bis @tmz-ez auftretenden Ableitungen durch Quotienten
 endlicher --- _finiter_ --- Differenzen umschrieben werden. Die Genauigkeit
 dieser Methode zeigt sich in der Taylor-Entwicklung einer hinreichend oft stetig
 differenzierbaren Funktion $u$ um die Stelle $x$
-@Taflove2005[eq(2.10a) und eq(2.10b)]:
+@Taflove2005[Gl. (2.10a) und Gl. (2.10b)]:
 
 $ u(x plus.minus Delta x) = u(x) plus.minus Delta x (d u)/(d x)
   + (Delta x)^2/2 (d^2 u)/(d x^2)
@@ -24,7 +24,7 @@ $ u(x plus.minus Delta x) = u(x) plus.minus Delta x (d u)/(d x)
 Anschließend werden die beiden in @taylor zusammengefassten Reihen
 voneinander subtrahiert: Dabei heben sich sämtliche Glieder gerader Ordnung
 auf, und Division durch $2 Delta x$ liefert die _zentrale Differenz_
-@Taflove2005[analog zu eq(2.12)]
+@Taflove2005[analog zu Gl. (2.12)]
 
 $ (d u)/(d x)
   = (u(x + Delta x) - u(x - Delta x))/(2 Delta x)
@@ -63,7 +63,7 @@ innerhalb dieses Gitters die einzelnen Feldkomponenten gespeichert werden
 eine halbe Zelle gegeneinander _versetzt_ (englisch _staggered_) --- und zwar
 so, dass jede Komponente genau dort liegt, wo die Ableitung der jeweils anderen
 Feldgröße benötigt wird. Für den in @sec-zweidimensional festgelegten
-TM#sub[z]-Fall bedeutet das @Yee1966[S.303]:
+TM#sub[z]-Fall bedeutet das @Yee1966[S. 303]:
 
 / $E_z$: liegt auf den ganzzahligen Gitterpunkten $(i Delta x, j Delta y)$;
 / $H_x$: liegt um eine halbe Zelle in $y$-Richtung versetzt bei $(i Delta x, (j+1\/2) Delta y)$;
@@ -74,7 +74,7 @@ TM#sub[z]-Fall bedeutet das @Yee1966[S.303]:
   caption: [Anordnung der Feldkomponenten im Yee-Gitter für den
     TM#sub[z]-Fall: $E_z$ liegt auf den ganzzahligen Gitterpunkten, $H_x$ um
     eine halbe Zelle in $y$-Richtung versetzt, $H_y$ um eine halbe Zelle in
-    $x$-Richtung.],
+    $x$-Richtung. Abbildung entnommen aus @Liu2022[Abb. 4].],
 ) <abb:yee>
 
 Der Sinn der in @abb:yee dargestellten Anordnung zeigt sich beim Blick auf die
@@ -93,7 +93,7 @@ Die wechselseitige zeitliche Abhängigkeit beider Felder ist damit jedoch noch
 nicht aufgelöst. Yee versetzt deshalb zusätzlich die Anordnung auf der
 Zeitachse: Das elektrische Feld wird zu ganzzahligen Vielfachen $n Delta t$
 ausgewertet, das magnetische zu den dazwischenliegenden halbzahligen Zeitpunkten
-$(n+1\/2) Delta t$ @Taflove2005[S.60f.]. Beide Felder werden dann abwechselnd
+$(n+1\/2) Delta t$ @Taflove2005[S. 60 f.]. Beide Felder werden dann abwechselnd
 fortgeschrieben --- ein Vorgehen, das nach dem Bocksprungspiel _leapfrog_
 benannt ist: Aus dem bekannten $E_z^n$ folgt über @tmz-hx und @tmz-hy das
 magnetische Feld zum Zeitpunkt $n+1\/2$, aus diesem über @tmz-ez das elektrische
@@ -116,7 +116,7 @@ Unter Verwendung des Yee-Gitters aus @sec-yee und Bildung zentraler Differenzen
 nach @zentraldifferenz-halb ergeben sich aus @tmz-hx bis @tmz-ez unmittelbar
 drei explizite Aktualisierungsvorschriften, im Folgenden _Update-Gleichungen_
 genannt: Für ein _quadratisches_ Gitter mit
-$Delta x = Delta y = Delta$ ergeben sich folgende Gleichungen @Taflove2005[mod. eq(3.41)]:
+$Delta x = Delta y = Delta$ ergeben sich folgende Gleichungen @Taflove2005[mod. Gl. (3.41)]:
 
 $ H_x bar.v_(i\,j+1/2)^(n+1/2) = H_x bar.v_(i\,j+1/2)^(n-1/2)
   - (Delta t)/(mu_0 Delta)
@@ -134,7 +134,7 @@ $ E_z bar.v_(i\,j)^(n+1) &= C_a bar.v_(i\,j) dot E_z bar.v_(i\,j)^n \
     - J_z bar.v_(i\,j)^(n+1/2) Delta) $ <update-ez>
 
 mit den allein vom Material abhängigen und deshalb vor Beginn der Zeitschleife
-einmalig berechneten Koeffizienten @Taflove2005[eq(3.31a) und eq(3.31b)]
+einmalig berechneten Koeffizienten @Taflove2005[Gl. (3.31a) und Gl. (3.31b)]
 
 $ C_a bar.v_(i\,j) = (1 - (sigma Delta t)/(2 epsilon))/(1 + (sigma Delta t)/(2 epsilon)),
   quad
@@ -158,7 +158,7 @@ wenn all ihre Glieder für _denselben_ Zeitpunkt gelten, muss auch der
 Verlustterm dort ausgewertet werden. Genau dort liegt jedoch kein gespeicherter
 Wert von $E_z$ vor, weil das elektrische Feld nach @sec-yee nur zu ganzzahligen
 Zeitpunkten geführt wird. Der Verlustterm wird deshalb durch das arithmetische
-Mittel der beiden umgebenden Werte ersetzt (_semi-implizites_ Vorgehen)@Taflove2005[S.63, mod. eq.(3.26)]:
+Mittel der beiden umgebenden Werte ersetzt (_semi-implizites_ Vorgehen) @Taflove2005[S. 63, mod. Gl. (3.26)]:
 
 $ E_z bar.v_(i\,j)^(n+1/2) approx
   (E_z bar.v_(i\,j)^(n+1) + E_z bar.v_(i\,j)^n)/2 $ <semiimplizit>
@@ -167,7 +167,7 @@ Setzt man @stromaufteilung und @semiimplizit in @tmz-ez ein, zerfällt der
 Verlustterm in zwei Teile: Der eine enthält den gesuchten Wert
 $E_z bar.v_(i\,j)^(n+1)$, der andere den bereits bekannten Wert
 $E_z bar.v_(i\,j)^n$. Bringt man den ersten auf die linke Seite und lässt den
-zweiten rechts stehen @Taflove2005[mod. eq. 3.28], so folgt 
+zweiten rechts stehen @Taflove2005[mod. Gl. (3.28)], so folgt 
 
 $ (1 + (sigma Delta t)/(2 epsilon)) E_z bar.v_(i\,j)^(n+1)
   &= (1 - (sigma Delta t)/(2 epsilon)) E_z bar.v_(i\,j)^n \
@@ -256,13 +256,12 @@ $ E_z bar.v_(i\,j)^(n+1) = 0 quad "für alle" (i,j) in M $ <pec>
 Die magnetischen Komponenten werden unverändert nach @update-hx und @update-hy
 fortgeschrieben. 
 
-=== Absorbierender Rand (PML) <sec-pml>
+=== Absorbierender Rand (_Perfectly Matched Layer_, PML) <sec-pml>
 
-Während @sec-pec beschreibt, wie man bewusst eine Totalreflexion herbeiführt, findet eine solche an den Rändern des Simulationsgebietes ebenfalls statt. In vielen Fällen ist dieser Effekt jedoch unerwünscht, da so die Energie vollständig in den Simulationsraum zurückgeworfen wird, statt sich weiter im unendlichen Raum auszubreiten.
-Die naheliegendste Lösung wäre es deshalb, den eigentlichen Rändern eine Schicht vorzulagern, welche die auslaufende Welle dämpft, sodass keine Energie zurück in das eigentliche Simulationsgebiet geworfen wird (@abb:pml-schema).
+An den Rändern des Simulationsgebiets fehlen benachbarte $H_y$-Felder, um zentrale Differenzen zu bilden, weshalb $E_z$ an diesen Stellen auf null gesetzt wird. Damit wird das Feld nach @sec-pec vollständig zurückgeworfen. In vielen Fällen ist dieser Effekt jedoch unerwünscht, insbesondere wenn die Ausbreitung im unendlichen Raum simuliert wird.
+Naheliegend wäre es deshalb, den eigentlichen Rändern eine Schicht vorzulagern, welche die auslaufende Welle dämpft, sodass keine Energie zurück in das eigentliche Simulationsgebiet geworfen wird (@abb:pml-schema).
 
 #figure(
-  placement: auto,
   image("../abbildungen/abb_pml_schema.pdf", width: 48%),
   caption: [Anordnung der absorbierenden Schicht: Sie umgibt das eigentliche
     Rechengebiet auf allen vier Seiten und ist außen weiterhin durch einen
@@ -272,22 +271,15 @@ Die naheliegendste Lösung wäre es deshalb, den eigentlichen Rändern eine Schi
 
 Eine gewöhnliche verlustbehaftete Schicht leistet das jedoch nicht: Sie dämpft in alle
 Richtungen gleich, während eine reflexionsfreie Anpassung verlangt, dass
-ausschließlich die Ausbreitung _senkrecht_ zur Grenzfläche gedämpft wird ---
-weshalb sie selbst dann, wenn ihr zusätzlich ein magnetischer Verlust $sigma_m$
-mit $sigma\/epsilon = sigma_m\/mu_0$ zugeordnet wird, nur bei senkrechtem
-Einfall reflexionsfrei bleibt und bei jedem schrägen Einfall zurückwirft; ohne
-einen solchen magnetischen Verlust, wie er hier durchgehend vorausgesetzt ist,
-reflektiert sie auch bei senkrechtem Einfall
+ausschließlich die Ausbreitung _senkrecht_ zur Grenzfläche gedämpft wird
 @Schneider2010[Abschn. 11.2 bis 11.4].
 
 *Komplexe Koordinatenstreckung.* Der Ausweg besteht darin, nicht das Material
-zu verändern, sondern die Koordinate. Bérenger erreichte dies 1994 zunächst,
-indem er jede Feldkomponente in zwei künstliche Anteile aufspaltete
-@Berenger1994; die hier verwendete, ohne Aufspaltung auskommende Formulierung
+zu verändern, sondern die Koordinate. Die hier verwendete Formulierung
 geht auf Chew und Weedon zurück und heißt _komplexe Koordinatenstreckung_,
 weil die dabei eingeführten Faktoren die einzelnen Koordinatenrichtungen
 skalieren @Schneider2010[Abschn. 11.1 und 11.5]. Zu jeder Raumrichtung $w in {x, y}$ wird dabei
-ein komplexer Streckfaktor eingeführt @Schneider2010[eq(11.86)]:
+ein komplexer Streckfaktor eingeführt @Schneider2010[Gl. (11.86)]:
 
 $ S_w = 1 + sigma_w/(upright(i) omega epsilon_0) $ <pml-sw>
 
@@ -296,16 +288,13 @@ $ S_w = 1 + sigma_w/(upright(i) omega epsilon_0) $ <pml-sw>
 Der Streckfaktor wird nun jeder Ortsableitung vorangestellt, und zwar derart, dass
 $1\/S_w$ stets an die Ableitung in _derselben_ Richtung $w$ gebunden ist. Dafür
 wird der Nabla-Operator erweitert, hier auf zwei Dimensionen
-eingeschränkt @Schneider2010[mod. eq(11.93)]
+eingeschränkt @Schneider2010[mod. Gl. (11.93)]
 
 $ tilde(nabla) = hat(x) 1/S_x partial/(partial x)
   + hat(y) 1/S_y partial/(partial y) $ <pml-nabla>
 
-unter dessen Anwendung die beiden Rotationsgleichungen in der Frequenzdomäne die Gestalt $upright(i) omega epsilon
-bold(E) = tilde(nabla) times bold(H)$ und $-upright(i) omega mu bold(H) =
-tilde(nabla) times bold(E)$ annehmen @Schneider2010[eq(11.94) und eq(11.95)].
 Ausgeschrieben für den TM#sub[z]-Fall aus @sec-zweidimensional bedeutet das
-@Schneider2010[mod. eq(11.90) bis eq(11.92)]
+@Schneider2010[mod. Gl. (11.90) bis Gl. (11.92)]
 
 $ upright(i) omega epsilon E_z = 1/S_x (partial H_y)/(partial x)
     - 1/S_y (partial H_x)/(partial y),
@@ -315,122 +304,75 @@ $ upright(i) omega epsilon E_z = 1/S_x (partial H_y)/(partial x)
   upright(i) omega mu_0 H_x = -1/S_y (partial E_z)/(partial y) $ <pml-tmz>
 
 Wichtig ist, dass sich diese Streckung richtungsweise vorschreiben lässt.
-So wird die Richtungsselektivität gewährleistet. Welche der beiden Streckungen
-dabei wirkt, entscheidet allein der Ort im Gitter (@abb:pml-schema): In den
+So wird die Richtungsselektivität gewährleistet: In den
 Schichten links und rechts ist $sigma_x > 0$, während $sigma_y = 0$ und damit
-$S_y = 1$ bleibt --- gedämpft wird dort also nur die $x$-Richtung; in den
-Schichten oben und unten ist es umgekehrt. In den vier Ecken sind beide
-Leitfähigkeiten von null verschieden, sodass beide Richtungen zugleich gedämpft
-werden, und im Rechengebiet selbst sind beide Streckfaktoren gleich eins, sodass
-@pml-tmz dort wieder in @tmz-hx bis @tmz-ez übergeht. Die Ausbreitung längs der
-Grenzfläche bleibt damit unverändert, gedämpft
-wird allein die dazu senkrechte @Schneider2010[eq(11.72) und eq(11.73)]. Der
+$S_y = 1$ bleibt; in den
+Schichten oben und unten ist es umgekehrt (@abb:pml-schema). Der
 Reflexionsfaktor verschwindet dadurch im Kontinuum für _jeden_ Einfallswinkel und _jede_
 Frequenz. Setzt man @pml-sw in eine unter $theta$ einlaufende ebene Welle nach
 @ansatz ein, so tritt an die Stelle von $k_x$ das Produkt $S_x k_x$, und der
 Ortsanteil der Welle zerfällt in zwei Faktoren
-@Schneider2010[eq(11.82) und eq(11.83)]:
+@Schneider2010[Gl. (11.82) und Gl. (11.83)]:
 
 $ e^(-upright(i) S_x k_x x - upright(i) k_y y)
   = underbrace(e^(-(sigma_x k_x)/(omega epsilon_0) x), "reell, klingt ab")
   dot underbrace(e^(-upright(i) (k_x x + k_y y)), "unveränderte Phase") $ <pml-daempfung>
 
-Der erste Faktor ist reell und ändert deshalb allein die Amplitude; der zweite
-ist Zeichen für Zeichen derselbe wie im angrenzenden verlustfreien Gebiet. Die
-Welle wird also gedämpft, läuft in Richtung und Betrag des Wellenvektors aber
-genau so weiter.
-
 *Dicke und Verlauf der Schicht.* Hinter der dämpfenden Schicht bleibt der
 PEC-Rand bestehen. Eine Welle durchläuft die Schicht der Dicke $d$, wird an
 diesem Rand gemäß @pec zurückgeworfen und durchläuft sie ein zweites Mal;
 maßgeblich für die verbleibende Reflexion ist deshalb die auf dem gesamten Hin-
-und Rückweg angesammelte Dämpfung. Mit $k_x = (omega\/c) cos theta$ und
-$1\/(c epsilon_0) = eta_0$, dem Freiraumwellenwiderstand, folgt aus dem
-Dämpfungsfaktor in @pml-daempfung für den Betrag des zurückkehrenden Anteils
-
-$ abs(R(theta)) = exp(-2 eta_0 cos theta integral_0^d sigma_x (x) d x) $ <pml-restreflexion>
-
-in Übereinstimmung mit @Taflove2005[S. 292, eq(7.59)]. Daraus lassen sich zwei
-Aussagen ablesen: Erstens tritt keine Frequenz auf --- im Kontinuum ist die
-Schicht für alle Frequenzen gleich wirksam. Zweitens geht allein das Integral
-über $sigma_x$ ein, nicht aber, wie die Dämpfung über die Dicke verteilt ist.
-
-Der Verlauf innerhalb der Schicht ist damit im Kontinuum frei wählbar; üblich
-ist ein Potenzverlauf @Taflove2005[S. 292, eq(7.60a)]
+und Rückweg angesammelte Dämpfung. Für den Verlauf innerhalb der Schicht ist
+ein Potenzverlauf üblich @Taflove2005[S. 292, Gl. (7.60a)]
 
 $ sigma_x (rho) = sigma_max rho^m,
   quad rho = a/d in [0, 1] $ <pml-profil>
 
-worin $a$ den Abstand vom inneren Schichtrand bezeichnet; dieselbe Form gibt
-@ShinFan2012[eq(2.8)] an. Sein Integral über die Schichtdicke beträgt
-$sigma_max d\/(m+1)$, sodass @pml-restreflexion die geschlossene Form
+worin $a$ den Abstand vom inneren Schichtrand bezeichnet. Mit $k_x = (omega\/c) cos theta$ und
+$1\/(c epsilon_0) = eta_0$, dem Freiraumwellenwiderstand, folgt aus dem
+Dämpfungsfaktor in @pml-daempfung für den Betrag des zurückkehrenden Anteils
 
 $ abs(R(theta)) = exp(-(2 eta_0 sigma_max d cos theta)/(m+1)) $ <pml-restreflexion-profil>
 
-annimmt @Taflove2005[S. 292, eq(7.61)]. Die Dämpfung liegt damit nicht durch
-$sigma_max$ allein fest, sondern erst im Zusammenspiel mit $m$ und $d$. Ferner
-folgt aus @pml-restreflexion-profil unmittelbar
-$abs(R(theta)) = abs(R(0))^(cos theta)$: Die Restreflexion nimmt mit
-zunehmend streifendem Einfall zu; dieser Zusammenhang wird in Kapitel 5
-quantitativ geprüft.
+@Taflove2005[S. 292, Gl. (7.61)]. Darin tritt keine Frequenz auf. 
 Logarithmiert man @pml-restreflexion-profil für senkrechten Einfall
-($theta = 0$) und löst nach der Leitfähigkeit auf, so folgt umgekehrt
-@Taflove2005[S. 293, eq(7.62)]
+($theta = 0$) und löst nach der Leitfähigkeit auf, so folgt
+@Taflove2005[S. 293, Gl. (7.62)]
 
 $ sigma_max = -((m+1) ln abs(R(0)))/(2 eta_0 d) $ <pml-sigmamax>
-
-Vorzugeben ist damit nicht die Leitfähigkeit, sondern die Zielreflexion
-$abs(R(0))$; $sigma_max$ ergibt sich aus ihr, sobald $m$ und $d$ gewählt sind.
 
 *Rückkehr in den Zeitbereich.* @pml-tmz steht im Frequenzbereich, das
 FDTD-Verfahren rechnet jedoch im Zeitbereich, und einem Produkt im
 Frequenzbereich entspricht dort eine Faltung. Benötigt wird also die
-Rücktransformierte $overline(S)_w$ von $1\/S_w$; der Querstrich kennzeichnet
-dabei die zugehörige Zeitfunktion, und zwar die zu $1\/S_w$ und nicht die zu
-$S_w$ selbst, weil in @pml-tmz gerade der Kehrwert vor den Ableitungen steht.
-Mit @pml-sw ist
+Rücktransformierte $overline(S)_w$ von $1\/S_w$. Mit @pml-sw ist
 
 $ 1/S_w = (upright(i) omega epsilon_0)/(sigma_w + upright(i) omega epsilon_0)
   = 1 - 1/(1 + upright(i) omega epsilon_0\/sigma_w) $ <pml-inverses>
 
 Der erste Summand liefert die Delta-Distribution $delta(t)$, die in der Faltung
-die ursprüngliche Ableitung unverändert reproduziert; für den zweiten genügt ein
-_Korrespondenzpaar_. Darunter versteht man einen Ausdruck im Frequenzbereich
-zusammen mit derjenigen Zeitfunktion, aus der die Fourier-Transformation ihn
-erzeugt; weil beide eindeutig zusammengehören, lässt sich die eine aus der
-anderen ablesen, statt das Transformationsintegral auszurechnen. Das hier
-passende Paar lautet $(1 + upright(i) omega tau)^(-1) arrow.l.r tau^(-1)
-e^(-t\/tau) u(t)$ @Schneider2010[eq(11.104)] --- einem einfachen Bruch im
-Frequenzbereich entspricht also eine abklingende Exponentialfunktion im
-Zeitbereich. Mit $tau = epsilon_0\/sigma_w$ ergibt sich zusammen
-@Schneider2010[mod. eq(11.107) und eq(11.108)]
+die ursprüngliche Ableitung unverändert reproduziert; für den zweiten genügt das
+Korrespondenzpaar $(1 + upright(i) omega tau)^(-1) arrow.l.r tau^(-1)
+e^(-t\/tau) u(t)$ @Schneider2010[Gl. (11.104)]. Mit $tau = epsilon_0\/sigma_w$ ergibt sich zusammen
+@Schneider2010[mod. Gl. (11.107) und Gl. (11.108)]
 
 $ overline(S)_w (t) = delta(t) + zeta_w (t),
   quad
   zeta_w (t) = -sigma_w/epsilon_0 e^(-(sigma_w\/epsilon_0) t) u(t) $ <pml-zeta>
 
 wobei $u(t)$ die Sprungfunktion ist. Im Zeitbereich lautet damit etwa die
-Gleichung für $H_x$ @Schneider2010[mod. eq(11.99)]
+Gleichung für $H_x$ @Schneider2010[mod. Gl. (11.99)]
 
 $ mu_0 (partial H_x)/(partial t) = -(partial E_z)/(partial y)
   - zeta_y (t) star (partial E_z)/(partial y) $ <pml-zeit>
 
-also die gewohnte Gleichung, ergänzt um genau einen Faltungsterm; für die
-übrigen Komponenten gilt dasselbe mit dem jeweils zugehörigen $zeta_w$.
+für die übrigen Komponenten gilt dasselbe mit dem jeweils zugehörigen $zeta_w$.
 
-*Rekursive Auswertung der Faltung.* Eine Faltung über die gesamte
-Vorgeschichte des Feldes würde in der Zeitschleife mit einem hohen Rechenaufwand einhergehen --- sie
-würde je Gitterpunkt und Zeitschritt einen mit $n$ wachsenden Aufwand
-verursachen und den in @sec-yee gewonnenen Vorteil des expliziten Verfahrens
-zunichtemachen. Der Kern in @pml-zeta ist jedoch eine reine
+*Rekursive Auswertung der Faltung.* Eine Faltung über die gesamte Vorgeschichte würde den in @sec-yee gewonnenen Vorteil des expliziten Verfahrens zunichtemachen. Der Kern in @pml-zeta ist jedoch eine reine
 Exponentialfunktion, und für einen solchen Kern lässt sich die Faltung rekursiv
 auswerten. Dazu wird die Ableitung über je einen Zeitschritt als konstant
-angesehen --- dieselbe Treppenannäherung, die dem Verfahren ohnehin zugrunde
-liegt ---, sodass das Faltungsintegral in eine Summe über Teilintegrale
-zerfällt. Jedes dieser Teilintegrale ist wegen
-$integral e^(-alpha t) d t prop e^(-alpha t)$ derselbe Faktor, multipliziert
-mit der $i$-ten Potenz einer Konstanten @Schneider2010[mod. eq(11.125) bis
-eq(11.127)]:
+angesehen, sodass jedes Teilintegral derselbe Faktor ist, multipliziert
+mit der $i$-ten Potenz einer Konstanten @Schneider2010[mod. Gl. (11.125) bis
+Gl. (11.127)]:
 
 $ integral_(i Delta t)^((i+1) Delta t) zeta_w (tau) d tau = C_w (b_w)^i,
   quad
@@ -438,20 +380,16 @@ $ integral_(i Delta t)^((i+1) Delta t) zeta_w (tau) d tau = C_w (b_w)^i,
   quad
   C_w = b_w - 1 $ <pml-bc>
 
-Zieht man in der so entstandenen Summe den Term $i = 0$ heraus, so ist der Rest
-bis auf den Faktor $b_w$ genau dieselbe Summe zum vorangegangenen Zeitschritt
-@Schneider2010[eq(11.128) bis eq(11.132)]. Der Wert der Faltung hängt damit nur
-noch von seinem eigenen Vorgängerwert und der aktuellen Ableitung ab. Für jede
+Für jede
 der vier in @pml-tmz auftretenden Ortsableitungen wird deshalb eine Hilfsgröße
 $Psi$ mitgeführt, die die gesamte Vorgeschichte in einer einzigen Zahl je
 Gitterpunkt speichert.
 
-*Modifizierte Update-Gleichungen.* Damit lassen sich @update-hx bis
-@update-ez unmittelbar erweitern: An jeder Stelle, an der dort ein
+*Modifizierte Update-Gleichungen.* An jeder Stelle, an der in @update-hx bis
+@update-ez ein
 Differenzenquotient steht, tritt nun dieser Quotient _zuzüglich_ der zugehörigen
-Hilfsgröße auf, und die Hilfsgröße wird unmittelbar davor nach @pml-bc
-fortgeschrieben. Für die beiden magnetischen Komponenten treten an die Stelle
-von @update-hx und @update-hy die Paare
+Hilfsgröße auf. Für $H_x$ tritt an die Stelle
+von @update-hx das Paar
 
 $ Psi_(H_x) bar.v_(i\,j+1/2)^n = b_y bar.v_(j+1/2) thin
     Psi_(H_x) bar.v_(i\,j+1/2)^(n-1)
@@ -462,16 +400,7 @@ $ H_x bar.v_(i\,j+1/2)^(n+1/2) = H_x bar.v_(i\,j+1/2)^(n-1/2)
   - (Delta t)/mu_0 [(E_z bar.v_(i\,j+1)^n - E_z bar.v_(i\,j)^n)/Delta
     + Psi_(H_x) bar.v_(i\,j+1/2)^n] $ <pml-update-hx>
 
-$ Psi_(H_y) bar.v_(i+1/2\,j)^n = b_x bar.v_(i+1/2) thin
-    Psi_(H_y) bar.v_(i+1/2\,j)^(n-1)
-  + C_x bar.v_(i+1/2) thin
-    (E_z bar.v_(i+1\,j)^n - E_z bar.v_(i\,j)^n)/Delta $ <pml-psi-hy>
-
-$ H_y bar.v_(i+1/2\,j)^(n+1/2) = H_y bar.v_(i+1/2\,j)^(n-1/2)
-  + (Delta t)/mu_0 [(E_z bar.v_(i+1\,j)^n - E_z bar.v_(i\,j)^n)/Delta
-    + Psi_(H_y) bar.v_(i+1/2\,j)^n] $ <pml-update-hy>
-
-Für die elektrische Komponente sind zwei Hilfsgrößen nötig, weil in @pml-tmz
+Für $H_y$ gilt dasselbe mit $b_x$ und $C_x$. Für die elektrische Komponente sind zwei Hilfsgrößen nötig, weil in @pml-tmz
 zwei Ableitungen mit unterschiedlichen Streckfaktoren auftreten:
 
 $ Psi_(E\,x) bar.v_(i\,j)^(n+1/2) &= b_x bar.v_i thin
@@ -483,40 +412,11 @@ $ Psi_(E\,x) bar.v_(i\,j)^(n+1/2) &= b_x bar.v_i thin
   + C_y bar.v_j thin
     (H_x bar.v_(i\,j+1/2)^(n+1/2) - H_x bar.v_(i\,j-1/2)^(n+1/2))/Delta $ <pml-psi-ez>
 
-$ E_z bar.v_(i\,j)^(n+1) &= C_a bar.v_(i\,j) dot E_z bar.v_(i\,j)^n \
-  & quad + C_b bar.v_(i\,j) dot (H_y bar.v_(i+1/2\,j)^(n+1/2)
-    - H_y bar.v_(i-1/2\,j)^(n+1/2)
-    + H_x bar.v_(i\,j-1/2)^(n+1/2)
-    - H_x bar.v_(i\,j+1/2)^(n+1/2) \
-  & quad quad quad quad quad
-    + Delta (Psi_(E\,x) bar.v_(i\,j)^(n+1/2)
-    - Psi_(E\,y) bar.v_(i\,j)^(n+1/2))
-    - J_z bar.v_(i\,j)^(n+1/2) Delta) $ <pml-update-ez>
+Diese treten in @update-ez als zusätzlicher Summand
+$Delta (Psi_(E\,x) - Psi_(E\,y))$ innerhalb der Klammer von $C_b$ auf.
 
-Die Koeffizienten $C_a$ und $C_b$ sind unverändert die aus @koeffizienten; der
-Faktor $Delta$ vor der Klammer mit den Hilfsgrößen steht dort, weil $C_b$ nach
-@koeffizienten bereits $1\/Delta$ enthält, die Klammer also bare Differenzen
-und keine Differenzenquotienten aufnimmt. Die Reihenfolge innerhalb eines
-Zeitschritts ist damit festgelegt: zuerst @pml-psi-hx und @pml-psi-hy, dann
-@pml-update-hx und @pml-update-hy, anschließend @pml-psi-ez und zuletzt
-@pml-update-ez.
-
-Die Größen $b_w$ und $C_w$ hängen nach @pml-bc allein von $sigma_w$ am Ort der
-jeweiligen Komponente ab. Sie sind daher --- wie $C_a$ und $C_b$ --- vor Beginn
-der Zeitschleife einmalig zu berechnen, und zwar als eindimensionale Profile,
-da $sigma_x$ nur von $x$ und $sigma_y$ nur von $y$ abhängt. Im Inneren des Rechengebiets ist
-$sigma_w = 0$ und damit $b_w = 1$ und $C_w = 0$: Die Hilfsgrößen bleiben, vom
-feldfreien Anfangszustand aus, dauerhaft null, und @pml-psi-hx bis
-@pml-update-ez gehen exakt in @update-hx bis @update-ez über. Die Schicht wirkt
-also ausschließlich dort, wo $sigma_w > 0$ ist, und der Übergang ins Innere ist
-ohne Fallunterscheidung stetig. In den vier Ecken des Gebiets überlappen die
-Schichten beider Richtungen; dort sind $sigma_x$ und $sigma_y$ gleichzeitig von
-null verschieden. Auch das erfordert keine Sonderbehandlung, da @pml-update-ez
-ohnehin beide Hilfsgrößen enthält.
-
-Der gesamte Rechenaufwand je Schicht ist somit gering: je Ortsableitung --- also viermal --- eine
-zusätzliche Zahl je Gitterpunkt sowie je Zeitschritt zwei zusätzliche
-Multiplikationen und zwei Additionen. Die Bezeichnung _perfectly matched_ darf allerdings nicht darüber
+Im Inneren des Rechengebiets ist
+$sigma_w = 0$ und damit $b_w = 1$ und $C_w = 0$, sodass die Gleichungen dort exakt in @update-hx bis @update-ez übergehen. Die Bezeichnung _perfectly matched_ darf allerdings nicht darüber
 hinwegtäuschen, dass die Anpassung nur im Kontinuum exakt ist. Auf dem
 diskreten Gitter kommt es gegenüber dem Kontinuum zu systematischen Abweichungen, die im Rahmen der Validierung in Kapitel 5 
 erfasst werden.

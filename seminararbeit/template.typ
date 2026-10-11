@@ -22,7 +22,7 @@
   set page(
     paper: "a4",
     margin: (left: 3cm, right: 2cm, top: 2.5cm, bottom: 2.5cm),
-    numbering: "1",
+    numbering: none,
     number-align: center,
   )
 
@@ -104,6 +104,11 @@
   // ---------------- Inhaltsverzeichnis ----------------
   outline(title: "Inhaltsverzeichnis", indent: auto)
   pagebreak()
+
+  // Seitenzählung beginnt erst mit dem Textteil (Deckblatt und
+  // Inhaltsverzeichnis ohne Seitenzahl)
+  set page(numbering: "1")
+  counter(page).update(1)
 
   doc
 }

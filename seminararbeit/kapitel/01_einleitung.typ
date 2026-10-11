@@ -5,13 +5,12 @@
 
 == Relevanz und Motivation
 
----
 
 Als Apple im September 2023 das iPhone 15 Pro vorstellte, dessen Antennen in den umlaufenden Titanrahmen des Gehäuses integriert sind, war dieses Antennendesign bereits lange Gegenstand der Entwicklung. Möglich ist dies mittels computergestützter Simulationen, die die elektromagnetischen Eigenschaften des Geräts bereits im Voraus simulierten, wodurch der eigentliche Prototyp bereits ein optimiertes Abstrahlverhalten besaß.
 
 Die Schwierigkeit liegt dabei in der Bandbreite: Auf wenigen Zentimetern Gehäuserand müssen Mobilfunkbänder von etwa 600 MHz bis 6 GHz, WLAN bei 2,4, 5 und 6 GHz, Bluetooth, GNSS und NFC bei 13,56 MHz gleichzeitig untergebracht werden. Ein Teil der abgestrahlten Leistung wird dabei nicht nach außen abgegeben, sondern an den inneren Grenzflächen von Display, Platine, Akku und Rückglas reflektiert, im Material absorbiert und in Wärme umgewandelt oder in ungewollte Richtungen gestreut. Da diese Reflexions- und Absorptionseigenschaften stark von der Materialzusammensetzung, den Schichtdicken und der jeweiligen Frequenz abhängen, entsteht ein hochgradig gekoppeltes System. Eine tatsächliche Anfertigung verschiedener Prototypen mit jeweils unterschiedlichen Geometrien und Materialkonfigurationen ist somit aufgrund des finanziellen und zeitlichen Aufwands praktisch nicht realisierbar.
 
-Der Fall steht dabei stellvertretend für eine ganze Klasse technischer Problemstellungen --- vom Antennenarray hinter dielektrischer Abdeckung über die integrierte Photonik bis zur Spulenauslegung in Magnetresonanztomographen. Ihnen allen ist gemeinsam, dass Materialien unterschiedlicher Permittivität $epsilon_r$ und Leitfähigkeit $sigma$ auf unregelmäßigen, häufig gekrümmten oder geschichteten Grenzflächen zusammentreffen. Zwar beschreiben die Maxwell-Gleichungen das Feld bei gegebenen Quellen und Materialeigenschaften vollständig @Maxwell1865, geschlossene Lösungen sind aber nur für wenige hochsymmetrische Idealfälle bekannt: die ebene Welle im homogenen Raum, die Reflexion an einer unendlich ausgedehnten ebenen Grenzfläche, die Streuung an einer Kugel. Entfällt diese Symmetrie, wie in den genannten Testfällen, so ist für das entstehende System partieller Differentialgleichungen im Allgemeinen keine geschlossene analytische Lösung verfügbar.
+Der Fall steht dabei stellvertretend für eine ganze Klasse technischer Problemstellungen --- vom Antennenarray hinter dielektrischer Abdeckung über die integrierte Photonik bis zur Spulenauslegung in Magnetresonanztomographen. Ihnen allen ist gemeinsam, dass Materialien unterschiedlicher Permittivität $epsilon_r$ und Leitfähigkeit $sigma$ auf unregelmäßigen, häufig gekrümmten oder geschichteten Grenzflächen zusammentreffen. Zwar beschreiben die Maxwell-Gleichungen das Feld bei gegebenen Quellen und Materialeigenschaften vollständig @Maxwell1865, geschlossene Lösungen sind aber nur für wenige hochsymmetrische Idealfälle bekannt: die ebene Welle im homogenen Raum, die Reflexion an einer unendlich ausgedehnten ebenen Grenzfläche, die Streuung an einer Kugel. Entfällt diese Symmetrie, wie in den genannten Beispielen, so ist für das entstehende System partieller Differentialgleichungen im Allgemeinen keine geschlossene analytische Lösung verfügbar.
 
 Wo eine analytische Lösung nicht verfügbar ist, treten deshalb numerische Verfahren an ihre Stelle: Das Kontinuum wird in ein endliches Gitter überführt und Differentialquotienten durch Differenzenquotienten angenähert.
 
@@ -19,7 +18,7 @@ Eines der verbreitetsten Verfahren in diesem Zusammenhang ist die _Finite-Differ
 
 Gegenüber dem physikalischen Kontinuum treten auf einem diskreten Gitter systematische Abweichungen auf, deren Ursachen bei der alleinigen Verwendung kommerzieller Blackbox-Programme oder fremder Quelltexte nur eingeschränkt nachvollzogen werden können.
 
-Demnach verfolgt diese Arbeit den Ansatz, die Maxwell-Gleichungen in ein System diskreter Gleichungen zu überführen und daraus einen eigenen FDTD-Löser in Python zu implementieren, welcher anschließend gegen analytisch beschriebene Testfälle gehalten wird. Ziel ist es, die numerische Genauigkeit des Verfahrens zu bestimmen und zu untersuchen, welche Fehlerquellen aus der Diskretisierung hervorgehen.
+Dementsprechend verfolgt diese Arbeit den Ansatz, die Maxwell-Gleichungen in ein System diskreter Gleichungen zu überführen und daraus einen eigenen FDTD-Löser in Python zu implementieren, welcher anschließend gegen analytisch beschriebene Testfälle gehalten wird. Ziel ist es, die numerische Genauigkeit des Verfahrens zu bestimmen und zu untersuchen, welche Fehlerquellen aus der Diskretisierung hervorgehen.
 
 == Historischer Kontext
 

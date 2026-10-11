@@ -3,17 +3,14 @@
 
 = Validierung an analytisch lösbaren Anordnungen
 
-In Kapitel 4 wurden die zuvor hergeleiteten Update-Gleichungen in ein Python Programm überführt. Offen bleibt jedoch weiterhin, inwiefern daraus gewonnene 
-Lösungen tatsächlich ausagekräftig sind und vor allem, ob diese die Eigenschaften elektromagnetischer Wellen korrekt reproduzieren - insbesondere verglichen mit 
+In Kapitel 4 wurden die zuvor hergeleiteten Update-Gleichungen in ein Python-Programm überführt. Offen bleibt jedoch weiterhin, inwiefern daraus gewonnene 
+Lösungen tatsächlich aussagekräftig sind und vor allem, ob diese die Eigenschaften elektromagnetischer Wellen korrekt reproduzieren --- insbesondere verglichen mit 
 analytischen Lösungsansätzen. Vor diesem Hintergrund werden im Folgenden verschiedene Testfälle mittels fdtd_core.py simuliert und anschließend mit analytischen Lösungen verglichen. 
-Ziel ist es zu beurteiöen, ob das Verfahren genau rechnet und wovon mögliche Abweichungen abhängen.
+Ziel ist es, zu beurteilen, ob das Verfahren genau rechnet und wovon mögliche Abweichungen abhängen.
 
 == Fragestellung und Vorgehen <sec-vorgehen>
 
-Ein Programm kann an mehreren Stellen gleichzeitig fehelerhaft sein; eine Anordnung, die zu viele Bestandteile 
-der Simulation (PEC,PML,Dielektrikum etc.) könnte somit im Zweifel keine verwertbare Aussage über den Grund 
-des Fehlers liefern. Aufgrund dessen rückt in den verschiedenen Testfällen jeweils eine andere Testkonfiguration in den Vordergrund, 
-bei der dann jeweils spezifische Testgrößen erfasst und ausgwertet werden:
+Die numerische Validierung gliedert sich in vier Testfälle, die jeweils eine andere Kenngröße erfassen und dem Kontinuum gegenüberstellen:
 #figure(
   table(
     columns: (auto, 1fr, 1fr),
@@ -22,7 +19,7 @@ bei der dann jeweils spezifische Testgrößen erfasst und ausgwertet werden:
     [1 --- Ausbreitung im Vakuum], [Update-Gleichungen, Zeitschritt],
       [Phasengeschwindigkeit],
     [2 --- PEC-Hohlraumresonator], [Randbedingung, Langzeitverhalten],
-      [Eigenfrequenzen, Energieerhaltung],
+      [Energieerhaltung],
     [3 --- Materialgrenzfläche], [Materialkoeffizienten],
       [Fresnel-Koeffizienten],
     [4 --- Absorbierender Rand], [Randschicht],
@@ -40,8 +37,8 @@ werden jedoch als sehr gering eingeschätzt und werden somit im weiteren Verlauf
 berücksichtigt. 
 
 Von besonderer Bedeutung für das Kapitel wird ohnehin nicht der absolute Fehler sein, sondern vielmehr, wie sich dieser verhält -- beispielsweise 
-in Abhängigkeit von der Gitterbreite. Dadurch gewinnt das Verfahren an Aussagekraft und durch die Erkentniss über das Fehlerverhalten können  
-tatsächlichen Anwendungen auf einen möglichst kleinen Fehler optimiert werden. 
+in Abhängigkeit von der Gitterbreite. Dadurch gewinnt das Verfahren an Aussagekraft und durch die Erkenntnis über das Fehlerverhalten können  
+tatsächliche Anwendungen auf einen möglichst kleinen Fehler optimiert werden. 
 
 Aussagekräftig ist das Fehlerverhalten vor allem in Abhängigkeit von zwei
 Größen. Nach @Schneider2010[S. 113] bestimmen nicht die absoluten Schrittweiten
@@ -55,26 +52,22 @@ Ergebnis gilt somit für jede Frequenz und jede Gittergröße gleichermaßen; da
 Fehlerverhalten wird deshalb in allen Testfällen über $N_lambda$ und $S$
 untersucht.
 
-Um nicht für jedes $N_lambda$ eigene Testläufe mit jeweils einer anderen Frequenz durchführen zu müssen, tritt in den Testfällen an die Stelle der harmonischen Quelle ein Puls. Konkret wird im Folgenden der _Ricker-Puls_ verwendet, also die zweite Ableitung der Gaußkurve @Schneider2010[S.118, eq.(5.20)]. Ähnlich wie der Gaußpuls enthält dieser ein breites Frequenzspektrum, besitzt jedoch keinen Gleichanteil, welcher im Gitter teils unphysikalische Artefakte erzeugen kann. Da nach @nlambda jede Frequenz bei gleicher Gitterbreite einer anderen Auflösung entspricht, liefert ein einziger Lauf nach der Fourier-Transformation aus @sec-auswertung die Ergebnisse für verschiedene $N_lambda$ zugleich. 
+Um nicht für jedes $N_lambda$ eigene Testläufe mit jeweils einer anderen Frequenz durchführen zu müssen, tritt in den Testfällen an die Stelle der harmonischen Quelle ein Puls. Konkret wird im Folgenden der _Ricker-Puls_ verwendet, also die zweite Ableitung der Gaußkurve @Schneider2010[S. 118, Gl. (5.20)]. Da nach @nlambda jede Frequenz bei gleicher Gitterbreite einer anderen Auflösung entspricht, liefert ein einziger Lauf nach der Fourier-Transformation die Ergebnisse für verschiedene $N_lambda$ zugleich. 
 
 
-Der Code ist in dem Folgenden Kapitel nicht einsehbar, jedoch befindet sich ein Link zu dem _Github_ Archiv mit allen Dateien im Anhang. 
+Der Code ist in dem folgenden Kapitel nicht einsehbar, jedoch befindet sich ein Link zu dem _GitHub_-Archiv mit allen Dateien im Anhang. 
 Jegliche Diagramme wurden mithilfe der Bibliothek `matplotlib` erstellt.
 
 == Testfall 1 --- Ebene Welle im Vakuum <sec-tf1>
 
-Im ersten Testfall steht alleine die Aubreitung im Vakuum im Zentrum. Dementsprechend werden 
+Im ersten Testfall steht alleine die Ausbreitung im Vakuum im Zentrum. Dementsprechend werden 
 lediglich die Update-Gleichungen @update-hx bis @update-ez mit  $C_a = 1$, $C_b = Delta t\/(epsilon_0 Delta)$ und die Wahl 
 des Zeitschrittes geprüft; die PML begrenzt lediglich das Gebiet. 
 
 === Aufbau und Messgröße
 
-Eine Gitterlinie wird nach @sec-quellen mit Stromquellen $J_z$ besetzt
-(@abb:tf1-aufbau). Speisen alle Quellen gleichphasig ein, entsteht eine ebene
-Welle in $x$-Richtung ($theta = 0$). Für eine schräge Ausbreitung unter dem
-Winkel $theta$ wird jede Quelle um
 
-Nach @sec-quellen wird eine Gitterlinie mit mehreren Stromquellen $J_z$ besetzt @abb:tf1-aufbau, welche durch gleichphasige Einspeisung eine ebene Welle in $x$-Richtung erzeugen ($theta=0$). Für eine schräge Ausbreitung  um $theta$ wird die jeweilige Einspeisung der Punktquellen um 
+Nach @sec-quellen wird eine Gitterlinie mit mehreren Stromquellen $J_z$ besetzt (@abb:tf1-aufbau), welche durch gleichphasige Einspeisung eine ebene Welle in $x$-Richtung erzeugen ($theta=0$). Für eine schräge Ausbreitung  um $theta$ wird die jeweilige Einspeisung der Punktquellen um 
 
 $ t_d = (y sin theta)/c $ <tf1-verzoegerung>
 
@@ -90,7 +83,7 @@ einer um $theta$ gekippten Front überlagern.
 
 
 
-Parallel zur Ausbreitungsrichtung werden zwei Sonden $P_1$ und $P_2$ mit dem Abstand L registriert ; die FFT liefert für jegliche Frequenzen jeweils Frequenz und Phase. Da eine Fläche konstanter Phase die Strecke $L$ in der Zeit $L\/tilde(v)_p$ zurücklegt ergibt sich die Phasendifferenz $Delta phi(f) = 2 pi f L\/tilde(v)_p$, woraus für die Phasengeschwindigkeit folgt:
+Parallel zur Ausbreitungsrichtung werden zwei Sonden $P_1$ und $P_2$ mit dem Abstand $L$ registriert; die _Fast Fourier Transformation_ liefert für jegliche Frequenzen jeweils Amplitude und Phase. Da eine Fläche konstanter Phase die Strecke $L$ in der Zeit $L\/tilde(v)_p$ zurücklegt, ergibt sich die Phasendifferenz $Delta phi(f) = 2 pi f L\/tilde(v)_p$, woraus für die Phasengeschwindigkeit folgt:
 
 $ tilde(v)_p (f) = (2 pi f L)/(Delta phi(f)). $ <tf1-vp>
 
@@ -117,13 +110,13 @@ Frequenz und Richtung. Variiert werden $N_lambda$, die Courant-Zahl $S$
 ) <abb:tf1-anisotropie>
 
 
-Aus @abb:tf1-dispersion und @abb:tf1-anisotropie folgen drei systematische Erkentnisse.
+Aus @abb:tf1-dispersion und @abb:tf1-anisotropie folgen drei systematische Erkenntnisse.
 So ist die Phasengeschwindigkeit im Gitter stets langsamer als im Kontinuum, wobei die Abweichung mit abnehmender Auflösung zunimmt;
-im doppelt-logarithmischen Diagramm verläuft sie annähernd parallel mit einer Geraden der Steigung $-2$, sodass die Abweichung mit $N_lambda^(-2)$ fällt. Außerdem  zeigt sich eine Anisotropie von $tilde(v)_p$: Längs der Gitterachsen ist die Welle am langsamsten, längs der Diagonalen schneller; Für $S=0.99$ beinahe $c$.
-Visuell lässt sich das Phänomen der Frequenzunabhängigkeit besonders bei der Betrachtung eines Pulses beobachten (@abb:tf1-dispersion): 
+im doppelt-logarithmischen Diagramm verläuft sie annähernd parallel mit einer Geraden der Steigung $-2$, sodass die Abweichung mit $N_lambda^(-2)$ fällt. Außerdem  zeigt sich eine Anisotropie von $tilde(v)_p$: Längs der Gitterachsen ist die Welle am langsamsten, längs der Diagonalen schneller; für $S = 0,99$ beinahe $c$.
+Visuell lässt sich das Phänomen der Frequenzabhängigkeit besonders bei der Betrachtung eines Pulses beobachten (@abb:tf1-puls): 
 Bei grober Auflösung zerfällt der Puls in einen langen Nachlauf, bei feiner bleibt er erhalten. 
 
- Diese Ergebnisse widersprechen zunächst den in @sec-material getroffenen Vereinfachungen der Richtungs- und Frequenzunabhängigkeit. Zurückzuführen sind sie auf die numerische Dispersion @Taflove2005[S.107].
+ Diese Ergebnisse widersprechen zunächst den in @sec-material getroffenen Vereinfachungen der Richtungs- und Frequenzunabhängigkeit.
 
 #figure(
   image("../abbildungen/testfall_a_pulszerfliessen.pdf", width: 80%),
@@ -135,14 +128,14 @@ Bei grober Auflösung zerfällt der Puls in einen langen Nachlauf, bei feiner bl
 === Deutung: numerische Dispersion
 
 
-Im Kontinuum folgt die Aubreitunsgeschiwndigkeit aus der Dispersionsrelation @dispersion, die sich in @sec-dispersionsrelation, die aus dem Einsetzen einer ebenen Welle in die Wellengleichung folgte. Die gleiche Vorgehensweise läasst sich auch auf das Gitter anwenden @Taflove2005[S.108]: In die verlustfreien Update-Gleichungen wird die an Gitterpunkten abgetastete ebene Welle 
+Im Kontinuum folgt die Ausbreitungsgeschwindigkeit aus der Dispersionsrelation @dispersion, die in @sec-dispersionsrelation aus dem Einsetzen einer ebenen Welle in die Wellengleichung folgte. Die gleiche Vorgehensweise lässt sich auch auf das Gitter anwenden @Taflove2005[S. 108]: In die verlustfreien Update-Gleichungen wird die an Gitterpunkten abgetastete ebene Welle 
 
 $ E_z bar.v_(i\,j)^n = E_0 thin
   e^(upright(i)(omega n Delta t - tilde(k)_x i Delta - tilde(k)_y j Delta)) $ <tf1-ansatz>
 
 sowie ein entsprechender Ansatz mit den Amplituden $H_(x 0)$ und $H_(y 0)$ für
 $H_x$ und $H_y$ eingesetzt. Nach Vereinfachung bleiben aus den drei Update-Gleichungen drei
-algebraische Gleichungen für die Amplituden @Taflove2005[S. 109, mod. eq.(4.4a-c)]:
+algebraische Gleichungen für die Amplituden @Taflove2005[S. 109, mod. Gl. (4.4a--c)]:
 
 $ H_(x 0) = (Delta t thin E_(z 0))/(mu_0 Delta)
   dot sin(tilde(k)_y Delta\/2)/sin(omega Delta t\/2) , $ <tf1-hx0>
@@ -164,12 +157,12 @@ $ [1/(c Delta t) sin((omega Delta t)/2)]^2
   + [1/Delta sin((tilde(k)_y Delta)/2)]^2 . $ <num-dispersion>
 
 
-Für $Delta, Delta t -> 0$ folgt aus der Kleinwinkelnäherung $sin x approx x$ und @num-dispersion geht in $omega^2\/c^2 = k_x^2+k_y^2$ sprich in die Dispersionsrelation des Kontinuums über. Bei endlicher Schrittweite dagegen hängt $tilde(k)$ nichtlinear von $omega$ ab:
+Für $Delta, Delta t -> 0$ geht @num-dispersion mit der Kleinwinkelnäherung $sin x approx x$ in $omega^2\/c^2 = k_x^2+k_y^2$, sprich in die Dispersionsrelation des Kontinuums, über. Bei endlicher Schrittweite dagegen hängt $tilde(k)$ nichtlinear von $omega$ ab:
 $tilde(v)_p = omega\/tilde(k)$ wird frequenzabhängig, und das Gitter verhält sich
-wie ein dispersives Medium, entgegen der Vereinfachung die im Kontinuum festgelegt wurde.
+wie ein dispersives Medium, entgegen der Vereinfachung, die im Kontinuum festgelegt wurde.
 Über
 $tilde(k)_x = tilde(k) cos theta$ und $tilde(k)_y = tilde(k) sin theta$ geht
-zudem die Richtung ein; das Gitter weißt folglich eine Richtungsabhängigkeit auf  @Taflove2005[S. 107].
+zudem die Richtung ein; das Gitter weist folglich eine Richtungsabhängigkeit auf  @Taflove2005[S. 107].
 
 Mit $S_c = S\/sqrt(2)$ aus @sec-cfl und $N_lambda$ lässt sich @num-dispersion
 umformen zu @Taflove2005[S. 109, Gl. (4.6)]
@@ -198,23 +191,23 @@ Längs der Gitterdiagonalen ist die Ausbreitung dann dispersionsfrei
 Folge: Seine hochfrequenten, schlechter aufgelösten Anteile laufen langsamer und
 bleiben als Nachlauf zurück @Taflove2005[S. 107].
 
-Die numerische Dispersion ist Folge des Abbruchsfehlers aus @sec-finite-differenzen, der zweiter Ordnung war --
+Die numerische Dispersion ist Folge des Abbruchfehlers aus @sec-finite-differenzen, der zweiter Ordnung war --
 die Auswirkungen dieses Fehlers zeigen sich also direkt in der Physik.
-Während die Abweichung der Geschwindigkeit im niederschwelligen Prozentbereich als sehr gering erscheint, ergibt sich daraus ein Fehler der sich mit der Zeit linear aufsummiert. Nach längerer Simulationsdauer kann es somit zu einer völlig verfälschten Phase kommen, weshalb die Kentniss über die Größe des Fehlers von großer Relevanz für die sinngemäße Anwendung des FDTD-Verfahrens ist @Schneider2010[S.166].
+Während die Abweichung der Geschwindigkeit im niederschwelligen Prozentbereich als sehr gering erscheint, ergibt sich daraus ein Fehler, der sich mit der Zeit linear aufsummiert. Nach längerer Simulationsdauer kann es somit zu einer völlig verfälschten Phase kommen, weshalb die Kenntnis über die Größe des Fehlers von großer Relevanz für die sachgemäße Anwendung des FDTD-Verfahrens ist @Schneider2010[S. 166].
 
 
 == Testfall 2 --- Energieerhaltung und Langzeitstabilität <sec-tf2>
-In diesem Testfall werden insbesondere die Langzeitstabilität und die Fähigkeit der Simulation Energie zu konservieren auf die Probe gestellt. Von besonderer Bedeutung wird dabei auch die in Abschnitt @sec-cfl definierte Stabilitätszahl $S$ sein. 
+In diesem Testfall werden insbesondere die Langzeitstabilität und die Fähigkeit der Simulation, Energie zu konservieren auf die Probe gestellt. Von besonderer Bedeutung wird dabei auch die in @sec-cfl definierte Stabilitätszahl $S$ sein. 
 
 === Aufbau und Messgröße
 
 
-Ein quadratisches Gebiet von $101 times 101$ quadratischen Zellen mit $Delta = 1 "mm"$ wird angesetzt und an die Stelle der PML als Randschicht tritt ein ideal leitender Rand (@sec-pec). In der Mitte wird eine Stromquelle $J_Z$ platziert, die das Simulationsgebiet einmalig mit einem Ricker-Puls ansetzt. Danach wird dem System keinerlei Energie mehr zugeführt und das Feld wird an den Simulationsrändern vollständig reflektiert, sodass keine Energie das System verlässt. Gerechnet wird mit
+Ein quadratisches Gebiet von $101 times 101$ quadratischen Zellen mit $Delta = 1 "mm"$ wird angesetzt und an die Stelle der PML als Randschicht tritt ein ideal leitender Rand (@sec-pec). In der Mitte wird eine Stromquelle $J_z$ platziert, die das Simulationsgebiet einmalig mit einem Ricker-Puls anregt. Danach wird dem System keinerlei Energie mehr zugeführt und das Feld wird an den Simulationsrändern vollständig reflektiert, sodass keine Energie das System verlässt. Gerechnet wird mit
 $S = 0,5$, $0,99$ und $1$ über $20 thin 000$ Zellen Laufweg, also rund $200$
 Durchquerungen des Hohlraums, sowie zum Vergleich mit $S = 1,01$ und $1,05$
 knapp oberhalb der Stabilitätsgrenze @cfl.
 
-Gemessen wird dabei die Energie, die im Gitter gespeichert ist. Für den diskreten Fall ist die Gesamtenergie in einem Gitter für den TM#sub[z]-Fall durch @Schuhmann2001[Gl.(27)]:
+Gemessen wird dabei die Energie, die im Gitter gespeichert ist. Für den diskreten Fall ist die Gesamtenergie in einem Gitter für den TM#sub[z]-Fall gegeben durch @Schuhmann2001[Gl. (27)]:
 
 $ W^n = Delta^2/2 sum_(i,j) [epsilon_0 (E_z bar.v_(i\,j)^n)^2
   + mu_0 (H_x^(n-1/2) H_x^(n+1/2) + H_y^(n-1/2) H_y^(n+1/2))] . $ <tf2-energie>
@@ -228,7 +221,7 @@ $-integral bold(E) dot bold(J) thin d A$ der Ströme und durch Energiefluss übe
 den Rand @GriffithsDE[Gl. (8.9)]. An der ideal leitenden Wand verschwindet
 $E_z$ und damit der Energiefluss. Dieselbe Bilanz gilt auch im Gitter
 @Schuhmann2001[vgl. S. 307, Gl. (30)]; für die zeitdiskrete Form an der
-Quellzelle ergibt sich (eigene Rechnung)
+Quellzelle ergibt sich 
 
 $ W_Q^n = - sum_(k=0)^(n-1) Delta^2 Delta t thin J_z^(k+1/2)
   (E_z^k + E_z^(k+1))/2 . $ <tf2-einspeisung>
@@ -251,38 +244,45 @@ $ W^n = W_Q^n , $ <tf2-soll>
 ) <abb:tf2-energie>
 
 
-Für $S <= 1$ steigt die Energie anfangs aufgrund der Arbeit der Quelle an und bleibt nach dem Abschalten der Quelle weitesgehend konstant. Über die gesamte Simulationsdauer weichen $W$ und $W_Q$ dabei um maximal $10 ^(-15)$ voneinander ab, ohne merklichen zeitlichen Zuwachs der Abweichung. 
+Für $S <= 1$ steigt die Energie anfangs aufgrund der Arbeit der Quelle an und bleibt nach dem Abschalten der Quelle weitestgehend konstant. Über die gesamte Simulationsdauer weichen $W$ und $W_Q$ dabei um maximal $10 ^(-15)$ voneinander ab, ohne merklichen zeitlichen Zuwachs der Abweichung. 
 
-Oberhalb von $S=1$ ändert sich diese Stabilität fundamental. Mit dem Fortschreiten der Zeit wächst die Energie exponetiell an -- im logarithmischen Diagramm als Gerade -- und übertrifft die eingespeiste Energie nach nur kurzer Laufdauer um mehrere Größenordnungen. 
+Oberhalb von $S=1$ ändert sich diese Stabilität fundamental. Mit dem Fortschreiten der Zeit wächst die Energie exponentiell an -- im logarithmischen Diagramm als Gerade -- und übertrifft die eingespeiste Energie nach nur kurzer Laufdauer um mehrere Größenordnungen. 
 
 
 === Deutung
 
-Dass die Energiebilanz @tf2-soll für $S <= 1$ bis auf $10^(-15)$ erfüllt ist,
-liegt am Yee-Verfahren selbst. Das Feld im Hohlraum lässt sich als Überlagerung
-von _Eigenschwingungen_ mit festen Kreisfrequenzen $omega_ell$ auffassen.
-Solange $omega_ell Delta t <= 2$ gilt, verschiebt ein Zeitschritt bei jeder
-dieser Schwingungen nur die Phase; ihre Amplitude und damit die Energie bleiben
-exakt erhalten @Schuhmann2001[S. 309 f.]. Da diese Bedingung auch für die
-höchste Frequenz gelten muss, die das Gitter darstellen kann, entspricht sie
-genau $S <= 1$, also @cfl (eigene Rechnung). Die Restabweichung von $10^(-15)$
-geht allein auf Rundungsfehler zurück (vgl. @sec-vorgehen).
+Dass die Energie für $S <= 1$ bis auf $10^(-15)$ erhalten bleibt (@tf2-soll),
+liegt am Yee-Verfahren selbst. Das Feld im Hohlraum lässt sich, ähnlich wie bei
+einer schwingenden Saite, als Summe einfacher Schwingungsmuster auffassen, der
+_Eigenschwingungen_. Jedes Muster schwingt mit einer eigenen Kreisfrequenz
+$omega_ell$; je feiner das Muster, desto schneller schwingt es. Das
+Leapfrog-Verfahren verfolgt jede dieser Schwingungen Zeitschritt für Zeitschritt.
+Solange ein Zeitschritt im Vergleich zur Schwingungsdauer kurz genug ist,
+genauer $omega_ell Delta t <= 2$, wird die Schwingung in jedem Schritt nur ein
+Stück weitergeführt; ihre Amplitude und damit die Energie bleiben unverändert
+@Schuhmann2001[S. 309 f.]. Am schnellsten schwingt das feinste Muster, das das
+Gitter darstellen kann, bei dem das Feld von Zelle zu Zelle das Vorzeichen
+wechselt. Erfüllt dieses die Bedingung, so erfüllen sie auch alle anderen Muster;
+genau das ist bei $S <= 1$, also @cfl, der Fall (eigene Rechnung). Die verbleibende
+Abweichung von $10^(-15)$ ist ein reiner Rundungsfehler (vgl. @sec-vorgehen).
 
-Für $S > 1$ überschreiten die höchsten Frequenzen diese Grenze. Schon durch
-Rundungsfehler angeregt, werden sie in jedem Schritt um denselben Faktor
-verstärkt @Schuhmann2001[vgl. Gl. (44)] --- die Energie wächst exponentiell, im
-logarithmischen Diagramm als Gerade (@abb:tf2-energie, aufgetragen als Summe
-der Feldquadrate).
+Für $S > 1$ ist der Zeitschritt für die feinsten Muster zu lang: Das Verfahren
+kann ihrer Schwingung nicht mehr folgen und schießt in jedem Schritt über,
+sodass ihre Amplitude jedes Mal um denselben Faktor wächst. Da schon kleinste
+Rundungsfehler diese Muster enthalten, wächst die Energie exponentiell
+@Schuhmann2001[vgl. Gl. (44)] und erscheint im logarithmischen Diagramm als
+Gerade (@abb:tf2-energie, dort als Summe der Feldquadrate aufgetragen).
 
-Ein systematischer Fehler zeigt sich allein in der eingespeisten Energie: Bei
+Systematisch weicht allein die eingespeiste Energie ab: Bei
 $S = 0,5$ liegt $W_Q$ um knapp $1 %$ über dem Wert bei $S = 0,99$. Da die
-Differenz mit $N_lambda^(-2)$ fällt (eigene Kontrollrechnung), deutet sie wie in
-Testfall 1 auf den Abbruchfehler zweiter Ordnung (@sec-finite-differenzen) hin.
-
+Differenz mit $N_lambda^(-2)$ fällt, geht sie wie in Testfall 1 auf den
+Abbruchfehler zweiter Ordnung (@sec-finite-differenzen) zurück. Ursache ist,
+dass eine Punktquelle im Kontinuum unendlich klein ist, im Gitter dagegen eine
+Zelle der Breite $Delta$ einnimmt.
 
 == Testfall 3 --- Reflexion und Transmission an einer dielektrischen Grenzfläche <sec-tf3>
 
-In diesem Testfall wird durch ein Dielektrikum eine Reflexion hervorgerufen. Dabei wird insbesondere geprüft ob die Reflexions - und Transmissionskoeffizienten mit dem Kontinuum übereinstimmen. 
+In diesem Testfall wird durch ein Dielektrikum eine Reflexion hervorgerufen. Dabei wird insbesondere geprüft, ob die Reflexions- und Transmissionskoeffizienten mit dem Kontinuum übereinstimmen. 
 
 === Aufbau und Messgröße
 
@@ -299,9 +299,9 @@ In der Versuchsanordnung wird das Dielektrikum mit `set_material_box` ab der Spa
 $i_G$ gesetzt. In beiden Materialien befindet sich jeweils eine Messsonde.
 Ergänzend wird eine weitere Simulation durchgeführt, die sich nur darin unterscheidet, dass diesmal kein Dielektrikum vorhanden ist, die Impedanz also durchweg gleich bleibt. 
 
-Nach @Schneider2010[S.136 f.] wird zweimal gerechnet: Aus Lauf A ohne Dielektrikum ergibt sich die einfallende Welle, während aus Lauf B mit Dielektrikum das Gesamtfeld folgt. 
+Nach @Schneider2010[S. 136 f.] wird zweimal gerechnet: Aus Lauf A ohne Dielektrikum ergibt sich die einfallende Welle, während aus Lauf B mit Dielektrikum das Gesamtfeld folgt. 
 Da $Gamma$ und $T$ im
-Frequenzbereich definiert sind, werden die Spektren (@sec-auswertung)
+Frequenzbereich definiert sind, werden die Spektren
 frequenzweise geteilt @Schneider2010[S. 137]. Aus den beiden Testläufen folgt so in Abhängigkeit der Frequenz für die Fresnel-Koeffizienten @Schneider2010[vgl. S. 144]:
 
 
@@ -321,7 +321,7 @@ $ Gamma_"Sim"= abs(hat(E)_B - hat(E)_A)/abs(hat(E)_A) bar.v_(P_r) ,
     von @tf3-fresnel mit einer Vergleichsgeraden der Steigung $-2$.],
 ) <abb:tf3-courant>
 
-Die beiden numerischen Koeffizienten liegen jeweils über den Fresnel-Werten: Bei $N_lambda  = 10$ bei etwa $0,42$ statt $1\/3$. Mit wachsender Auflösung kovergieren sie gegen die aus @tf3-fresnel berechneten Werte. Aus @abb:tf3-courant folgt zudem eine quadratische Abnahme dieser Abweichung mit $N_lambda^(⁻2)$, wohingegen die Courant-Zahl anders als in Testfall 1 kaum Einfluss nimmt. Mit der Permittivität wächst die Abwiechung dagegen deutlich (@abb:tf3-material). 
+Die beiden numerischen Koeffizienten liegen jeweils über den Fresnel-Werten: Bei $N_lambda  = 10$ bei etwa $0,42$ statt $1\/3$. Mit wachsender Auflösung konvergieren sie gegen die aus @tf3-fresnel berechneten Werte. Aus @abb:tf3-courant folgt zudem eine quadratische Abnahme dieser Abweichung mit $N_lambda^(-2)$, wohingegen die Courant-Zahl anders als in Testfall 1 kaum Einfluss nimmt. Mit der Permittivität wächst die Abweichung dagegen deutlich (@abb:tf3-material). 
 #figure(
   image("../abbildungen/testfall_d_material.pdf", width: 100%),
   caption: [Links: $abs(Gamma_"Sim")$ bezogen auf den Fresnel-Wert für
@@ -388,7 +388,7 @@ $ tilde(Gamma) = (n_1 cos(tilde(k)_2 Delta\/2) - n_2 cos(tilde(k)_1 Delta\/2))
 Bei kleiner Zellbreite nähern sich die Kosinusfaktoren eins und @tf3-gitter geht in @tf3-fresnel über. 
 
 
-Die quadratische Ordnung des aus den Kosinusfaktoren folgenden Fehlers lässt sich mittels $cos x approx 1 -x² \/2$ und mittels Kleinwinkelnäherung von @num-dispersion-n,  aus welcher $tilde(k)_ell Delta\/2 approx pi n_ell\/N_lambda$ folgt, zeigen: 
+Die quadratische Ordnung des aus den Kosinusfaktoren folgenden Fehlers lässt sich mittels $cos x approx 1 - x^2 \/2$ und mittels Kleinwinkelnäherung von @num-dispersion-n,  aus welcher $tilde(k)_ell Delta\/2 approx pi n_ell\/N_lambda$ folgt, zeigen: 
 
 $ abs(tilde(Gamma))/abs(Gamma) approx 1 + (n_1 n_2 pi^2)/N_lambda^2 . $ <tf3-naeherung>
 
@@ -398,102 +398,117 @@ Damit sind die Befunde aus @abb:tf3-courant und @abb:tf3-material erklärt, dass
 
 == Testfall 4 --- Absorbierender Rand <sec-tf4>
 
-In diesem Testfall steht die PML aus @sec-pml im Vordergrund. Geprüft wird, ob
-sie eine auslaufende Welle so weit absorbiert, wie es die vorgegebene
-Restreflexion $abs(R(0))$ verspricht, und wovon die tatsächlich verbleibende
-Reflexion abhängt. Anders als in den übrigen Testfällen steht dabei nicht die
-Auflösung $N_lambda$ im Vordergrund, sondern die Dicke der Schicht in Zellen.
+In diesem Testfall steht die PML aus @sec-pml im Vordergrund. Nach
+@pml-restreflexion-profil entspricht die Reflexion im Kontinuum genau der
+vorgegebenen Restreflexion $abs(R(0))$ und hängt nicht von der Frequenz ab.
+Geprüft wird, ob dies im Gitter gilt und welche Rolle die Dicke der Schicht
+spielt.
 
 === Aufbau und Messgröße
 
-Im Mittelpunkt eines quadratischen Gebiets von $200 times 200$ Zellen speist
-eine einzelne Stromquelle $J_z$ nach @sec-quellen einen Ricker-Puls ein, sodass
-sich eine Zylinderwelle ausbreitet. Auf der Achse durch die Quelle liegt
-$95$ Zellen entfernt, also $5$ Zellen vor der PML, eine Sonde $P$, an der die
-Welle senkrecht auf die Schicht trifft. Die Reflexion wird genau wie beim
-Dielektrikum in Testfall 3 (@sec-tf3) aus zwei Testläufen bestimmt; an die
-Stelle des Laufs ohne Dielektrikum tritt hier ein Gebiet von $600 times 600$
-Zellen, dessen Rand während der Messdauer nicht erreicht wird. Dasselbe
-Vorgehen verwendet @Taflove2005[S. 314, Abb. 7.2] zur Prüfung einer PML: eine
-Stromquelle im Zentrum und als Referenz ein so großes Gitter, dass von dessen
-Rändern während der betrachteten Zeitspanne keine Reflexionen eintreffen.
-Aufgezeichnet
-wird nur so lange, bis die Sonde von Reflexionen der übrigen Ränder erreicht
-würde. Die gemessene Reflexion $abs(R_"Sim")$ folgt damit wie $Gamma_"Sim"$ aus
-@tf3-messung, ausgewertet an der Sonde $P$.
+Im Mittelpunkt eines Gebiets von $200 times 200$ Zellen speist eine
+Stromquelle $J_z$ nach @sec-quellen einen Ricker-Puls ein, sodass sich eine
+Zylinderwelle ausbreitet. $95$ Zellen entfernt, also $5$ Zellen vor der PML,
+liegt auf der Achse die Sonde $P$, an der die Welle senkrecht auf die Schicht
+trifft. Die Reflexion wird wie in Testfall 3 (@sec-tf3) aus zwei Läufen
+bestimmt; an die Stelle des Laufs ohne Dielektrikum tritt ein Gebiet von
+$600 times 600$ Zellen, dessen Rand während der Messdauer nicht erreicht wird @Taflove2005[S. 314, Abb. 7.2]. $abs(R_"Sim")$
+folgt damit aus @tf3-messung.
 
-Sollgröße ist die in `fdtd_core.py` als `r0` vorgegebene Restreflexion
-$abs(R(0))$, aus der nach @pml-sigmamax die maximale Leitfähigkeit $sigma_max$
-folgt. Variiert werden die Dicke der Schicht zwischen $4$ und $30$ Zellen, die
-Vorgabe $abs(R(0))$ zwischen $10^(-1)$ und $10^(-20)$; ausgewertet wird bei
-$N_lambda = 10$. Das Profil bleibt kubisch ($m = 3$), die Courant-Zahl beträgt
-$S = 0,99$.
+Variiert werden die Vorgabe $abs(R(0))$ zwischen $10^(-1)$ und $10^(-20)$ für
+$5$, $10$ und $20$ Zellen bei $N_lambda = 10$. Um das Zusammenspiel von Dicke
+$n$, Vorgabe und Auflösung zu erfassen, wird zusätzlich jede Kombination aus
+$n$ zwischen $2$ und $30$ Zellen und $39$ Vorgaben gemessen; da der
+Ricker-Puls ein breites Spektrum enthält, liefert jeder Lauf zugleich alle
+$N_lambda$ zwischen $7$ und $30$. Das Profil bleibt kubisch ($m = 3$), die
+Courant-Zahl beträgt $S = 0,99$.
 
 === Ergebnis
 
 #figure(
   image("../abbildungen/testfall_c_restreflexion.pdf", width: 100%),
-  caption: [Gemessene Reflexion der PML bei $N_lambda = 10$. Links: über der
-    Dicke der Schicht für drei Vorgaben, punktiert die Vorgaben $10^(-3)$ und
-    $10^(-6)$. Rechts:
-    über der Vorgabe $abs(R(0))$ für zwei Schichtdicken, punktiert
-    $abs(R_"Sim") = abs(R(0))$, gestrichelt der Standardwert $10^(-6)$ von
-    `fdtd_core.py`.],
+  caption: [Gemessene Reflexion der PML bei senkrechtem Einfall. Links: über
+    der Vorgabe $abs(R(0))$ für drei Dicken bei $N_lambda = 10$, punktiert
+    $abs(R_"Sim") = abs(R(0))$, gestrichelt der Standardwert von
+    `fdtd_core.py`. Rechts: kleinste Reflexion je Dicke (beste Vorgabe) für
+    vier Auflösungen $N_lambda$.],
 ) <abb:tf4-restreflexion>
 
-Die Dicke der Schicht bestimmt die Reflexion am stärksten
-(@abb:tf4-restreflexion, links). Bei nur vier Zellen werden unabhängig von der
-Vorgabe mehrere Prozent der Welle zurückgeworfen. Mit wachsender Dicke fällt die
-Reflexion für den Standardwert $10^(-6)$ stetig und erreicht die Vorgabe erst
-bei $20$ bis $25$ Zellen. Für $10^(-3)$ endet der Abfall dagegen bereits nach
-etwa acht Zellen; eine dickere Schicht bringt dort keinen Gewinn mehr, die
-Reflexion bleibt unterhalb der Vorgabe und nähert sich ihr langsam an. Die
-strengste Vorgabe $10^(-16)$ reflektiert bei fast allen Dicken sogar stärker als
-der Standardwert.
+Für schwache Vorgaben folgt die gemessene Reflexion der Vorgabe
+(@abb:tf4-restreflexion, links), löst sich dann jedoch von ihr und steigt für
+strengere Vorgaben wieder an. Eine kleinere Vorgabe führt also nicht
+zwangsläufig zu weniger Reflexion: Bei $10$ Zellen liegt der Tiefstwert bei
+$1,2 dot 10^(-5)$, für $abs(R(0)) = 10^(-20)$ dagegen bei
+$5 dot 10^(-4)$. Der schmale Einbruch bei $10^(-8)$ entsteht, weil sich dort
+zwei Reflexionsanteile gegenseitig auslöschen (eigene Kontrollrechnung). Mit
+wachsender Dicke sinkt das Minimum deutlich, von
+$2,8 dot 10^(-3)$ bei $5$ auf $1,6 dot 10^(-6)$ bei $20$ Zellen.
 
-Deutlicher zeigt dies die Auftragung über der Vorgabe (@abb:tf4-restreflexion,
-rechts). Zunächst folgt die gemessene Reflexion der Vorgabe, löst sich unterhalb
-von etwa $10^(-4)$ bei $10$ Zellen bzw. $10^(-5)$ bei $20$ Zellen jedoch von ihr.
-Bei $10$ Zellen steigt sie für sehr strenge Vorgaben wieder an und liegt bei
-$10^(-20)$ um mehr als eine Größenordnung über dem Tiefstwert; der schmale
-Einbruch bei $10^(-8)$ entsteht, weil sich dort zwei Reflexionsanteile
-gegenseitig auslöschen (eigene Kontrollrechnung). Bei $20$ Zellen
-liegt der Tiefstwert rund eine Größenordnung niedriger, und der Anstieg fällt
-deutlich flacher aus.
+Rechts in @abb:tf4-restreflexion ist für jede Dicke die mit der besten Vorgabe
+erreichbare Reflexion bei vier Auflösungen aufgetragen.
+Dabei zeigt sich, dass die gemessene Reflexion sowohl für größere $N_lambda$ als auch für mehr PML-Zellen sinkt.
+
 
 === Deutung
 
-Im Kontinuum lässt sich die Restreflexion nach @pml-restreflexion-profil über
-$sigma_max$ beliebig verkleinern. Im Gitter springt die Leitfähigkeit jedoch von
-Zelle zu Zelle, und jeder Sprung wirft wie eine kleine Grenzfläche einen Teil der
-Welle zurück @Schneider2010[S. 309]. Der Potenzverlauf @pml-profil hält diese
-Sprünge am Eingang klein und legt die großen in die Tiefe, wo die Felder bereits
-abgeklungen sind @Taflove2005[S. 293]. Die gemessene Reflexion setzt sich daher
-aus zwei Anteilen zusammen @Taflove2005[S. 293]: der Reflexion am ideal
-leitenden Rand hinter der Schicht, die nach @pml-restreflexion-profil der
-Vorgabe entspricht (Kontinuumsanteil), und einem Diskretisierungsanteil, der mit
-der Größe der Sprünge wächst.
+Die gemessene Reflexion setzt sich aus zwei Anteilen zusammen
+@Taflove2005[S. 293]. Der _Kontinuumsanteil_ ist die Welle, die die Schicht
+zweimal durchläuft und dazwischen am ideal leitenden Rand zurückgeworfen wird;
+er entspricht nach @pml-restreflexion-profil der Vorgabe $abs(R(0))$ und hängt
+nicht von der Frequenz ab. Der _Diskretisierungsanteil_ entsteht, weil die
+Leitfähigkeit im Gitter nicht stetig ansteigt, sondern von Zelle zu Zelle
+springt: Jeder Sprung wirft wie eine kleine Grenzfläche einen Teil der Welle
+zurück @Schneider2010[S. 309]. Der Potenzverlauf @pml-profil hält diese Sprünge
+am Eingang klein und legt die großen in die Tiefe, wo die Felder bereits
+abgeklungen sind @Taflove2005[S. 293].
 
+Wie groß der Diskretisierungsanteil ausfällt, hängt davon ab, wie gut das
+stufige Profil den stetigen Verlauf des Kontinuums annähert. Mit wachsender
+Auflösung $N_lambda$ entfallen mehr Zellen auf eine Wellenlänge; für die Welle
+wird das Profil dadurch glatter, und die Reflexion nähert sich dem
+Kontinuumsfall an. Dieselbe Wirkung hat eine dickere Schicht: Je mehr Zellen sie
+umfasst, desto flacher steigt die Leitfähigkeit von null auf $sigma_max$ an,
+desto kleiner ist jeder einzelne Sprung und desto geringer die Reflexion
+(@abb:tf4-restreflexion, rechts). Bei dünnen Schichten sind die Sprünge so groß,
+dass die Auflösung stark ins Gewicht fällt; ab etwa $10$ Zellen ist der
+Diskretisierungsanteil dagegen so klein, dass $N_lambda$ kaum noch eine Rolle
+spielt.
+
+Aus beiden Anteilen folgt auch das Minimum in @abb:tf4-restreflexion (links).
 Da $sigma_max$ nach @pml-sigmamax mit $-ln abs(R(0))$ wächst, senkt eine
-strengere Vorgabe den Kontinuumsanteil, vergrößert aber die Sprünge. Ist
-$sigma_max$ zu groß, überwiegt der Diskretisierungsanteil; das optimale
-$sigma_max$ gleicht beide Anteile aus @Taflove2005[S. 293]. Eine dickere Schicht
-verteilt den Anstieg auf mehr Zellen und verkleinert so die Sprünge. Bei
-$10^(-6)$ und $10^(-16)$ überwiegt deshalb fast im ganzen Bereich der
-Diskretisierungsanteil, und die Reflexion fällt mit der Dicke. Bei $10^(-3)$ ist
-dagegen schon nach etwa acht Zellen der Kontinuumsanteil erreicht. Dass dieser
-zunächst unter der Vorgabe liegt und mit der Dicke wieder ansteigt, geht auf die
-rekursive Auswertung nach @pml-bc zurück: Für $sigma Delta t\/epsilon_0$ in der
-Größenordnung eins dämpft sie stärker als die kontinuierliche Schicht; mit
-wachsender Dicke sinkt $sigma_max$, und die Messung nähert sich der Vorgabe
-(eigene Rechnung).
+strengere Vorgabe zwar den Kontinuumsanteil, macht das Profil aber steiler und
+vergrößert so die Sprünge. Das Optimum gleicht beide Anteile aus
+@Taflove2005[S. 293]; weil eine dickere Schicht die Sprünge verkleinert, sinkt
+es mit der Dicke und verschiebt sich zu strengeren Vorgaben. Dass die Reflexion
+bei schwachen Vorgaben sogar unter der Vorgabe liegt, geht auf die rekursive
+Auswertung nach @pml-bc zurück, die für $sigma Delta t\/epsilon_0$ in der
+Größenordnung eins stärker dämpft als die kontinuierliche Schicht (eigene
+Rechnung).
 
 Das von @Taflove2005[S. 294] für $10$ Zellen als optimal genannte
 $abs(R(0)) approx e^(-16) approx 10^(-7)$ liegt in @abb:tf4-restreflexion
-(rechts) im flachen Bereich um das Minimum. Auch die Größenordnung von rund
-$10^(-5)$ stimmt mit @Taflove2005[S. 315, Abb. 7.3a] überein, obwohl der Fehler
-dort im Zeitbereich definiert ist @Taflove2005[S. 314, Gl. (7.135)].
+(links) im flachen Bereich um das Minimum. Auch die Größenordnung von rund
+$10^(-5)$ stimmt mit @Taflove2005[S. 315, Abb. 7.3a] überein.
 
 Für die Anwendung ist damit zuerst die Dicke der Schicht maßgeblich; `r0` ist
-anschließend nahe dem Minimum zu wählen. Die in den übrigen Testfällen
-verwendeten $14$ Zellen erreichen mit dem Standardwert etwa $10^(-5)$.
+anschließend nahe dem Minimum und nicht möglichst klein zu wählen. Die in den
+übrigen Testfällen verwendeten $14$ Zellen erreichen mit dem Standardwert
+senkrecht etwa $10^(-5)$.
+
+== Zwischenfazit <sec-zwischenfazit>
+
+Die vier Testfälle zeigen, dass der Solver die analytischen Sollgrößen nicht
+exakt trifft, sich ihnen aber mit wachsender Auflösung annähert. Entscheidend
+ist, dass keine der Abweichungen zufällig ist: Jede lässt sich auf eine Ursache
+in der Diskretisierung zurückführen und mit einer Gitterformel berechnen. Die
+geringere Phasengeschwindigkeit, die überhöhten Fresnel-Koeffizienten und die
+Abweichung der eingespeisten Energie gehen dabei auf den Abbruchfehler der
+zentralen Differenz zurück, der sich nach der Taylor-Entwicklung @taylor als
+Fehler zweiter Ordnung erweist; sie fallen deshalb mit $N_lambda^(-2)$. Die
+Stabilität hängt dagegen allein von der Courant-Zahl ab (@cfl), die
+Restreflexion am Rand von der stufigen Annäherung des Leitfähigkeitsprofils.
+
+Da es keine Zufallsfehler gibt (@sec-vorgehen), ist das Fehlerverhalten des
+Solvers damit vollständig bekannt. Ein bekannter Fehler lässt sich vor einer
+Simulation abschätzen und über $N_lambda$, $S$ und die Dicke der PML gezielt
+begrenzen --- auch dort, wo keine analytische Lösung zum Vergleich vorliegt.

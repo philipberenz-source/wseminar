@@ -35,16 +35,15 @@
   text(size: 7pt, fill: luma(60), style: "italic")[#body])
 = Implementierung in Python
 
-Bei den in Kapitel 3 hergeleiteten Update-Gleichungen handelt es sich um Rekursionsgleichungen. Die Feldwerte eines neuen Zeitschritts werden dabei aus bereits bekannten Feldwerten des vorherigen Zeitschritts berechnet.
-. Da für das Bilden neuer Werte lediglich der vorherige Wert benötigt wird, ist die FDTD-Methode sehr effizient für Computer, da die Rechenleistung pro Schritt nur gering ist. Im Folgenden werden die Update-Gleichungen und die Randbedingungen in ein Computerprogramm überführt, welches objektorientiert im Rahmen einer _Solver-Klasse_ Methoden zur numerischen Lösung der Maxwell-Gleichungen bereitstellt. 
+ Ziel dieses Kapitels ist es, die Update-Gleichungen und die Randbedingungen in ein Computerprogramm zu überführen, welches objektorientiert im Rahmen einer _Solver-Klasse_ Methoden zur numerischen Lösung der Maxwell-Gleichungen bereitstellt. 
 Python wurde gewählt, da die Sprache eine vergleichsweise kompakte Implementierung mathematischer Operationen ermöglicht und mit NumPy eine Bibliothek zur effizienten Verarbeitung mehrdimensionaler Arrays bereitstellt.
 == Aufbau der Klasse <sec-aufbau>
 
 
 
-Der gesamte Löser wird als Klasse `FDTD2D` aufgefasst. Eine Simulation kann dementsprechend als ein Objekt betrachtet werden, welches sämtliche Feldwerte, Materialkoeffizienten, PML-Profile und Auflösungen hält. Ändern lassen sich diese Zustände durch verschiedene Methoden, die die Klasse ebenfalls bereitstellt. Der entscheidende Vorteil einer solchen Struktur ist die Möglichkeit, mehrere voneinander unabhängige Simulationen als separate Objektinstanzen zu erzeugen, was insbesondere in Kapitel 5 bei der Durchführung mehrerer Testfälle mit unterschiedlichen Parametern von Nutzen sein wird.. Zudem sorgt die klare Trennung zwischen Berechnung innerhalb der Klasse und Auswertung/Visualisierung --stets außerhalb der Klasse -- für mehr Übersicht. 
+Der gesamte Löser wird als Klasse `FDTD2D` aufgefasst. Eine Simulation kann dementsprechend als ein Objekt betrachtet werden, welches sämtliche Feldwerte, Materialkoeffizienten, PML-Profile und Auflösungen hält. Ändern lassen sich diese Zustände durch verschiedene Methoden, die die Klasse ebenfalls bereitstellt. Der entscheidende Vorteil einer solchen Struktur ist die Möglichkeit, mehrere voneinander unabhängige Simulationen als separate Objektinstanzen zu erzeugen, was insbesondere in Kapitel 5 bei der Durchführung mehrerer Testfälle mit unterschiedlichen Parametern von Nutzen sein wird.
 
-Der untenstehende  _flowchart_ beschreibt den Aufbau der Klasse:
+Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse:
 
 
 
@@ -142,95 +141,12 @@ Der untenstehende  _flowchart_ beschreibt den Aufbau der Klasse:
   caption: [Aufbau der Klasse `FDTD2D`. Links die Methoden in drei Gruppen,
     rechts der Zustand, den ein Objekt zwischen den Aufrufen hält. Innerhalb
     des Zeitschritts ist die Reihenfolge der Aufrufe festgelegt; sie folgt aus
-    der Zuordnung der Felder zu ganz- und halbzahligen Zeitpunkten
-    (@sec-zeitschleife).],
+    der Zuordnung der Felder zu ganz- und halbzahligen Zeitpunkten.],
 ) <fig-klasse>
 
-== Aufbau des Moduls und Konstruktor <sec-konstruktor>
-Im Folgenden wird der Aufbau des oben beschriebenen Moduls im Detail betrachtet, beginnend mit dem Konstruktor der Klasse.
-
-```python
-import numpy as np
-
-EPS0 = 8.8541878128e-12
-MU0 = 4e-7 * np.pi
-C0 = 1.0 / np.sqrt(EPS0 * MU0)
-
-```
-Das Modul importiert zunächst die Bibliothek NumPy zur Handhabung großer Arrays. Zudem werden die Naturkonstanten festgelegt,
-wobei $c$ aus $epsilon_0$ und $mu_0$
-berechnet wird.
-```python
-    def __init__(self, nx, ny, d, courant=0.99,
-                 eps_r=None, sigma=None, npml=10, pml_m=3, r0=1e-6):
-
-        self.nx, self.ny = nx, ny
-        self.d = d
-
-        self.dt = courant * self.d / (C0 * np.sqrt(2.0))
-
-        self.eps_r = np.ones((nx, ny)) if eps_r is None else np.asarray(eps_r, dtype=float).copy()
-        self.sigma = np.zeros((nx, ny)) if sigma is None else np.asarray(sigma, dtype=float).copy()
-        self.Ez = np.zeros((nx, ny))
-        self.Hx = np.zeros((nx, ny - 1))
-        self.Hy = np.zeros((nx - 1, ny))
-        self.Jz = np.zeros((nx, ny))
-        self._pec_mask = np.zeros((nx, ny), dtype=bool)
-
-        self._update_material_coeffs()
-
-        self.npml = npml
-        self.pml_m = pml_m
-        self.r0 = r0
-        self._setup_pml()
-
-        self._soft_sources = []
-        self._current_sources = []
-        self._probes = []
-        self._snapshot_steps = set()
-        self._snapshots = {}
-
-        self.time_step = 0
-        self.t = 0.0
-```
-Der Konstruktor nimmt wichtige Simulationsparameter als Eingabe und erstellt daraus ein Objekt mit den relevanten Simulationsgrößen und -zuständen. Der Zeitschritt folgt aus @cfl, wobei
-`courant` die nach @sec-cfl auf $S = 1$ normierte Courant-Zahl ist.
-
-Erwähnenswert ist, dass die drei Feldarrays _verschiedene_
-Größen haben. $E_z$ belegt alle $n_x times n_y$ Gitterpunkte, $H_x$ und $H_y$ dagegen
-die Zwischenräume, von denen es in der jeweiligen Richtung einen weniger gibt
---- der Halbzellenversatz des Yee-Gitters aus @sec-yee taucht hier zum ersten
-Mal im Code auf, allerdings wird bei der Indexierung der Arrays bei allen drei Komponenten auf ganzzahlige _Indizes_ zurückgegriffen, wie es die Indexierung von Numpy erfordert.
-
-== Material und Geometrie <sec-materialkoeff>
-
-```python
-
-    def _update_material_coeffs(self):
-        loss = self.sigma * self.dt / (2.0 * EPS0 * self.eps_r)
-        self.Ca = (1.0 - loss) / (1.0 + loss)
-        self.Cb = (self.dt / (EPS0 * self.eps_r * self.d)) / (1.0 + loss)
-```
-Die Methode `_update_material_coeffs` berechnet die Koeffizienten aus
-@koeffizienten. Dass die Koeffizienten bereits zu Beginn berechnet werden, hat zur Folge, dass sie nur einmalig –- beziehungsweise bei einer Materialänderung –- neu berechnet werden müssen, wodurch Rechenzeit eingespart wird.
-
-```python
-    def set_material_box(self, i0, i1, j0, j1, eps_r=1.0, sigma=0.0):
-        self.eps_r[i0:i1, j0:j1] = eps_r
-        self.sigma[i0:i1, j0:j1] = sigma
-        self._update_material_coeffs()
-
-    def set_pec_box(self, i0, i1, j0, j1):
-        self._pec_mask[i0:i1, j0:j1] = True
-        self.Ez[self._pec_mask] = 0.0
-```
-Die beiden obenstehenden Methoden beschreiben die Szene über Indexbereiche
-$[i_0, i_1) times [j_0, j_1)$.
- `set_pec_box` vermerkt ideal leitende Zellen lediglich in einer
-Maske; ausgewertet wird sie in jedem Zeitschritt nach @pec.
 
 == Die absorbierende Randschicht <sec-randschicht>
-
+Um die in @sec-pml hergeleiteten Randbedingungen in Python zu implementieren, müssen zunächst die Koeffizienten berechnet werden:
 ```python
     def _pml_koeffizienten(self, positionen, n_zellen):
         if self.npml == 0:
@@ -244,9 +160,9 @@ Maske; ausgewertet wird sie in jedem Zeitschritt nach @pec.
         return b, b - 1.0
 ```
 Die Methode `_pml_koeffizienten` berechnet die beiden Rekursionskoeffizienten nach @pml-bc an
-jeglichen Positionen. 
+beliebigen Positionen. 
 Dafür nimmt die Methode als Argument ein eindimensionales _Array_ mit allen Positionen der Gitterpunkte in einer Richtung (bspw. Liste von ganzzahligen x-Koordinaten für $E_z$ oder Liste von  halben Zahlen für die x-Koordinaten von $H_y$).
-`d_links` und `d_rechts` messen anschließend wie tief welche Position in der pml ist. Dabei entstehen jeweils zwei _Arrays_, sodass jede einzelne Position behandelt wird. Da bei einer Position stets entweder `d_links` oder `d_rechts` negativ ist, wählt die Variable `tiefe` die größere Zahl aus. Sind beide Zahlen negativ, so befindet sich die Position nicht in der PML und wird damit auf null gesetzt. Damit ist `tiefe` ebenfalls ein Array, welcher für jede Position die Tiefe in einer PML speichert. Darauf aufbauend wird die Tiefe nun auf ein Intervall $[0;1]$ normiert und daraus eine Funktion für die Dämpfung $sigma$ festgelegt. Da außerhalb der PML $rho$ stets null beträgt, ist an diesen Stellen die Dämpfung ebenfalls null. Nach der Berechnung des Koeffizienten _b_ nach @pml-bc wird dieser gemeinsam mit dem Koeffizienten _C_ jeweils als _Array_ zurückgegeben.
+`d_links` und `d_rechts` messen anschließend, wie tief welche Position in der PML ist. Dabei entstehen jeweils zwei _Arrays_, sodass jede einzelne Position behandelt wird. Da bei einer Position stets mindestens einer der Werte `d_links` und `d_rechts` negativ ist, wählt die Variable `tiefe` die größere Zahl aus. Sind beide Zahlen negativ, so befindet sich die Position nicht in der PML und wird damit auf null gesetzt. Damit ist `tiefe` ebenfalls ein Array, welches für jede Position die Tiefe in einer PML speichert. Darauf aufbauend wird die Tiefe nun auf ein Intervall $[0;1]$ normiert und daraus eine Funktion für die Dämpfung $sigma$ festgelegt. Da außerhalb der PML $rho$ stets null beträgt, ist an diesen Stellen die Dämpfung ebenfalls null. Nach der Berechnung des Koeffizienten _b_ nach @pml-bc wird dieser gemeinsam mit dem Koeffizienten _C_ jeweils als _Array_ zurückgegeben.
 
 
 ```python
@@ -277,54 +193,12 @@ Aus der ganzzahligen Position von $E_z$ folgt `np.arange(nx)` und aus dem Versat
 Positionen um $0.5$.  
 
 Abschließend werden die Hilfsfelder $Psi$ auf null initialisiert. `psi_hx` und `psi_hy` haben dabei die gleichen Dimensionen wie 
-die beiden H-Felder, während die beiden Hilfsgrößen des E-Feldes mit  $(n_x - 2) times (n_y - 2)$ kleiner sind, da $E_z$  nur im Inneren aktualisiert wird und je eine Spalte und eine Zeile 
+die beiden H-Felder, während die beiden Hilfsgrößen des E-Feldes mit  $(n_x - 2) times (n_y - 2)$ kleiner sind, da $E_z$  nur im Inneren aktualisiert wird und die beiden äußeren Spalten und Zeilen 
 als PEC-Abschluss null bleiben.
 
-== Quellen, Sonden und Auswertung <sec-auswertung>
-
-```python
-    def add_soft_source(self, i, j, waveform):
-        self._soft_sources.append((i, j, waveform))
-
-    def add_current_source(self, i, j, waveform, amplitude=1.0):
-        self._current_sources.append((i, j, waveform, amplitude))
-
-    def add_probe(self, i, j):
-        self._probes.append({"i": i, "j": j, "t": [], "Ez": []})
-        return len(self._probes) - 1
-
-    def add_snapshot(self, steps):
-        self._snapshot_steps.update(steps)
-```
-Um eine Quelle darzustellen, liefert das Skript zwei Methoden. Bei `add_current_source` geht eine eingeprägte Stromdichte $J_z$ additiv in die diskrete Ampère'sche Update-Gleichung ein und regt damit $E_z$ an – dies entspricht einer physikalisch eingeprägten Quelle im Sinne von @Taflove2005[S.175], während bei `add_soft_source` der Wert von $E_z$ an einem Gitterpunkt direkt aufaddiert wird, ohne dass ein physikalischer Strom zugrunde liegt.
- Die Methode `add_probe` registriert eine Sonde an einer festen Gitterposition, `add_snapshot`
-hingegen Zeitschritte, an denen das gesamte $E_z$-Feld gespeichert werden soll. 
-```python
-    def get_spectrum(self, probe_index, pad=1):
-        p = self._probes[probe_index]
-        y = np.asarray(p["Ez"], dtype=float)
-        if y.size == 0:
-            raise ValueError("Diese Sonde hat noch keinen Wert aufgezeichnet.")
-        if pad < 1:
-            raise ValueError("pad muss mindestens 1 sein.")
-        n = int(pad) * y.size
-        f = np.fft.rfftfreq(n, self.dt)
-        Y = np.fft.rfft(y, n) * self.dt
-        return f, Y * np.exp(-2j * np.pi * f * p["t"][0])
-```
-Für die Testfälle in Kapitel 5 ist unter anderem der Frequenzbereich von Interesse, weshalb das Programm mittels einer diskreten _Fourier-Transformation (Fast Fourier Transform, FFT)_ das Spektrum an einem Gitterpunkt bestimmen kann.
-Da $E_z$ reell ist, genügt `rfft (real fast fourier transform)` @NumPyFFT:
-`f` ist das zugehörige Frequenzraster von $0$ bis zur Nyquist-Frequenz
-$1\/(2 Delta t)$ (diejenige Frequenz bis zu der numerisch bestimmte Frequenzen physikalisch aussagekräftig sind), `Y` das komplexe Spektrum, dessen Betrag die Amplitude und
-dessen Phase die Phasenlage jeder Frequenzkomponente angibt
-@Schneider2010[Abschn. 5.5]. Durch Multiplikation mit `dt` ergibt sich das diskrete _Fourier Integral_. Der Exponentialfaktor am Ende korrigiert einen
-Zeitversatz: `rfft` trifft die Annahme, der erste Messwert gehöre zu $t = 0$,
-in Wirklichkeit gehört er aber zum tatsächlichen ersten Aufzeichungspunkt $t_0$. Ein solcher Zeitversatz äußert
-sich entsprechend als Phasendrehung. Die Variable `pad` beeinflusst, wie fein die Frequenzauflösung ist @NumPyFFT.
 
 
 == Die Update-Gleichungen im Code <sec-updateE>
-
 ```python
     def _update_H(self):
         d = self.d
@@ -337,20 +211,20 @@ sich entsprechend als Phasendrehung. Die Variable `pad` beeinflusst, wie fein di
         self.psi_hy = self.bx_h[:, None] * self.psi_hy + self.Cx_h[:, None] * dEz_dx
         self.Hy += (self.dt / MU0) * (dEz_dx + self.psi_hy)
 ```
-Der obenstehende Code setzt @pml-psi-hx bis @pml-update-hy um. Für jede Komponente werden jeweils zwei Zeilen Code benötigt:
-Zunächst wird die Hilfsgröße nach @pml-bc fortgeschrieben, woraus danach das Feld nach @pml-update-hy und @pml-update-hx berechnet werden kann.
+Der obenstehende Code setzt @pml-psi-hx und @pml-update-hx sowie das analoge Paar für $H_y$ um. Für jede Komponente werden jeweils zwei Zeilen Code benötigt:
+Zunächst wird die Hilfsgröße nach @pml-bc fortgeschrieben, woraus danach das Feld nach @pml-update-hx berechnet werden kann.
 
 Auffällig ist die Abwesenheit jeglicher _for-Schleifen_, die in der Programmierung klassischerweise für Array-Iterationen verwendet werden. 
 Stattdessen greift der Code auf das Konzept der _Vektorisierung_ zurück, bei der Operationen elementweise auf gesamte Arrays wirken. Verwendet wird dabei die Ausschnitts-Schreibweise
-(_slicing_) von numpy: `a:b` wählt auf einer Achse alle Indizes von `a` (eingeschlossen) bis `b` (ausgeschlossen), wobei das Fehlen einer Zahl immer die jeweilige Grenze impliziert.  `self.Ez[:, 1:]` wählt folglich alle
+(_slicing_) von NumPy: `a:b` wählt auf einer Achse alle Indizes von `a` (eingeschlossen) bis `b` (ausgeschlossen), wobei das Fehlen einer Zahl immer die jeweilige Grenze impliziert.  `self.Ez[:, 1:]` wählt folglich alle
 $x$-Werte und alle $y$-Werte ab dem zweiten Gitterpunkt, `self.Ez[:, :-1]`
 alle $x$-Werte und alle $y$-Werte bis zum vorletzten Gitterpunkt; beide
 Ausschnitte sind damit um einen Gitterpunkt in $y$-Richtung
 zueinander verschoben. `self.Ez[:, 1:] - self.Ez[:, :-1]` liefert dementsprechend in
-einem einzigen Aufruf die Differenz zwischen benachbarten $y$-Nachbarn an
+einem einzigen Aufruf die Differenz zwischen benachbarten Gitterpunkten in $y$-Richtung an
 allen Gitterpunkten zugleich --- also die diskrete Ableitung
 $partial E_z\/partial y$ als vollständiges Array.
-Das Verfahren der _Vektorisierung_ ist aufgrund der Ausführung in compiliertem, für Array-Operationen optimiertem Code deutlich effizienter als eine elementweise Schleife in reinem Python.
+Das Verfahren der _Vektorisierung_ ist aufgrund der Ausführung in kompiliertem, für Array-Operationen optimiertem Code deutlich effizienter als eine elementweise Schleife in reinem Python.
 
 Zu erläutern ist außerdem die unterschiedliche Schreibweise von `self.by_h[None, :]` und `self.bx_h[:, None]`. Da die Profile zunächst eindimensional vorliegen, müssen sie für die Verwendung in den zweidimensionalen Feldern entsprechend erweitert werden. Die eingefügte Achse bestimmt dabei, entlang welcher Raumrichtung das jeweilige Profil aufgespannt wird. `[None, :]` formt das $y$-Profil zu einer Zeile, die über alle $x$-Werte ausgedehnt wird, während `[:, None]` das $x$-Profil zu einer Spalte formt, die sich über alle $y$-Werte erstreckt. Würde ein $sigma_y$ versehentlich in $x$-Richtung aufgespannt, entstünde die entsprechende Schicht an den falschen Rändern.
 
@@ -376,60 +250,8 @@ Zu erläutern ist außerdem die unterschiedliche Schreibweise von `self.by_h[Non
 
 
 Der Ausschnitt `[1:-1, 1:-1]` lässt die äußerste Zeile und Spalte aus, sodass diese immer null bleiben; das ist die PEC-Bedingung @pec als
-Abschluss _hinter_ der Schicht, wie in @sec-randschicht bereits angedeutet.Im Gebietsinneren bleiben zudem die Hilfsgrößen $Psi$ wegen $b = 1$, $C = 0$ dauerhaft null, sodass der Ausdruck dort exakt in @update-ez übergeht -– die PML ist damit außerhalb der Ränder stets ausgeblendet.
-== Der Zeitschritt <sec-zeitschleife>
+Abschluss _hinter_ der Schicht, wie in @sec-randschicht bereits angedeutet. Im Gebietsinneren bleiben zudem die Hilfsgrößen $Psi$ wegen $b = 1$, $C = 0$ dauerhaft null, sodass der Ausdruck dort exakt in @update-ez übergeht – die PML ist damit im Gebietsinneren wirkungslos.
 
-```python
-    def _inject_current_sources(self, t):
-        self.Jz[:, :] = 0.0
-        for i, j, waveform, amplitude in self._current_sources:
-            self.Jz[i, j] += amplitude * waveform(t)
-
-    def _inject_soft_sources(self, t):
-        for i, j, waveform in self._soft_sources:
-            self.Ez[i, j] += waveform(t)
-
-    def _record_probes(self):
-        for p in self._probes:
-            ez = self.Ez[p["i"], p["j"]]
-            p["t"].append(self.t)
-            p["Ez"].append(ez)
-
-    def _record_snapshots(self):
-        if self.time_step in self._snapshot_steps:
-            self._snapshots[self.time_step] = {"t": self.t, "Ez": self.Ez.copy()}
-```
-`_inject_current_sources` setzt das Stromdichtefeld $J_z$ zunächst auf null und addiert anschließend die Quellen. Durch `+=` können sich mehrere Quellen überlagern. Bei additiven Quellen (`_inject_soft_sources`) entfällt das Nullsetzen, sodass eine zurückkehrende Welle den Quellpunkt ungehindert passieren kann.
-
-```python
-    def step(self):
-
-        t_halb = self.t + 0.5 * self.dt
-        t_neu = self.t + self.dt
-
-        self._update_H()
-        self._inject_current_sources(t_halb)
-        self._update_E()
-        self._inject_soft_sources(t_neu)
-        self.time_step += 1
-        self.t = self.time_step * self.dt
-        self._record_probes()
-        self._record_snapshots()
-
-    def run(self, n_steps, callback=None):
-        for _ in range(n_steps):
-            self.step()
-            if callback is not None:
-                callback(self)
-```
-Die Reihenfolge folgt aus der Zuordnung in @sec-yee: $E_z$ liegt auf
-ganzzahligen, $bold(H)$ auf halbzahligen Zeitpunkten, und @pml-update-ez
-braucht $H^(n+1\/2)$, das erst nach dem Magnetfeld-Update existiert.
-
-Bei der Behandlung der Quellen taucht eine halbe Schrittweite zum zweiten Mal in dem Code auf -- diesmal in der Zeit. 
-Dass in diesem Fall nicht wie bei `Ez`, `Hx` und `Hy` lediglich die Struktur des _Arrays_ über Versatz entscheidet hat einen trivialen Grund:
-Eine Wellenform ist über eine _Formel_ beschrieben und benötigt ein konkretes Argument, wohingegen die Feldarrays _Rekursionen_ sind, bei denen alleine die abgeänderte Struktur genügt.
-Die Zeit wird zuletzt aus dem Zähler berechnet statt aufaddiert zu werden, sodass Rundungsfehler minimiert werden.
 
 // --- Bausteine für den Ablaufplan in Abschnitt 4.8 ------------------------
 // Ergänzt die kl-*-Bausteine aus Abschnitt 4.1 um die DIN-Symbole eines
@@ -449,7 +271,7 @@ Die Zeit wird zuletzt aus dem Zähler berechnet statt aufaddiert zu werden, soda
 
 == Der Gesamtalgorithmus <sec-gesamtablauf>
 
-Die in @sec-konstruktor bis @sec-zeitschleife einzeln besprochenen Methoden fügen sich zu dem in @fig-gesamtablauf dargestellten Gesamtalgorithmus zusammen. Die abgebildete Reihenfolge folgt unmittelbar aus `__init__`, `step` und `run`; nach DIN-Konvention steht die Raute für die Abbruchbedingung der Zeitschleife und das Parallelogramm für die Eingabe der Parameter. Die Auswertung selbst (@sec-auswertung) ist bewusst nicht Teil dieses Diagramms: `get_spectrum()` und `total_energy()` sind eigenständige Methoden, die von außen aufgerufen werden, nachdem die Schleife beendet ist, und nicht Teil von `step()` oder `run()`.
+Unter Berücksichtigung des zeitlichen Versatzes im Rahmen des Leapfrog-Schemas ergibt sich für `n` simulierte Zeitschritte der in @fig-gesamtablauf dargestellte Gesamtalgorithmus. Die abgebildete Reihenfolge folgt unmittelbar aus `__init__`, `step` und `run`; nach DIN-Konvention steht die Raute für die Abbruchbedingung der Zeitschleife und das Parallelogramm für die Eingabe der Parameter. Die Methoden `_record_probes()` und `_record_snapshots()` dienen hierbei der Sicherung der Simulationsergebnisse, welche dann nach der Simulation für weitere Untersuchungen aufgerufen werden können.
 
 #figure(
   block(width: 12.8cm, height: 12.6cm)[
@@ -471,7 +293,7 @@ Die in @sec-konstruktor bis @sec-zeitschleife einzeln besprochenen Methoden füg
     #kl-pfeil-ab(7.0cm, 2.8cm, 3.1cm)
 
     #kl-kasten(3.0cm, 3.1cm, 8.0cm, 0.6cm)
-    #kl-mitte(3.0cm, 3.1cm, 8.0cm, 0.6cm)[Materialkoeffizienten berechnen: `Ca`, `Cb` (@sec-materialkoeff)]
+    #kl-mitte(3.0cm, 3.1cm, 8.0cm, 0.6cm)[Materialkoeffizienten berechnen: `Ca`, `Cb` ]
     #kl-pfeil-ab(7.0cm, 3.7cm, 4.0cm)
 
     #kl-kasten(3.0cm, 4.0cm, 8.0cm, 0.6cm)
@@ -479,7 +301,7 @@ Die in @sec-konstruktor bis @sec-zeitschleife einzeln besprochenen Methoden füg
     #kl-pfeil-ab(7.0cm, 4.6cm, 4.9cm)
 
     #kl-kasten(3.0cm, 4.9cm, 8.0cm, 0.6cm)
-    #kl-mitte(3.0cm, 4.9cm, 8.0cm, 0.6cm)[Szene, Quellen und Sonden festlegen]
+    #kl-mitte(3.0cm, 4.9cm, 8.0cm, 0.6cm)[Quellen festlegen]
     #kl-pfeil-ab(7.0cm, 5.5cm, 5.85cm)
 
     // ---------- Zeitschleife ----------
@@ -492,7 +314,6 @@ Die in @sec-konstruktor bis @sec-zeitschleife einzeln besprochenen Methoden füg
     #kl-kasten(3.0cm, 7.8cm, 8.0cm, 0.7cm)
     #kl-mitte(3.0cm, 7.8cm, 8.0cm, 0.7cm)[`_update_H()`: $H_x$ und $H_y$ aktualisieren (inkl. $Psi_(H_x)$, $Psi_(H_y)$)]
     #kl-pfeil-ab(7.0cm, 8.5cm, 8.8cm)
-
     #kl-kasten(3.0cm, 8.8cm, 8.0cm, 0.6cm)
     #kl-mitte(3.0cm, 8.8cm, 8.0cm, 0.6cm)[`_inject_current_sources()`: $J_z$ setzen]
     #kl-pfeil-ab(7.0cm, 9.4cm, 9.7cm)
@@ -520,41 +341,13 @@ Die in @sec-konstruktor bis @sec-zeitschleife einzeln besprochenen Methoden füg
   ],
   kind: image,
   caption: [Gesamtalgorithmus des Lösers, zusammengesetzt aus Konstruktor
-    (@sec-konstruktor) und Zeitschleife (@sec-zeitschleife). Die Raute stellt
+     und Zeitschleife. Die Raute stellt
     die Abbruchbedingung der Zeitschleife dar; bleibt sie erfüllt (ja), wird
     der Zeitschritt erneut durchlaufen, andernfalls (nein) endet die
-    Simulation. Die Auswertung (@sec-auswertung) erfolgt danach separat und
+    Simulation. Die Auswertung  erfolgt danach separat und
     ist hier nicht mit dargestellt.],
 ) <fig-gesamtablauf>
 
-== Übersicht der Feld- und Hilfsarrays <sec-arrayuebersicht>
 
-Da die einzelnen Arrays über das Kapitel verteilt eingeführt wurden, fasst @tab-arrays deren Dimensionen abschließend zusammen. Alle Größen sind, wie in @sec-konstruktor erläutert, nach der Struktur des Yee-Gitters entweder auf den ganzzahligen Positionen von $E_z$ oder den halbzahligen Positionen von $H_x$ und $H_y$ definiert, woraus sich die um jeweils einen Gitterpunkt kleineren Dimensionen der beiden Magnetfeldkomponenten ergeben.
 
-#figure(
-  table(
-    columns: 3,
-    align: (left, center, left),
-    table.header([Array], [Dimension], [Bedeutung]),
-    [`Ez`], [$n_x times n_y$], [elektrisches Feld, alle Gitterpunkte],
-    [`Hx`], [$n_x times (n_y - 1)$], [Magnetfeld $H_x$, in $y$ versetzt],
-    [`Hy`], [$(n_x - 1) times n_y$], [Magnetfeld $H_y$, in $x$ versetzt],
-    [`Jz`], [$n_x times n_y$], [eingeprägte Stromdichte],
-    [`eps_r`, `sigma`], [$n_x times n_y$], [relative Permittivität und Leitfähigkeit je Gitterpunkt],
-    [`_pec_mask`], [$n_x times n_y$, boolesch], [Maske ideal leitender Zellen (@sec-materialkoeff)],
-    [`Ca`, `Cb`], [$n_x times n_y$], [Materialkoeffizienten aus @koeffizienten],
-    [`bx_i`, `Cx_i`], [$n_x$], [PML-Koeffizienten für $E_z$ in $x$, ganzzahlige Positionen],
-    [`by_j`, `Cy_j`], [$n_y$], [PML-Koeffizienten für $E_z$ in $y$, ganzzahlige Positionen],
-    [`bx_h`, `Cx_h`], [$n_x - 1$], [PML-Koeffizienten für $H_y$, halbzahlige Positionen],
-    [`by_h`, `Cy_h`], [$n_y - 1$], [PML-Koeffizienten für $H_x$, halbzahlige Positionen],
-    [`psi_hx`], [$n_x times (n_y - 1)$], [PML-Hilfsgröße zu $H_x$],
-    [`psi_hy`], [$(n_x - 1) times n_y$], [PML-Hilfsgröße zu $H_y$],
-    [`psi_ez_x`, `psi_ez_y`], [$(n_x - 2) times (n_y - 2)$], [PML-Hilfsgrößen zu $E_z$, ohne PEC-Randzeile/-spalte],
-  ),
-  caption: [Sämtliche im Löser gehaltenen Arrays mit ihren Dimensionen.
-    `bx_i`/`Cx_i` und `by_j`/`Cy_j` sind an den ganzzahligen Positionen von
-    $E_z$ ausgewertet, `bx_h`/`Cx_h` und `by_h`/`Cy_h` an den halbzahligen
-    Positionen von $H_y$ beziehungsweise $H_x$ (@sec-randschicht).],
-) <tab-arrays>
-
-Damit ist die aus den Maxwell-Gleichungen entwickelte FDTD-Methode vollständig in Python implementiert. Die konkrete Umsetzung bildet die Grundlage für die im folgenden Kapitel durchgeführten Testfälle, anhand derer die numerischen Ergebnisse mit analytisch bekannten Eigenschaften elektromagnetischer Wellen verglichen und damit die Zuverlässigkeit des implementierten Solvers untersucht wird.
+Damit ist die aus den Maxwell-Gleichungen entwickelte FDTD-Methode vollständig in Python implementiert. Die konkrete Umsetzung bildet die Grundlage für die im folgenden Kapitel durchgeführten Testfälle, anhand derer die numerischen Ergebnisse mit analytisch bekannten Eigenschaften elektromagnetischer Wellen verglichen und damit die Zuverlässigkeit des implementierten Solvers untersucht wird. Der gesamte Code ist in dem im Anhang verlinkten _GitHub_-Archiv aufrufbar.

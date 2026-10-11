@@ -10,7 +10,7 @@
 
 #show: doc => project(
   title: "Die FDTD-Methode zur numerischen Lösung der Maxwell-Gleichungen",
-  subtitle: "Theoretische Herleitung und analytische Validierung  ",
+  subtitle: "Theoretische Herleitung, Implementierung und analytische Validierung  ",
   author: "Philip Berenz",
   school: "Oskar-von-Miller-Gymnasium",
   course: "Wissenschaftspropädeutisches Seminar im Leitfach Physik",
@@ -19,13 +19,6 @@
   date: datetime(year: 2026, month: 8, day: 1),
   doc,
 )
-
-// Notationskonventionen (einmal festlegen, dann durchgängig verwenden):
-// E: elektrische Feldstärke, D: elektrische Flussdichte, H: magnetische
-// Feldstärke, B: magnetische Flussdichte, J: Stromdichte, σ: Leitfähigkeit,
-// ε = ε₀εᵣ: Permittivität, μ = μ₀μᵣ: Permeabilität, ρ_frei: freie Ladungsdichte.
-// Werden Symbole später ergänzt oder umbenannt (z. B. zusätzliche
-// Verlustterme), bitte hier vermerken und konsistent in allen Kapiteln anpassen.
 
 #include "kapitel/01_einleitung.typ"
 #include "kapitel/02_grundlagen.typ"
@@ -47,7 +40,6 @@
 #bibliography("literatur.bib", title: "Literaturverzeichnis", style: "ieee")
 
 // ---------------- Anhang ----------------
-// Vorbereitet, aber derzeit leer: Der Quelltext steht wieder in Kapitel 4.
-// Fuer weitere Anhaenge die drei Zeilen einkommentieren und #include ergaenzen.
-// #counter(heading).update(0)
-// #set heading(numbering: "A.1", supplement: [Anhang])
+#counter(heading).update(0)
+#set heading(numbering: "A.1", supplement: [Anhang])
+#include "kapitel/anhang.typ"
