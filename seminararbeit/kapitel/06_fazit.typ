@@ -21,21 +21,25 @@ Koordinatenstreckung und die rekursive Auswertung der entstehenden Faltung in
 diese explizite Form überführen. Die Umsetzung in Python benötigt daher nur
 wenige Zeilen je Feldkomponente.
 
-Die Validierung in Kapitel 5 bestätigt diese Herleitung in doppelter Hinsicht:
-Der Solver reproduziert die analytisch bekannten Eigenschaften
-elektromagnetischer Wellen, und auch seine Abweichungen lassen sich aus den
-hergeleiteten diskreten Gleichungen vorhersagen (@sec-zwischenfazit). Dieselben
-Gleichungen, aus denen das Verfahren aufgebaut ist, beschreiben somit zugleich
-seine Grenzen. Gerade darin liegt der Wert einer vollständigen Herleitung: Sie
-macht nicht nur nachvollziehbar, wie das Verfahren arbeitet, sondern auch, wann
-seinen Ergebnissen zu trauen ist.
+Die Validierung in Kapitel 5 zeigt, dass der Solver die analytisch bekannten
+Eigenschaften elektromagnetischer Wellen reproduziert, wenn auch nicht exakt.
+Die verbleibenden Abweichungen sind jedoch keine Mängel der Implementierung,
+sondern systematische Folgen der Diskretisierung, die sich aus den hergeleiteten
+diskreten Gleichungen erklären und vorhersagen lassen (@sec-zwischenfazit).
 
-Einschränkend ist festzuhalten, dass sich die Untersuchung auf zwei
-Dimensionen, frequenzunabhängige Materialien und Anordnungen mit bekannter
-analytischer Lösung beschränkt --- also auf Fälle, in denen eine Simulation am
-wenigsten erforderlich ist. Die Arbeit versteht sich deshalb als Grundlage: Sie
-liefert das Verständnis des Verfahrens, auf dem ein begründeter Einsatz bei
-komplexeren Problemen aufbauen kann.
+Daraus ergibt sich eine zentrale Erkenntnis dieser Arbeit: Ein numerischer Fehler
+ist nicht grundsätzlich problematisch, sofern seine Ursache und sein Verhalten
+bekannt sind. Ist bekannt, wovon eine Abweichung abhängt und wie sie sich mit
+Auflösung, Zeitschritt oder Randschicht verändert, so lassen sich die Parameter
+einer Simulation gezielt so wählen, dass der Fehler unterhalb einer geforderten
+Grenze bleibt. Die Zuverlässigkeit eines Ergebnisses hängt somit weniger davon
+ab, ob ein Fehler auftritt, als davon, ob er verstanden und abgeschätzt werden
+kann.
+
+Nachgewiesen wurde dies an Anordnungen mit bekannter analytischer Lösung. Die
+gewonnenen Zusammenhänge bilden jedoch die Grundlage dafür, das Verfahren auch
+auf Probleme anzuwenden, für die keine analytische Lösung existiert, und die
+Verlässlichkeit der Ergebnisse dort begründet einzuschätzen.
 
 == Ausblick
 
@@ -54,6 +58,6 @@ $N_lambda^2$.
 frequenzunabhängigen Permittivität trifft auf viele reale Stoffe, etwa
 wasserhaltige, nicht zu. Ein Debye-Modell beschreibt solche Medien und lässt
 sich im Zeitbereich über eine zusätzliche Differentialgleichung oder eine
-rekursive Faltung umsetzen @Schneider2010[Abschn. 10.3, 10.7]. Letztere arbeitet
+rekursive Faltung umsetzen. Letztere arbeitet
 mit einem Dämpfungsfaktor @Schneider2010[S. 308] und folgt damit demselben Prinzip wie die Hilfsgrößen der PML in
 @pml-bc.

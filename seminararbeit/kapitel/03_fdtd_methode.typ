@@ -102,7 +102,7 @@ Aktualisierungsvorschrift stehen damit ausschließlich bereits berechnete Werte;
 das Verfahren ist _explizit_, es muss zu keinem Zeitpunkt ein Gleichungssystem
 gelöst werden.
 
-Entscheidend ist dabei, dass auch die Zeitachse versetzt abgetastet wird: Die
+Durch den zeitlichen Versatz ist die
 Differenz zweier um $Delta t$ auseinanderliegender Werte ist der halbzahligen
 Zwischenzeit zugeordnet, an der die jeweils andere Feldgröße gerade vorliegt.
 Damit ist auch die Zeitableitung eine zentrale Differenz nach
@@ -144,7 +144,8 @@ wobei $epsilon = epsilon_0 epsilon_r bar.v_(i\,j)$ und $sigma = sigma bar.v_(i\,
 die am Ort des betreffenden $E_z$-Wertes gültigen Materialgrößen nach @material
 bezeichnen.
 
-Die Form von @koeffizienten geht auf zwei Festlegungen zurück, die in @tmz-ez
+Ziel der folgenden Umformung ist eine Gleichung, die den neuen Wert
+$E_z bar.v_(i\,j)^(n+1)$ allein aus bereits bekannten Größen berechnet. Die Form von @koeffizienten geht auf zwei Festlegungen zurück, die in @tmz-ez
 noch offen sind. So wird die dort auftretende Stromdichte aufgeteilt in
 einen von außen eingeprägten Quellstrom $J_z$ und den vom Feld selbst
 getriebenen Leitungsstrom nach dem Ohmschen Gesetz @material:
@@ -203,7 +204,7 @@ $ "weich:" quad E_z bar.v_(i\,j)^(n+1) arrow.l
   quad quad quad
   "Strom:" quad J_z bar.v_(i\,j)^(n+1/2) = f^(n+1/2) $ <quellen>
 
-Nur die zweite Form ist physikalisch deutbar; beiden gemeinsam ist, dass der
+Nur die zweite Form ist physikalisch deutbar, da $J_z$ als Stromdichte unmittelbar in @tmz-ez auftritt; beiden gemeinsam ist, dass der
 Quellpunkt regulär weiter aktualisiert wird und eine zurücklaufende Welle ihn
 daher ungehindert passiert.
 
@@ -237,7 +238,7 @@ Wie nahe die Rechnung an dieser Grenze geführt wird, gibt die _Courant-Zahl_
 $S = sqrt(2) c Delta t \/ Delta$ an, die hier so normiert ist, dass die
 Stabilitätsgrenze @cfl gerade bei $S = 1$ liegt. Die in der Literatur übliche
 Courant-Zahl $S_c = c Delta t\/Delta$ mit der Stabilitätsgrenze
-$S_c <= 1\/sqrt(2)$ hängt damit über $S_c = S\/sqrt(2)$ zusammen. In den folgenden Kapiteln wird der Zeitschritt stets durch diese bestimmt. Welchen Einfluss die _Courant-Zahl_ auf die Simulationsergebnisse hat, wird in Kapitel 5 näher untersucht. 
+$S_c <= 1\/sqrt(2)$ hängt damit über $S_c = S\/sqrt(2)$ zusammen. In den folgenden Kapiteln wird der Zeitschritt stets über $S$ festgelegt. Welchen Einfluss die _Courant-Zahl_ auf die Simulationsergebnisse hat, wird in Kapitel 5 näher untersucht. 
 
 == Randbedingungen <sec-rand>
 
@@ -258,7 +259,7 @@ fortgeschrieben.
 
 === Absorbierender Rand (_Perfectly Matched Layer_, PML) <sec-pml>
 
-An den Rändern des Simulationsgebiets fehlen benachbarte $H_y$-Felder, um zentrale Differenzen zu bilden, weshalb $E_z$ an diesen Stellen auf null gesetzt wird. Damit wird das Feld nach @sec-pec vollständig zurückgeworfen. In vielen Fällen ist dieser Effekt jedoch unerwünscht, insbesondere wenn die Ausbreitung im unendlichen Raum simuliert wird.
+An den Rändern des Simulationsgebiets fehlen benachbarte $H_y$- bzw. $H_x$-Felder, um zentrale Differenzen zu bilden, weshalb $E_z$ an diesen Stellen auf null gesetzt wird. Damit wird das Feld nach @sec-pec vollständig zurückgeworfen. In vielen Fällen ist dieser Effekt jedoch unerwünscht, insbesondere wenn die Ausbreitung im unendlichen Raum simuliert wird.
 Naheliegend wäre es deshalb, den eigentlichen Rändern eine Schicht vorzulagern, welche die auslaufende Welle dämpft, sodass keine Energie zurück in das eigentliche Simulationsgebiet geworfen wird (@abb:pml-schema).
 
 #figure(
@@ -272,11 +273,14 @@ Naheliegend wäre es deshalb, den eigentlichen Rändern eine Schicht vorzulagern
 Eine gewöhnliche verlustbehaftete Schicht leistet das jedoch nicht: Sie dämpft in alle
 Richtungen gleich, während eine reflexionsfreie Anpassung verlangt, dass
 ausschließlich die Ausbreitung _senkrecht_ zur Grenzfläche gedämpft wird
-@Schneider2010[Abschn. 11.2 bis 11.4].
+@Schneider2010[Abschn. 11.2 bis 11.4]. Im Folgenden wird deshalb zunächst die
+Koordinate komplex gestreckt, daraus die Restreflexion der Schicht bestimmt und
+das Ergebnis anschließend in den Zeitbereich übertragen und in die
+Update-Gleichungen eingebaut.
 
 *Komplexe Koordinatenstreckung.* Der Ausweg besteht darin, nicht das Material
 zu verändern, sondern die Koordinate. Die hier verwendete Formulierung
-geht auf Chew und Weedon zurück und heißt _komplexe Koordinatenstreckung_,
+heißt _komplexe Koordinatenstreckung_,
 weil die dabei eingeführten Faktoren die einzelnen Koordinatenrichtungen
 skalieren @Schneider2010[Abschn. 11.1 und 11.5]. Zu jeder Raumrichtung $w in {x, y}$ wird dabei
 ein komplexer Streckfaktor eingeführt @Schneider2010[Gl. (11.86)]:
@@ -341,7 +345,10 @@ Logarithmiert man @pml-restreflexion-profil für senkrechten Einfall
 
 $ sigma_max = -((m+1) ln abs(R(0)))/(2 eta_0 d) $ <pml-sigmamax>
 
-*Rückkehr in den Zeitbereich.* @pml-tmz steht im Frequenzbereich, das
+*Rückkehr in den Zeitbereich.* Ziel der folgenden zwei Schritte ist es,
+@pml-tmz in eine Form zu bringen, die sich wie @update-hx bis @update-ez
+Zeitschritt für Zeitschritt auswerten lässt und dabei je Gitterpunkt nur einen
+zusätzlichen gespeicherten Wert benötigt. @pml-tmz steht im Frequenzbereich, das
 FDTD-Verfahren rechnet jedoch im Zeitbereich, und einem Produkt im
 Frequenzbereich entspricht dort eine Faltung. Benötigt wird also die
 Rücktransformierte $overline(S)_w$ von $1\/S_w$. Mit @pml-sw ist

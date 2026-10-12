@@ -5,7 +5,8 @@
 
 Dieses Kapitel stellt knapp die Gleichungen bereit, aus denen in Kapitel 3 die
 FDTD-Methode abgeleitet und mit denen in Kapitel 5 ihr Ergebnis überprüft wird.
-Da es sich um Grundlagen und nicht um den eigentlichen Gegenstand der Arbeit
+Abschließend werden die Grenzen analytischer Lösungsverfahren aufgezeigt. Da es
+sich um Grundlagen und nicht um den eigentlichen Gegenstand der Arbeit
 handelt, bleiben die Herleitungen kurz.
 
 == Die Maxwell-Gleichungen <sec-maxwell>
@@ -84,7 +85,7 @@ elektrisch, $E_x,E_y,H_z$) @GriffithsDE[S. 516].
 
 Beide Fälle sind strukturell gleich gebaut; die Arbeit verwendet durchgehend
 den TM#sub[z]-Fall, weil er mit nur einer elektrischen Feldkomponente Anregung
-und Randbedingung auf eine skalare Größe zurückführt. Mit $mu=mu_0$ und unter Verwendung der in @sec-material angesprochenen Vereinfachungen vereinfachen sich die Gleichungen @Taflove2005[Gl. (3.13)] zu
+und Randbedingung auf eine skalare Größe zurückführt. Mit $mu=mu_0$ und unter Verwendung der in @sec-material angesprochenen Vereinfachungen lauten die Gleichungen @Taflove2005[Gl. (3.13)]
 
 $ mu_0 (partial H_x)/(partial t) = - (partial E_z)/(partial y) $ <tmz-hx>
 $ mu_0 (partial H_y)/(partial t) = (partial E_z)/(partial x) $ <tmz-hy>
@@ -149,8 +150,7 @@ dessen Richtung die Ausbreitungsrichtung angibt @GriffithsDE[mod. Gl. (9.43)].
 Wegen @zinvarianz liegt $bold(k)$ stets in der $x y$-Ebene, sodass
 $bold(k) dot bold(r) = k_x x + k_y y$ gilt. Physikalisch ist der Realteil des
 komplexen Ansatzes; $upright(i)$ bezeichnet hier und im Folgenden die imaginäre
-Einheit, im Unterschied zu den kursiv gesetzten Gitterindizes $i$ und $j$ aus
-Kapitel 3. Ihren Namen trägt die ebene Welle, weil alle Orte gleicher Phase zu
+Einheit. Ihren Namen trägt die ebene Welle, weil alle Orte gleicher Phase zu
 jedem Zeitpunkt eine zu $bold(k)$ senkrechte Ebene bilden @GriffithsDE[S. 483],
 die sich mit der Zeit in Richtung $bold(k)$ verschiebt (@abb:ebene-welle).
 
@@ -187,8 +187,7 @@ Entscheidend ist, was in @phasengeschwindigkeit _nicht_ auftritt: weder $omega$
 noch die Richtung von $bold(k)$. Im Kontinuum laufen also alle Frequenzen und
 alle Richtungen gleich schnell --- Ersteres folgt aus dem in @sec-material
 frequenzunabhängig angesetzten $epsilon$, Letzteres aus der dort geforderten
-Isotropie. Ein aus mehreren Frequenzen zusammengesetzter Puls behält deshalb
-seine Form.
+Isotropie. 
 
 == Die Wellenimpedanz <sec-impedanz>
 
@@ -210,7 +209,7 @@ beruht die Reflexion am Dielektrikum in @sec-tf3.
 == Grenzen analytischer Lösungsverfahren
 Die in diesem Kapitel behandelten Lösungen sind stark idealisiert: Die ebene
 Welle setzt einen unendlichen, homogenen Raum voraus, die Reflexion eine ebene,
-unendlich ausgedehnte Grenzfläche. Geschlossene analytische Ausdrücke existieren
+unendlich ausgedehnte Grenzfläche. Geschlossene analytische Lösungen existieren
 nur für solche Sonderfälle.
 Reale Anordnungen wie das _iPhone_ aus der Einleitung erfüllen keine dieser
 Voraussetzungen: Die Geometrie ist gekrümmt und endlich, das Material

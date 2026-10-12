@@ -43,3 +43,25 @@
 #counter(heading).update(0)
 #set heading(numbering: "A.1", supplement: [Anhang])
 #include "kapitel/anhang.typ"
+
+// ---------------- Offene Punkte (vor der Abgabe löschen) ----------------
+#pagebreak()
+#todo[
+  *Offene Punkte vor der Abgabe* (diesen Block danach aus `main.typ` löschen)
+
+  + Literatur Liu 2022 (Yee-Abbildung, Kap. 3): Band, Seiten, DOI und ggf.
+    weitere Autoren nachtragen.
+  + Literatur Griffiths: Auflage und Erscheinungsjahr der verwendeten Ausgabe
+    prüfen.
+  + Kap. 3, CFL-Bedingung: Seitenzahl der Quelle bei Taflove ergänzen.
+  + Kap. 5.1: drei bis vier Sätze zu Messfehlern ergänzen (warum Rundungs- und
+    FFT-Fehler klein sind; Einfluss von Sondenabstand, $sqrt(r)$-Korrektur und
+    Referenzgebiet).
+  + Kap. 4: einen Satz am Anfang, dass die NumPy-Umsetzung ausdrücklich Teil der
+    Aufgabenstellung ist; „Löser“ zu „Solver“ vereinheitlichen.
+  + Ton vereinheitlichen: Kap. 2.4 und 2.8, Kap. 3.6.2 (PML), Kap. 5.3.3
+    (Deutung Testfall 2), Kap. 5.5 (Testfall 4), Kap. 5.6 (Zwischenfazit) und
+    Kap. 6.1 (Fazit) in eigene Sprache bringen.
+  + Erklärung: Ort, Datum und Unterschrift eintragen; KI-Formulierung mit dem
+    Kursleiter abstimmen.
+]
