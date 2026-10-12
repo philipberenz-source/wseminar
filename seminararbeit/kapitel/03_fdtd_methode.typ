@@ -179,7 +179,6 @@ $ (1 + (sigma Delta t)/(2 epsilon)) E_z bar.v_(i\,j)^(n+1)
     - J_z bar.v_(i\,j)^(n+1/2) Delta) $ <sortiert>
 
 Division durch die Klammer der linken Seite isoliert $E_z bar.v_(i\,j)^(n+1)$
-und liefert @update-ez: Die Vorfaktoren vereinfachen sich dabei zu 
 $C_a$ und $C_b$.
 
 Für verlustfreie Gebiete ($sigma = 0$) entfallen beide Hälften des
