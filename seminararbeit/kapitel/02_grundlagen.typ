@@ -12,11 +12,11 @@ handelt, bleiben die Herleitungen kurz.
 == Die Maxwell-Gleichungen <sec-maxwell>
 
 Maxwell zeigte 1865, dass sich alle elektrischen und magnetischen
-Erscheinungen durch ein Gleichungssystem beschreiben lassen @Maxwell1865, das
+Erscheinungen durch ein Gleichungssystem beschreiben lassen @lit:Maxwell1865, das
 zusammen mit der Lorentz-Kraft den gesamten theoretischen Inhalt der
-klassischen Elektrodynamik zusammenfasst @GriffithsDE[S. 417 f.]. Auf die freien
-Ladungen und Ströme bezogen @GriffithsDE[S. 420] lauten sie in differentieller
-Form @GriffithsDE[Gl. (7.56)]
+klassischen Elektrodynamik zusammenfasst @lit:GriffithsDE[S. 417 f.]. Auf die freien
+Ladungen und Ströme bezogen @lit:GriffithsDE[S. 420] lauten sie in differentieller
+Form @lit:GriffithsDE[Gl. (7.56)]
 
 $ nabla dot bold(D) = rho_"frei" $ <gauss-e>
 $ nabla dot bold(B) = 0 $ <gauss-b>
@@ -33,7 +33,7 @@ Arbeit ist dementsprechend vorrangig die Kopplung von @faraday (Faradaysches
 Induktionsgesetz: ein sich änderndes $bold(B)$ erzeugt ein umlaufendes
 $bold(E)$) und @ampere (Ampère-Maxwell-Gesetz: ein umlaufendes $bold(H)$
 entsteht durch einen Strom _oder_ ein sich änderndes $bold(D)$). Der Term
-$partial bold(D)\/partial t$ heißt _Verschiebungsstrom_ @GriffithsDE[S. 422];
+$partial bold(D)\/partial t$ heißt _Verschiebungsstrom_ @lit:GriffithsDE[S. 422];
 erst er schließt den Kreis und bildet damit die Grundlage für die Ausbreitung
 _elektromagnetischer_ Wellen.
 
@@ -43,17 +43,17 @@ Die vier Gleichungen verknüpfen sechs Feldgrößen und sind unterbestimmt; es
 fehlt die Angabe, wie ein Material auf ein Feld reagiert. Diese
 _Materialgleichung_ folgt nicht aus den Maxwell-Gleichungen und hängt vom
 Material ab; in ihrer einfachsten, für _lineare_ Medien gültigen Form
-@GriffithsDE[S. 422] wird hier durchgehend angesetzt
+@lit:GriffithsDE[S. 422] wird hier durchgehend angesetzt
 
 $ bold(D) = epsilon bold(E), quad bold(B) = mu bold(H), quad
   bold(J) = sigma bold(E) $ <material>
 
 mit $epsilon = epsilon_0 epsilon_r$ und $mu = mu_0 mu_r$
 sowie der Leitfähigkeit $sigma$; der letzte Ausdruck ist das Ohmsche Gesetz in
-lokaler Form @GriffithsDE[S. 368].
+lokaler Form @lit:GriffithsDE[S. 368].
 
 
-Dass @material in dieser Form gilt, ist eine Annahme, die vier Vereinfachungen @Taflove2005[S. 52 f.] voraussetzt:
+Dass @material in dieser Form gilt, ist eine Annahme, die vier Vereinfachungen @lit:Taflove2005[S. 52 f.] voraussetzt:
 
 / Linearität: $epsilon,mu,sigma$ unabhängig von der Feldstärke.
 / Isotropie: $epsilon,mu,sigma$ Zahlen statt Tensoren --- $bold(D) parallel bold(E), bold(J) parallel bold(E)$.
@@ -81,11 +81,11 @@ $ partial/(partial z) equiv 0 $ <zinvarianz>
 Unter @zinvarianz  zerfallen @faraday und @ampere in zwei vollständig
 entkoppelte, unabhängig lösbare Gruppen: den _TM#sub[z]-Fall_ (transversal
 magnetisch, Komponenten $E_z,H_x,H_y$) und den _TE#sub[z]-Fall_ (transversal
-elektrisch, $E_x,E_y,H_z$) @GriffithsDE[S. 516].
+elektrisch, $E_x,E_y,H_z$) @lit:GriffithsDE[S. 516].
 
 Beide Fälle sind strukturell gleich gebaut; die Arbeit verwendet durchgehend
 den TM#sub[z]-Fall, weil er mit nur einer elektrischen Feldkomponente Anregung
-und Randbedingung auf eine skalare Größe zurückführt. Mit $mu=mu_0$ und unter Verwendung der in @sec-material angesprochenen Vereinfachungen lauten die Gleichungen @Taflove2005[Gl. (3.13)]
+und Randbedingung auf eine skalare Größe zurückführt. Mit $mu=mu_0$ und unter Verwendung der in @sec-material angesprochenen Vereinfachungen lauten die Gleichungen @lit:Taflove2005[Gl. (3.13)]
 
 $ mu_0 (partial H_x)/(partial t) = - (partial E_z)/(partial y) $ <tmz-hx>
 $ mu_0 (partial H_y)/(partial t) = (partial E_z)/(partial x) $ <tmz-hy>
@@ -97,7 +97,7 @@ $ epsilon (partial E_z)/(partial t) + J_z^"ges"
 
 An der Grenze zweier Medien ändern sich $epsilon, mu, sigma$ sprunghaft. Aus der
 Integralform der Maxwell-Gleichungen folgt, dass die zur Grenzfläche
-_parallelen_ Feldanteile dabei stetig bleiben @GriffithsDE[S. 424, Gl. (7.62),
+_parallelen_ Feldanteile dabei stetig bleiben @lit:GriffithsDE[S. 424, Gl. (7.62),
 Gl. (7.63)]:
 
 $ bold(E)_(1,parallel) = bold(E)_(2,parallel), quad
@@ -108,7 +108,7 @@ den verlustfreien Dielektrika in @sec-tf3 ist das der Fall.
 
 Ein wichtiger Sonderfall ist der _ideal leitende_ Rand (PEC): Für
 $sigma arrow.r infinity$ bleibt die Stromdichte $bold(J) = sigma bold(E)$ nur
-endlich, wenn $bold(E)$ im Inneren verschwindet @GriffithsDE[S. 368]; mit
+endlich, wenn $bold(E)$ im Inneren verschwindet @lit:GriffithsDE[S. 368]; mit
 @stetig folgt an der Grenzfläche $bold(E)_parallel = 0$, im TM#sub[z]-Fall
 also $E_z = 0$.
 
@@ -116,20 +116,20 @@ also $E_z = 0$.
 
 Aus @faraday und @ampere folgt für ein quellen- und verlustfreies Gebiet
 ($rho_"frei"=0$ und $bold(J)_"frei"=sigma bold(E)=0$, also $sigma=0$) mit konstantem $epsilon,mu$ eine einzelne
-Gleichung für $bold(E)$ @GriffithsDE[S. 481 f.]: Bildet man die Rotation von
-@faraday, nutzt die Vektoridentität @GriffithsDE[S. 482]
+Gleichung für $bold(E)$ @lit:GriffithsDE[S. 481 f.]: Bildet man die Rotation von
+@faraday, nutzt die Vektoridentität @lit:GriffithsDE[S. 482]
 
 $ nabla times (nabla times bold(E)) = nabla (nabla dot bold(E)) - nabla^2 bold(E) $
 
 und setzt @gauss-e sowie @ampere ein, ergibt sich die _Wellengleichung_
-@GriffithsDE[mod. Gl. (9.41)]
+@lit:GriffithsDE[mod. Gl. (9.41)]
 
 $ nabla^2 bold(E) - mu epsilon (partial^2 bold(E))/(partial t^2) = 0 $ <welle>
 
 Dieselbe Gleichung folgt für $bold(H)$, wenn man stattdessen bei @ampere
 ansetzt. In @welle kommen keine Ladungen oder Ströme mehr vor: Eine einmal
 erzeugte Störung breitet sich mit der durch $mu epsilon$ festgelegten
-Geschwindigkeit aus, im Vakuum @GriffithsDE[S. 482]
+Geschwindigkeit aus, im Vakuum @lit:GriffithsDE[S. 482]
 
 $ c = 1/sqrt(mu_0 epsilon_0) approx 2,998 dot 10^8 " m/s" $
 
@@ -146,12 +146,12 @@ $ bold(E)(bold(r), t) = E_0 thin e^(upright(i)(omega t - bold(k) dot bold(r))) h
 Darin ist $E_0$ die Amplitude, $hat(z)$ der Einheitsvektor in $z$-Richtung ---
 im TM#sub[z]-Fall hat $bold(E)$ nur die Komponente $E_z$ ---, $bold(r)$ der
 Ortsvektor, $omega=2pi f$ die Kreisfrequenz und $bold(k)$ der Wellenvektor,
-dessen Richtung die Ausbreitungsrichtung angibt @GriffithsDE[mod. Gl. (9.43)].
+dessen Richtung die Ausbreitungsrichtung angibt @lit:GriffithsDE[mod. Gl. (9.43)].
 Wegen @zinvarianz liegt $bold(k)$ stets in der $x y$-Ebene, sodass
 $bold(k) dot bold(r) = k_x x + k_y y$ gilt. Physikalisch ist der Realteil des
 komplexen Ansatzes; $upright(i)$ bezeichnet hier und im Folgenden die imaginäre
 Einheit. Ihren Namen trägt die ebene Welle, weil alle Orte gleicher Phase zu
-jedem Zeitpunkt eine zu $bold(k)$ senkrechte Ebene bilden @GriffithsDE[S. 483],
+jedem Zeitpunkt eine zu $bold(k)$ senkrechte Ebene bilden @lit:GriffithsDE[S. 483],
 die sich mit der Zeit in Richtung $bold(k)$ verschiebt (@abb:ebene-welle).
 
 #figure(
@@ -160,7 +160,7 @@ die sich mit der Zeit in Richtung $bold(k)$ verschiebt (@abb:ebene-welle).
     erfolgt längs $bold(k) parallel hat(x)$. Die eingezeichneten Wellenflächen
     stehen senkrecht auf $bold(k)$; auf jeder von ihnen hat das Feld zu einem
     festen Zeitpunkt überall denselben Wert. Abbildung entnommen aus
-    @Orosz2022.],
+    @lit:Orosz2022.],
 ) <abb:ebene-welle>
 
 == Die Dispersionsrelation <sec-dispersionsrelation>
@@ -172,7 +172,7 @@ einen Faktor: Die zweifache Zeitableitung liefert $-omega^2$, der
 Laplace-Operator $-k^2$ mit $k^2 = k_x^2 + k_y^2$, da $k_z$ nach @zinvarianz
 entfällt. Der gemeinsame Faktor kürzt sich heraus, und aus der
 Differentialgleichung wird eine algebraische Bedingung, die
-_Dispersionsrelation_ @GriffithsDE[vgl. S. 483]
+_Dispersionsrelation_ @lit:GriffithsDE[vgl. S. 483]
 
 $ k^2 = mu epsilon omega^2 $ <dispersion>
 
@@ -194,7 +194,7 @@ Isotropie.
 In einer ebenen Welle sind $bold(E)$ und $bold(H)$ nicht unabhängig voneinander:
 Setzt man @ansatz in @faraday ein, so folgt, dass beide senkrecht aufeinander
 stehen und ihr Amplitudenverhältnis allein vom Medium abhängt. Dieses
-Verhältnis heißt _Wellenimpedanz_ @Schneider2010[Gl. (7.46), S. 169]
+Verhältnis heißt _Wellenimpedanz_ @lit:Schneider2010[Gl. (7.46), S. 169]
 
 $ eta = E_0/H_0 = sqrt(mu/epsilon)
   quad "bzw. im Vakuum" quad

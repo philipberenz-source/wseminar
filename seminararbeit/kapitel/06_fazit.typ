@@ -59,5 +59,5 @@ frequenzunabhängigen Permittivität trifft auf viele reale Stoffe, etwa
 wasserhaltige, nicht zu. Ein Debye-Modell beschreibt solche Medien und lässt
 sich im Zeitbereich über eine zusätzliche Differentialgleichung oder eine
 rekursive Faltung umsetzen. Letztere arbeitet
-mit einem Dämpfungsfaktor @Schneider2010[S. 308] und folgt damit demselben Prinzip wie die Hilfsgrößen der PML in
+mit einem Dämpfungsfaktor @lit:Schneider2010[S. 308] und folgt damit demselben Prinzip wie die Hilfsgrößen der PML in
 @pml-bc.

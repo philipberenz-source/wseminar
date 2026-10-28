@@ -43,16 +43,31 @@
     line(length: 100%, stroke: 0.6pt + luma(170))
     v(1em)
   }
+  // Abschnitte nicht am Seitenende anfangen: Ist unter der aktuellen Position
+  // weniger Platz als `min`, beginnt die Überschrift auf einer neuen Seite.
+  // `sticky` hält die Überschrift zusätzlich immer mit dem Folgetext zusammen.
+  // (Ohne context/here(): das würde mit dem Literaturpaket nicht konvergieren.
+  // Ein unsichtbarer, unteilbarer Block der Höhe `min` rutscht auf die nächste
+  // Seite, wenn er nicht mehr passt; der negative Abstand hebt ihn wieder auf.)
+  let needspace(min) = {
+    block(breakable: false, height: min, above: 0pt, below: 0pt)
+    v(-min)
+  }
   show heading.where(level: 2): it => {
+    needspace(6.5cm)
     v(1.1em)
-    text(size: 13pt, weight: "bold", it)
+    block(sticky: true, text(size: 13pt, weight: "bold", it))
     v(0.45em)
   }
   show heading.where(level: 3): it => {
+    needspace(4.5cm)
     v(0.85em)
-    text(size: 11.5pt, weight: "bold", it)
+    block(sticky: true, text(size: 11.5pt, weight: "bold", it))
     v(0.3em)
   }
+
+  // Keine einzelnen Absatzzeilen am Seitenanfang/-ende (Hurenkind/Schusterjunge)
+  set text(costs: (orphan: 100%, widow: 100%))
 
   // ---------------- Tabellen: schlichter Buchsatz ----------------
   // Keine Gitterlinien, nur eine Linie unter der Kopfzeile; Kopfzeile hellgrau
@@ -102,7 +117,7 @@
   pagebreak()
 
   // ---------------- Inhaltsverzeichnis ----------------
-  outline(title: "Inhaltsverzeichnis", indent: auto)
+  outline(title: "Inhaltsverzeichnis", indent: auto, depth: 2)
   pagebreak()
 
   // Seitenzählung beginnt erst mit dem Textteil (Deckblatt und
