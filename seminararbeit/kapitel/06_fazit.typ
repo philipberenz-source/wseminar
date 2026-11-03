@@ -5,59 +5,76 @@
 
 == Fazit
 
-Ziel dieser Arbeit war es, die Maxwell-Gleichungen in eine zweidimensionale
-FDTD-Simulation zu überführen, diese in Python umzusetzen und die Genauigkeit
-des entstandenen Solvers zu untersuchen.
-
-Den Kern bildet dabei die Herleitung. Ausgehend von den Rotationsgleichungen,
-reduziert auf den $"TM"_z$-Fall, wurden die Ableitungen über die
-Taylor-Entwicklung durch zentrale Differenzenquotienten zweiter Ordnung ersetzt.
-Die räumlich und zeitlich versetzte Anordnung der Feldkomponenten im Yee-Gitter
-sorgt dafür, dass jede dieser Differenzen genau dort ausgewertet wird, wo die
-Ableitung benötigt wird; so entstehen explizite Update-Gleichungen, die $E$ und
-$H$ abwechselnd fortschreiben. Die Stabilitätsbedingung folgt aus demselben
-Gleichungssystem, und selbst die PML lässt sich über die komplexe
+Die Herleitung in Kapitel 3 zeigt, dass sich das Verfahren aus wenigen Bausteinen ergibt:
+Zentrale Differenzen ersetzen die Ableitungen, und erst die räumlich und
+zeitlich versetzte Anordnung der Felder im Yee-Gitter macht daraus explizite
+Update-Gleichungen, die elektrisches und magnetisches Feld abwechselnd
+fortschreiben. Den Zeitschritt begrenzt die Courant-Friedrichs-Lewy-Bedingung,
+und auch die absorbierende Randschicht fügt sich über die komplexe
 Koordinatenstreckung und die rekursive Auswertung der entstehenden Faltung in
-diese explizite Form überführen. Die Umsetzung in Python benötigt daher nur
-wenige Zeilen je Feldkomponente.
+dieses Verfahren ein. Mit NumPy (Kapitel 4) lassen sich die Update-Gleichungen vektorisiert auf
+ganze Felder anwenden, wodurch Simulation effizient ausgeführt werden können.
 
-Die Validierung in Kapitel 5 zeigt, dass der Solver die analytisch bekannten
-Eigenschaften elektromagnetischer Wellen reproduziert, wenn auch nicht exakt.
-Die verbleibenden Abweichungen sind jedoch keine Mängel der Implementierung,
-sondern systematische Folgen der Diskretisierung, die sich aus den hergeleiteten
-diskreten Gleichungen erklären und vorhersagen lassen (@sec-zwischenfazit).
+Dieselbe Diskretisierung, die das Verfahren so einfach macht, bestimmt auch
+seine Grenzen. Die Validierung bestätigt zwar, dass der Solver Ausbreitung, Reflexion
+und Transmission ebener Wellen wiedergibt, aber nicht exakt: Der Abbruchfehler
+der zentralen Differenz verlangsamt die Welle im Gitter, die Verknüpfung der
+Felder eine halbe Zelle neben der Grenzfläche erhöht Reflexions- und
+Transmissionskoeffizient, und das stufige Leitfähigkeitsprofil trägt zur
+Restreflexion der PML bei. Die Dispersion hängt von Auflösung, Courant-Zahl und
+Ausbreitungsrichtung ab, der Grenzflächenfehler von Auflösung und
+Permittivität; beide lassen sich mit den diskreten Gleichungen
+vorhersagen. Bei der Randschicht sind ihre Dicke, die vorgegebene
+Restreflexion und der Einfallswinkel maßgeblich.
 
-Daraus ergibt sich eine zentrale Erkenntnis dieser Arbeit: Ein numerischer Fehler
-ist nicht grundsätzlich problematisch, sofern seine Ursache und sein Verhalten
-bekannt sind. Ist bekannt, wovon eine Abweichung abhängt und wie sie sich mit
-Auflösung, Zeitschritt oder Randschicht verändert, so lassen sich die Parameter
-einer Simulation gezielt so wählen, dass der Fehler unterhalb einer geforderten
-Grenze bleibt. Die Zuverlässigkeit eines Ergebnisses hängt somit weniger davon
-ab, ob ein Fehler auftritt, als davon, ob er verstanden und abgeschätzt werden
-kann.
+Ein Fehler ist damit nicht von vornherein ein Mangel der Simulation. Lässt sich
+einordnen, woraus er sich ergibt und wovon er abhängt, so können Auflösung,
+Zeitschritt und Randschicht vor einer Rechnung so gewählt werden, dass er unter
+einer geforderten Grenze bleibt. Die Zuverlässigkeit eines Ergebnisses hängt
+somit weniger davon ab, ob ein Fehler auftritt, als davon, ob er verstanden
+ist.
 
-Nachgewiesen wurde dies an Anordnungen mit bekannter analytischer Lösung. Die
-gewonnenen Zusammenhänge bilden jedoch die Grundlage dafür, das Verfahren auch
-auf Probleme anzuwenden, für die keine analytische Lösung existiert, und die
-Verlässlichkeit der Ergebnisse dort begründet einzuschätzen.
+Im Rahmen der Arbeit ergeben sich jedoch auch mehrere Grenzen. Das Modell beschränkt sich auf zwei
+Dimensionen und frequenzunabhängige Materialien, und auch innerhalb dieses
+Modells blieben Fehlerquellen und Testgrößen unbeleuchtet: Weder die
+elektrische Leitfähigkeit und die daraus folgende Absorption noch die
+Energieerhaltung in einem geschlossenen System oder Eigenfrequenzen wurden
+untersucht. Ungeprüft blieben zudem Fehler durch die Geometrie,
+etwa der _Staircasing_-Fehler, der entsteht, wenn das Gitter schräge oder
+gekrümmte Grenzflächen nur stufenförmig auflöst. 
+Reale Geräte wie das
+Smartphone aus der Einleitung gehen jedoch über die getroffenen Vereinfachungen hinaus, und die
+gewonnenen Zusammenhänge gelten zunächst nur innerhalb des untersuchten
+Rahmens. Sie zeigen aber, welche Größen auch dort für die Verlässlichkeit einer
+FDTD-Simulation zu beachten sind, wo keine analytische Lösung zum Vergleich
+vorliegt.
 
 == Ausblick
 
-Die gesamte Arbeit beschränkt sich auf den zweidimensionalen $"TM"_z$-Fall mit
-frequenzunabhängigen Materialien. Daraus ergeben sich zwei naheliegende
-Erweiterungen.
+Die Einschränkungen aus dem Fazit geben die nächsten Schritte vor. Am
+naheliegendsten ist es, die bisher ungeprüften Fehlerquellen mit dem
+vorhandenen Solver zu untersuchen. Die Leitfähigkeit ist durch die Koeffizienten
+$C_a$ und $C_b$ bereits implementiert, sodass sich die Reflexion an einem
+verlustbehafteten Halbraum mit demselben Zwei-Lauf-Verfahren wie in Testfall 2
+messen und mit der analytischen Lösung für leitfähige Medien vergleichen ließe.
+Energieerhaltung und Eigenfrequenzen ließen sich in einem ideal leitenden
+Hohlraum prüfen, und an einer schräg im Gitter liegenden Grenzfläche ließe sich
+abschätzen, wie stark der _Staircasing_-Fehler ins Gewicht fällt.
 
-*Dritte Dimension.* Das Yee-Gitter lässt sich unmittelbar auf drei Dimensionen
-mit allen sechs Feldkomponenten erweitern. Damit
-entfiele die Annahme einer in $z$-Richtung unendlich ausgedehnten Anordnung,
-und $"TM"_z$- und $"TE"_z$-Anteile würden gemeinsam erfasst. Der Preis ist der
-Rechenaufwand: Die Zahl der Zellen wächst dann mit $N_lambda^3$ statt mit
-$N_lambda^2$.
+Zwei weitere Erweiterungen betreffen das Modell selbst. Die erste ist der
+Übergang in die dritte Dimension: Das Yee-Gitter lässt sich unmittelbar auf drei
+Dimensionen mit allen sechs Feldkomponenten übertragen. Damit entfiele die
+Annahme einer in $z$-Richtung unendlich ausgedehnten Anordnung, und
+$"TM"_z$- und $"TE"_z$-Anteile würden gemeinsam erfasst. Einhergehen würde dies mit erhöhtem
+Rechenaufwand, da die Zahl der Zellen dann mit $N_lambda^3$ statt mit
+$N_lambda^2$ wächst. Die zweite betrifft die Materialien: Die in @sec-material
+getroffene Vereinfachung einer frequenzunabhängigen Permittivität trifft auf
+viele reale Stoffe, etwa wasserhaltige, nicht zu. Polare Stoffe dieser Art
+beschreibt ein Debye-Modell, das sich im Zeitbereich über eine zusätzliche
+Differentialgleichung oder eine rekursive Faltung umsetzen lässt. Letztere
+arbeitet mit einem Dämpfungsfaktor @lit:Schneider2010[S. 308] und folgt damit
+demselben Prinzip wie die Hilfsgrößen der PML in @pml-bc.
 
-*Dispersive Medien.* Die in @sec-material getroffene Vereinfachung einer
-frequenzunabhängigen Permittivität trifft auf viele reale Stoffe, etwa
-wasserhaltige, nicht zu. Ein Debye-Modell beschreibt solche Medien und lässt
-sich im Zeitbereich über eine zusätzliche Differentialgleichung oder eine
-rekursive Faltung umsetzen. Letztere arbeitet
-mit einem Dämpfungsfaktor @lit:Schneider2010[S. 308] und folgt damit demselben Prinzip wie die Hilfsgrößen der PML in
-@pml-bc.
+Erst nach diesen Schritten wäre eine praxisnahe Anordnung ohne analytische
+Lösung der nächste sinnvolle Gegenstand, an dem sich die hier gewonnenen
+Zusammenhänge bewähren müssten.

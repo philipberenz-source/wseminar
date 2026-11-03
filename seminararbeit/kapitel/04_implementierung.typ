@@ -43,7 +43,7 @@ Python wurde gewählt, da die Sprache eine vergleichsweise kompakte Implementier
 
 Der gesamte Löser wird als Klasse `FDTD2D` aufgefasst. Eine Simulation kann dementsprechend als ein Objekt betrachtet werden, welches sämtliche Feldwerte, Materialkoeffizienten, PML-Profile und Auflösungen hält. Ändern lassen sich diese Zustände durch verschiedene Methoden, die die Klasse ebenfalls bereitstellt. Der entscheidende Vorteil einer solchen Struktur ist die Möglichkeit, mehrere voneinander unabhängige Simulationen als separate Objektinstanzen zu erzeugen, was insbesondere in Kapitel 5 bei der Durchführung mehrerer Testfälle mit unterschiedlichen Parametern von Nutzen sein wird.
 
-Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse:
+Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse, wobei besonders relevante Stellen in den folgenden Abschnitten gesondert erläutert werden:
 
 
 
@@ -63,7 +63,7 @@ Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse:
       #text(fill: luma(80))[die drei Feldkomponenten] \
       #v(0.3em)
       `psi_hx`, `psi_hy`, `psi_ez_x`, `psi_ez_y` \
-      #text(fill: luma(80))[Gedächtnis der absorbierenden Schicht] \
+      #text(fill: luma(80))[Hilfsgrößen / Koeffizienten der absorbierenden Schicht] \
       #v(0.3em)
       `Ca`, `Cb` \
       #text(fill: luma(80))[Materialkoeffizienten, je Gitterpunkt ein Paar] \
@@ -125,8 +125,7 @@ Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse:
       #text(size: 8.4pt, weight: "bold")[Auswertung] #h(0.3em)
       #text(size: 7pt, fill: luma(90))[nach der Rechnung] \
       #v(0.4em)
-      `get_spectrum()`, `total_energy()`, `get_grid()` \
-      `reset_fields()`
+      `get_spectrum()`, `get_grid()`
     ]
 
     // ---------- Verbindungen ----------
@@ -143,7 +142,6 @@ Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse:
     des Zeitschritts ist die Reihenfolge der Aufrufe festgelegt; sie folgt aus
     der Zuordnung der Felder zu ganz- und halbzahligen Zeitpunkten.],
 ) <fig-klasse>
-
 
 == Die absorbierende Randschicht <sec-randschicht>
 Um die in @sec-pml hergeleiteten Randbedingungen in Python zu implementieren, müssen zunächst die Koeffizienten berechnet werden:
@@ -233,8 +231,8 @@ Zu erläutern ist außerdem die unterschiedliche Schreibweise von `self.by_h[Non
     def _update_E(self):
         d = self.d
 
-        dHy = self.Hy[1:, 1:-1] - self.Hy[:-1, 1:-1]      # nackte Differenz
-        dHx = self.Hx[1:-1, 1:] - self.Hx[1:-1, :-1]      # nackte Differenz
+        dHy = self.Hy[1:, 1:-1] - self.Hy[:-1, 1:-1]  
+        dHx = self.Hx[1:-1, 1:] - self.Hx[1:-1, :-1]     
 
         self.psi_ez_x = self.bx_i[1:-1, None] * self.psi_ez_x + self.Cx_i[1:-1, None] * (dHy / d)
         self.psi_ez_y = self.by_j[None, 1:-1] * self.psi_ez_y + self.Cy_j[None, 1:-1] * (dHx / d)
@@ -271,7 +269,7 @@ Abschluss _hinter_ der Schicht, wie in @sec-randschicht bereits angedeutet. Im G
 
 == Der Gesamtalgorithmus <sec-gesamtablauf>
 
-Unter Berücksichtigung des zeitlichen Versatzes im Rahmen des Leapfrog-Schemas ergibt sich für `n` simulierte Zeitschritte der in @fig-gesamtablauf dargestellte Gesamtalgorithmus. Die abgebildete Reihenfolge folgt unmittelbar aus `__init__`, `step` und `run`; nach DIN-Konvention steht die Raute für die Abbruchbedingung der Zeitschleife und das Parallelogramm für die Eingabe der Parameter. Die Methoden `_record_probes()` und `_record_snapshots()` dienen hierbei der Sicherung der Simulationsergebnisse, welche dann nach der Simulation für weitere Untersuchungen aufgerufen werden können.
+Unter Berücksichtigung des zeitlichen Versatzes im Rahmen des Leapfrog-Schemas ergibt sich für `n` simulierte Zeitschritte der in @fig-gesamtablauf dargestellte Gesamtalgorithmus. Die abgebildete Reihenfolge folgt unmittelbar aus `__init__`, `step` und `run`; nach Konvention steht die Raute für die Abbruchbedingung der Zeitschleife und das Parallelogramm für die Eingabe der Parameter. Die Methoden `_record_probes()` und `_record_snapshots()` dienen hierbei der Sicherung der Simulationsergebnisse, welche dann nach der Simulation für weitere Untersuchungen aufgerufen werden können.
 
 #figure(
   block(width: 12.8cm, height: 12.6cm)[
@@ -350,4 +348,4 @@ Unter Berücksichtigung des zeitlichen Versatzes im Rahmen des Leapfrog-Schemas 
 
 
 
-Damit ist die aus den Maxwell-Gleichungen entwickelte FDTD-Methode vollständig in Python implementiert. Die konkrete Umsetzung bildet die Grundlage für die im folgenden Kapitel durchgeführten Testfälle, anhand derer die numerischen Ergebnisse mit analytisch bekannten Eigenschaften elektromagnetischer Wellen verglichen und damit die Zuverlässigkeit des implementierten Solvers untersucht wird. Der gesamte Code ist in dem im Anhang verlinkten _GitHub_-Archiv aufrufbar.
+Damit ist die aus den Maxwell-Gleichungen entwickelte FDTD-Methode vollständig in Python implementiert. Die konkrete Umsetzung bildet die Grundlage für die im folgenden Kapitel durchgeführten Testfälle, anhand derer die numerischen Ergebnisse mit analytischen Lösungen für die Ausbreitung, Reflexion und Transmission ebener Wellen verglichen und damit die Zuverlässigkeit des implementierten Solvers untersucht wird. Der gesamte Code ist in dem im Anhang verlinkten _GitHub_-Archiv aufrufbar.

@@ -59,13 +59,9 @@ def fresnel(n2):
 def main():
     ABB.mkdir(parents=True, exist_ok=True)
     erg = {}
-    linie = []
     for S in COURANT:
         vakuum = lauf(S, 1.0)
-        if S == 0.99:
-            medium = lauf(S, N2 ** 2, linie)
-        else:
-            medium = lauf(S, N2 ** 2)
+        medium = lauf(S, N2 ** 2)
         erg[N2, S] = koeffizienten(vakuum, medium, S, N2)
     for n2 in N2_VERGLEICH:
         erg[n2, 0.99] = koeffizienten(vakuum, lauf(0.99, n2 ** 2), 0.99, n2)
@@ -107,7 +103,7 @@ def main():
     fig.savefig(ABB / "testfall_d_courant.pdf")
     plt.close(fig)
 
-    fig, (links, rechts) = plt.subplots(1, 2, figsize=(9.5, 3.6))
+    fig, links = plt.subplots(figsize=(4.9, 3.6))
     for n2, farbe in zip((N2_VERGLEICH[0], N2, N2_VERGLEICH[1]), FARBEN):
         nl, gamma, _, gamma_gitter, _ = erg[n2, 0.99]
         g = fresnel(n2)[0]
@@ -123,23 +119,6 @@ def main():
     links.set_xlim(7, 30)
     links.legend(fontsize=7.5, loc="upper right")
 
-    ez = np.array(linie)
-    ez /= np.abs(ez).max()
-    ct = np.arange(1, len(ez) + 1) * 0.99 / np.sqrt(2.0)
-    rechts.pcolormesh(np.arange(NX), ct, ez, cmap="RdBu_r", vmin=-0.5, vmax=0.5,
-                      shading="auto", rasterized=True)
-    rechts.axvline(I_GRENZE - 0.5, color="k", lw=0.9, ls="--")
-    rechts.axvspan(I_GRENZE - 0.5, NX - NPML, color="0.5", alpha=0.08, lw=0)
-    kasten = dict(fc="white", ec="none", alpha=0.8, pad=1)
-    rechts.text(80, 95, "einfallend", fontsize=8, ha="center", bbox=kasten)
-    rechts.text(85, 235, "reflektiert", fontsize=8, ha="center", bbox=kasten)
-    rechts.text(205, 330, "transmittiert", fontsize=8, ha="center", bbox=kasten)
-    rechts.text(I_GRENZE - 6, 20, r"$\varepsilon_r = 1$", ha="right", fontsize=8)
-    rechts.text(I_GRENZE + 6, 20, r"$\varepsilon_r = 4$", ha="left", fontsize=8)
-    rechts.set_xlim(NPML, NX - NPML)
-    rechts.set_ylim(0, 420)
-    rechts.set_xlabel("Gitterindex $i$")
-    rechts.set_ylabel(r"Laufweg $c\,t/\Delta$ in Zellen")
     fig.tight_layout()
     fig.savefig(ABB / "testfall_d_material.pdf")
     plt.close(fig)

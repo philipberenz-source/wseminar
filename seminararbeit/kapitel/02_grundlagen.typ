@@ -12,7 +12,7 @@ handelt, bleiben die Herleitungen kurz.
 == Die Maxwell-Gleichungen <sec-maxwell>
 
 Maxwell zeigte 1865, dass sich alle elektrischen und magnetischen
-Erscheinungen durch ein Gleichungssystem beschreiben lassen @lit:Maxwell1865, das
+Erscheinungen durch ein Gleichungssystem beschreiben lassen, das
 zusammen mit der Lorentz-Kraft den gesamten theoretischen Inhalt der
 klassischen Elektrodynamik zusammenfasst @lit:GriffithsDE[S. 417 f.]. Auf die freien
 Ladungen und Ströme bezogen @lit:GriffithsDE[S. 420] lauten sie in differentieller
@@ -68,11 +68,7 @@ innerhalb einer Gitterzelle jedoch konstant (_stückweise homogen_).
 == Reduktion auf zwei Dimensionen: der TM#sub[z]-Fall <sec-zweidimensional>
 
 Eine weitere Vereinfachung ist die Beschränkung auf zwei Dimensionen: Felder und
-Materialien werden nur in einer Ebene betrachtet. Der Grund ist der
-Rechenaufwand, der sich als Produkt aus Zellenzahl und Zeitschrittzahl ergibt.
-Da die Zahl der Zeitschritte wegen der Stabilitätsbedingung (@sec-cfl)
-proportional zu $N$ wächst, liegt er bei $N$ Zellen je Richtung in zwei
-Dimensionen bei $N^3$, in drei Dimensionen jedoch bei $N^4$.
+Materialien werden nur in einer Ebene betrachtet.
 Die Reduktion ist dabei keine Näherung, sondern _exakt_, sofern weder Felder
 noch Materialverteilung von der dritten Koordinate abhängen:
 
@@ -91,6 +87,9 @@ $ mu_0 (partial H_x)/(partial t) = - (partial E_z)/(partial y) $ <tmz-hx>
 $ mu_0 (partial H_y)/(partial t) = (partial E_z)/(partial x) $ <tmz-hy>
 $ epsilon (partial E_z)/(partial t) + J_z^"ges"
   = (partial H_y)/(partial x) - (partial H_x)/(partial y) $ <tmz-ez>
+
+wobei $J_z^"ges"$ die gesamte Stromdichte in $z$-Richtung bezeichnet; ihre
+Aufteilung folgt in @sec-update.
 
 
 == Randbedingungen an Grenzflächen <sec-randbedingungen>
@@ -177,11 +176,11 @@ _Dispersionsrelation_ @lit:GriffithsDE[vgl. S. 483]
 $ k^2 = mu epsilon omega^2 $ <dispersion>
 
 Eine ebene Welle löst @welle also genau dann, wenn $k$ und $omega$ in diesem
-allein vom Medium bestimmten Verhältnis stehen. Es ist zugleich die
+allein vom Medium bestimmten Verhältnis stehen. Das Verhältnis $omega\/k$ ist zugleich die
 Geschwindigkeit, mit der sich eine Fläche fester Phase verschiebt --- die
 _Phasengeschwindigkeit_
 
-$ c_p = omega/k = 1/sqrt(mu epsilon) $ <phasengeschwindigkeit>
+$ v_p = omega/k = 1/sqrt(mu epsilon) $ <phasengeschwindigkeit>
 
 Entscheidend ist, was in @phasengeschwindigkeit _nicht_ auftritt: weder $omega$
 noch die Richtung von $bold(k)$. Im Kontinuum laufen also alle Frequenzen und

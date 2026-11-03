@@ -3,22 +3,30 @@
 
 = Einleitung
 
+// Unsichtbare Zitate in der Reihenfolge des Literaturverzeichnisses (Gruppen
+// in main.typ): Da "ieee" nach der ersten Zitierung nummeriert, laufen die
+// Nummern im Verzeichnis so von oben nach unten durch. Neue Quellen hier an
+// der Stelle ihrer Gruppe eintragen (nur Quellen, die im Text zitiert werden).
+#place(hide[
+  @lit:Maxwell1865 @lit:Yee1966 @lit:Liu2022
+  @lit:Taflove2005 @lit:GriffithsDE @lit:Orosz2022 @lit:Schneider2010
+  @lit:AppleSpecs @lit:CSTStudio
+])
+
 == Relevanz und Motivation
 
 
 Als Apple im September 2023 das iPhone 15 Pro vorstellte, dessen Antennen in den umlaufenden Titanrahmen des Gehäuses integriert sind, war dieses Antennendesign bereits lange Gegenstand der Entwicklung. Möglich ist dies mittels computergestützter Simulationen, die die elektromagnetischen Eigenschaften eines Geräts im Voraus berechnen, sodass bereits der Prototyp ein optimiertes Abstrahlverhalten besitzen kann.
 
-Die Schwierigkeit liegt dabei in der Bandbreite: Auf wenigen Zentimetern Gehäuserand müssen Mobilfunkbänder von etwa 600 MHz bis 6 GHz, WLAN bei 2,4, 5 und 6 GHz, Bluetooth, GNSS und NFC bei 13,56 MHz gleichzeitig untergebracht werden. Ein Teil der abgestrahlten Leistung wird dabei nicht nach außen abgegeben, sondern an den inneren Grenzflächen von Display, Platine, Akku und Rückglas reflektiert, im Material absorbiert und in Wärme umgewandelt oder in ungewollte Richtungen gestreut. Da diese Reflexions- und Absorptionseigenschaften stark von der Materialzusammensetzung, den Schichtdicken und der jeweiligen Frequenz abhängen, entsteht ein hochgradig gekoppeltes System. Eine tatsächliche Anfertigung verschiedener Prototypen mit jeweils unterschiedlichen Geometrien und Materialkonfigurationen ist somit aufgrund des finanziellen und zeitlichen Aufwands praktisch nicht realisierbar.
+Die Schwierigkeit liegt dabei in den Multiband-Anforderungen: Auf wenigen Zentimetern Gehäuserand müssen Mobilfunkbänder von etwa 600 MHz bis 6 GHz, WLAN bei 2,4, 5 und 6 GHz, Bluetooth, GNSS und NFC bei 13,56 MHz gleichzeitig untergebracht werden @lit:AppleSpecs. Ein Teil der abgestrahlten Leistung wird dabei nicht nach außen abgegeben, sondern an den inneren Grenzflächen von Display, Platine, Akku und Rückglas reflektiert, im Material absorbiert und in Wärme umgewandelt oder in ungewollte Richtungen gestreut. Da diese Reflexions- und Absorptionseigenschaften stark von der Materialzusammensetzung, den Schichtdicken und der jeweiligen Frequenz abhängen, entsteht ein hochgradig gekoppeltes System. Eine tatsächliche Anfertigung verschiedener Prototypen mit jeweils unterschiedlichen Geometrien und Materialkonfigurationen ist somit aufgrund des finanziellen und zeitlichen Aufwands nur eingeschränkt möglich.
 
-Der Fall steht dabei stellvertretend für eine ganze Klasse technischer Problemstellungen --- vom Antennenarray hinter dielektrischer Abdeckung über die integrierte Photonik bis zur Spulenauslegung in Magnetresonanztomographen. Ihnen allen ist gemeinsam, dass Materialien unterschiedlicher Permittivität $epsilon_r$ und Leitfähigkeit $sigma$ auf unregelmäßigen, häufig gekrümmten oder geschichteten Grenzflächen zusammentreffen. Zwar beschreiben die Maxwell-Gleichungen das Feld bei gegebenen Quellen und Materialeigenschaften vollständig @lit:Maxwell1865, geschlossene Lösungen sind aber nur für wenige hochsymmetrische Idealfälle bekannt: die ebene Welle im homogenen Raum, die Reflexion an einer unendlich ausgedehnten ebenen Grenzfläche, die Streuung an einer Kugel. Entfällt diese Symmetrie, wie in den genannten Beispielen, so ist für das entstehende System partieller Differentialgleichungen im Allgemeinen keine geschlossene analytische Lösung verfügbar.
+Der Fall steht dabei stellvertretend für eine ganze Klasse technischer Problemstellungen --- von der Radarsignatur eines Kampfjets bis zur Spulenauslegung in Magnetresonanztomographen. Ihnen allen ist gemeinsam, dass Materialien unterschiedlicher Permittivität $epsilon_r$ und Leitfähigkeit $sigma$ auf unregelmäßigen, häufig gekrümmten oder geschichteten Grenzflächen zusammentreffen. Zwar beschreiben die Maxwell-Gleichungen das Feld bei gegebenen Quellen und Materialeigenschaften vollständig @lit:Maxwell1865, geschlossene Lösungen sind aber nur für wenige hochsymmetrische Idealfälle bekannt: die ebene Welle im homogenen Raum, die Reflexion an einer unendlich ausgedehnten ebenen Grenzfläche, die Streuung an einer Kugel. Entfällt diese Symmetrie, wie in den genannten Beispielen, so ist für das entstehende System partieller Differentialgleichungen im Allgemeinen keine geschlossene analytische Lösung verfügbar.
 
 Wo eine analytische Lösung nicht verfügbar ist, treten deshalb numerische Verfahren an ihre Stelle: Das Kontinuum wird in ein endliches Gitter überführt und Differentialquotienten durch Differenzenquotienten angenähert.
 
-Eines der verbreitetsten Verfahren in diesem Zusammenhang ist die _Finite-Difference Time-Domain_-Methode (FDTD), welche in der Praxis meist über kommerzielle Software angewandt wird. Weit verbreitet ist dabei etwa die Software CST Studio Suite, deren Quellcode jedoch nicht öffentlich zugänglich ist @lit:CSTStudio. Durch Bibliotheken wie MEEP oder gprMax gibt es jedoch _Open-Source_-Implementierungen, was bedeutet, dass die eigentliche Lücke weniger in der Verfügbarkeit des Codes als im Nachvollzug der Herleitung liegt:
+Eines der verbreitetsten Verfahren in diesem Zusammenhang ist die _Finite-Difference Time-Domain_-Methode (FDTD), welche in der Praxis meist über kommerzielle Software angewandt wird. Weit verbreitet ist dabei etwa die Software CST Studio Suite, deren Quellcode jedoch nicht öffentlich zugänglich ist @lit:CSTStudio. Durch Bibliotheken wie MEEP oder gprMax gibt es jedoch _Open-Source_-Implementierungen, was bedeutet, dass die eigentliche Lücke weniger in der Verfügbarkeit des Codes als im Nachvollzug der Herleitung liegt: Gegenüber dem physikalischen Kontinuum treten auf einem diskreten Gitter systematische Abweichungen auf, deren Ursachen bei der alleinigen Verwendung kommerzieller Blackbox-Programme oder fremder Quelltexte nur eingeschränkt nachvollzogen werden können.
 
-Gegenüber dem physikalischen Kontinuum treten auf einem diskreten Gitter systematische Abweichungen auf, deren Ursachen bei der alleinigen Verwendung kommerzieller Blackbox-Programme oder fremder Quelltexte nur eingeschränkt nachvollzogen werden können.
-
-Dementsprechend verfolgt diese Arbeit den Ansatz, die Maxwell-Gleichungen in ein System diskreter Gleichungen zu überführen und daraus einen eigenen FDTD-Solver in Python zu implementieren, welcher anschließend gegen analytisch beschriebene Testfälle gehalten wird. Ziel ist es, die numerische Genauigkeit des Verfahrens zu bestimmen und zu untersuchen, welche Fehlerquellen aus der Diskretisierung hervorgehen.
+Dementsprechend verfolgt diese Arbeit den Ansatz, die Maxwell-Gleichungen in ein System diskreter Gleichungen zu überführen und daraus einen eigenen FDTD-Solver in Python zu implementieren, welcher anschließend gegen analytisch beschriebene Testfälle gehalten wird. Dadurch wird sowohl die numerische Genauigkeit des Verfahrens bestimmt, als auch untersucht, welche Fehlerquellen sich durch die Diskretisierung ergeben. 
 
 == Historischer Kontext
 
@@ -42,9 +50,9 @@ Aus den dargestellten Überlegungen ergibt sich die folgende Leitfrage:
   #block(width: 92%)[
     _Wie lassen sich die Maxwell-Gleichungen in eine zweidimensionale
     FDTD-Simulation überführen und in Python implementieren, und wovon hängt die
-    numerische Genauigkeit des daraus entwickelten FDTD-Solvers bei der Reproduktion
-    analytisch bekannter Eigenschaften elektromagnetischer Wellen ab?_
+    numerische Genauigkeit des daraus entwickelten FDTD-Solvers beim Vergleich mit
+    analytischen Lösungen für die Ausbreitung, Reflexion und Transmission ebener Wellen ab?_
   ]
 ]
 
-Kapitel 2 stellt dazu die theoretischen Voraussetzungen bereit: die Maxwell-Gleichungen in differentieller Form, die Herleitung der Wellengleichung, die ebene Welle als analytische Referenzlösung sowie die Grenzen analytischer Verfahren. Aus diesen Grundlagen entwickelt Kapitel 3 die FDTD-Methode, vom Differenzenquotienten über das Yee-Gitter bis zu den Update-Gleichungen des zweidimensionalen $"TM"_z$-Falls, und ergänzt sie um die Courant-Friedrichs-Lewy-Bedingung sowie die verwendeten Randbedingungen. Die Übersetzung in ein lauffähiges Programm dokumentiert Kapitel 4. Kapitel 5 unterzieht den entwickelten Solver vier Testfällen, deren Lösungen sich jeweils in geschlossener Form angeben lassen, und leitet aus dem Vergleich die Fehlerquellen und Grenzen des Verfahrens ab. Kapitel 6 fasst die Erkenntnisse der Arbeit abschließend zusammen und gibt einen Ausblick.
+Kapitel 2 stellt dazu die theoretischen Voraussetzungen bereit: die Maxwell-Gleichungen in differentieller Form, die Herleitung der Wellengleichung, die ebene Welle als analytische Referenzlösung sowie die Grenzen analytischer Verfahren. Aus diesen Grundlagen entwickelt Kapitel 3 die FDTD-Methode, vom Differenzenquotienten über das Yee-Gitter bis zu den Update-Gleichungen des zweidimensionalen $"TM"_z$-Falls, und ergänzt sie um die Courant-Friedrichs-Lewy-Bedingung sowie die verwendeten Randbedingungen. Die Übersetzung in ein lauffähiges Programm dokumentiert Kapitel 4. Kapitel 5 unterzieht den entwickelten Solver drei Testfällen, deren Lösungen sich jeweils in geschlossener Form angeben lassen, und leitet aus dem Vergleich die Fehlerquellen und Grenzen des Verfahrens ab. Kapitel 6 fasst die Erkenntnisse der Arbeit abschließend zusammen und gibt einen Ausblick.
