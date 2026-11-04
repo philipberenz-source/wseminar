@@ -7,7 +7,7 @@ Dieses Kapitel stellt knapp die Gleichungen bereit, aus denen in Kapitel 3 die
 FDTD-Methode abgeleitet und mit denen in Kapitel 5 ihr Ergebnis überprüft wird.
 Abschließend werden die Grenzen analytischer Lösungsverfahren aufgezeigt. Da es
 sich um Grundlagen und nicht um den eigentlichen Gegenstand der Arbeit
-handelt, bleiben die Herleitungen kurz.
+handelt, werden die Herleitungen kurz gehalten.
 
 == Die Maxwell-Gleichungen <sec-maxwell>
 
@@ -62,8 +62,7 @@ Dass @material in dieser Form gilt, ist eine Annahme, die vier Vereinfachungen @
 
 Hinzu kommt die Festlegung auf _nichtmagnetische_ Materialien ($mu_r=1$,
 $mu=mu_0$ überall); das Programm in Kapitel 4 kennt entsprechend nur eine
-ortsabhängige Permittivität $epsilon_r(x,y)$ und Leitfähigkeit $sigma(x,y)$,
-innerhalb einer Gitterzelle jedoch konstant (_stückweise homogen_).
+ortsabhängige Permittivität $epsilon_r(x,y)$ und Leitfähigkeit $sigma(x,y)$.
 
 == Reduktion auf zwei Dimensionen: der TM#sub[z]-Fall <sec-zweidimensional>
 
@@ -115,10 +114,15 @@ also $E_z = 0$.
 
 Aus @faraday und @ampere folgt für ein quellen- und verlustfreies Gebiet
 ($rho_"frei"=0$ und $bold(J)_"frei"=sigma bold(E)=0$, also $sigma=0$) mit konstantem $epsilon,mu$ eine einzelne
-Gleichung für $bold(E)$ @lit:GriffithsDE[S. 481 f.]: Bildet man die Rotation von
-@faraday, nutzt die Vektoridentität @lit:GriffithsDE[S. 482]
+Gleichung für $bold(E)$ @lit:GriffithsDE[S. 481 f.]: Bildet man auf beiden
+Seiten von @faraday die Rotation, nutzt links die Vektoridentität
+@lit:GriffithsDE[S. 482]
 
-$ nabla times (nabla times bold(E)) = nabla (nabla dot bold(E)) - nabla^2 bold(E) $
+$ nabla times (nabla times bold(E)) = nabla (nabla dot bold(E)) - nabla^2 bold(E) , $
+
+wobei für die rechte Seite von @faraday mit $bold(B) = mu bold(H)$ folgt
+
+$ nabla times (-(partial bold(B))/(partial t)) = -mu partial/(partial t) (nabla times bold(H)) , $
 
 und setzt @gauss-e sowie @ampere ein, ergibt sich die _Wellengleichung_
 @lit:GriffithsDE[mod. Gl. (9.41)]

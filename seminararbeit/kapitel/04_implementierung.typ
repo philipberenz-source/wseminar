@@ -222,7 +222,7 @@ zueinander verschoben. `self.Ez[:, 1:] - self.Ez[:, :-1]` liefert dementsprechen
 einem einzigen Aufruf die Differenz zwischen benachbarten Gitterpunkten in $y$-Richtung an
 allen Gitterpunkten zugleich --- also die diskrete Ableitung
 $partial E_z\/partial y$ als vollständiges Array.
-Das Verfahren der _Vektorisierung_ ist aufgrund der Ausführung in kompiliertem, für Array-Operationen optimiertem Code deutlich effizienter als eine elementweise Schleife in reinem Python.
+Da die Array-Operationen in kompiliertem Code ausgeführt werden, ist die _Vektorisierung_ effizienter als eine elementweise Schleife in reinem Python.
 
 Zu erläutern ist außerdem die unterschiedliche Schreibweise von `self.by_h[None, :]` und `self.bx_h[:, None]`. Da die Profile zunächst eindimensional vorliegen, müssen sie für die Verwendung in den zweidimensionalen Feldern entsprechend erweitert werden. Die eingefügte Achse bestimmt dabei, entlang welcher Raumrichtung das jeweilige Profil aufgespannt wird. `[None, :]` formt das $y$-Profil zu einer Zeile, die über alle $x$-Werte ausgedehnt wird, während `[:, None]` das $x$-Profil zu einer Spalte formt, die sich über alle $y$-Werte erstreckt. Würde ein $sigma_y$ versehentlich in $x$-Richtung aufgespannt, entstünde die entsprechende Schicht an den falschen Rändern.
 

@@ -4,7 +4,7 @@
 = Validierung an analytisch lösbaren Anordnungen
 
 In Kapitel 4 wurden die zuvor hergeleiteten Update-Gleichungen in ein Python-Programm überführt. Offen bleibt jedoch weiterhin, inwiefern daraus gewonnene 
-Lösungen tatsächlich aussagekräftig sind und vor allem, ob sie Ausbreitung, Reflexion und Transmission ebener Wellen so wiedergeben, wie es die analytischen Lösungen vorhersagen. Vor diesem Hintergrund werden im Folgenden verschiedene Testfälle mittels fdtd_core.py simuliert und anschließend mit analytischen Lösungen verglichen. 
+Lösungen tatsächlich aussagekräftig sind und vor allem, ob sie Ausbreitung, Reflexion und Transmission ebener Wellen so wiedergeben, wie es die analytischen Lösungen vorhersagen. Vor diesem Hintergrund werden im Folgenden verschiedene Testfälle mit `fdtd_core.py` simuliert und anschließend mit analytischen Lösungen verglichen. 
 Ziel ist es, zu beurteilen, ob die Simulationsergebnisse eine physikalische Aussagekraft besitzen und wovon mögliche Abweichungen abhängen.
 
 == Fragestellung und Vorgehen <sec-vorgehen>
@@ -32,7 +32,7 @@ Fehlerrechnung im üblichen Sinn entfällt damit. Unsicherheiten gibt es dennoch
 --- unter anderem durch Rundungsfehler infolge der begrenzten Genauigkeit von Gleitkommazahlen oder Frequenz- und Phasenfehler bei der diskreten Fourier-Transformation. Die Frequenzauflösung der Fourier-Transformation ist dabei durch die Zahl $N_T$ der aufgezeichneten Zeitschritte auf $Delta f = 1\/(N_T Delta t)$ begrenzt @lit:Schneider2010[S. 121, Gl. (5.31)].
 
 Von besonderer Bedeutung für das Kapitel wird ohnehin nicht der absolute Fehler sein, sondern vielmehr, wie sich dieser verhält --- beispielsweise 
-in Abhängigkeit von der Gitterbreite. Dies ermöglicht es, differenzierter die Zuverlässigkeit des Verfahrens zu beurteilen und die enstehenden Abweichungen zu klassifizieren. Abhängig ist das Fehlerverhalten vor allem von zwei
+in Abhängigkeit von der Gitterbreite. Dies ermöglicht es, differenzierter die Zuverlässigkeit des Verfahrens zu beurteilen und die entstehenden Abweichungen zu klassifizieren. Abhängig ist das Fehlerverhalten vor allem von zwei
 Größen. Nach @lit:Schneider2010[S. 113] bestimmen nicht die absoluten Schrittweiten
 $Delta$ und $Delta t$ das Verhalten der Felder im Gitter, sondern allein die
 Courant-Zahl $S$, die nur ihr Verhältnis enthält, und die _Auflösung_
@@ -74,7 +74,7 @@ einer um $theta$ gekippten Front überlagern. Die Quelllinie durchspannt das ges
 
 
 
-Parallel zur Ausbreitungsrichtung werden zwei Sonden $P_1$ und $P_2$ mit dem Abstand $L$ registriert; die _Fast Fourier Transformation_ liefert für jegliche Frequenzen jeweils Amplitude und Phase. Da eine Fläche konstanter Phase die Strecke $L$ in der Zeit $L\/tilde(v)_p$ zurücklegt, ergibt sich die Phasendifferenz $Delta phi(f) = 2 pi f L\/tilde(v)_p$, woraus für die Phasengeschwindigkeit folgt:
+Parallel zur Ausbreitungsrichtung werden zwei Sonden $P_1$ und $P_2$ mit dem Abstand $L$ angeordnet; die _Fast Fourier Transformation_ liefert für jede Frequenz Amplitude und Phase. Da eine Fläche konstanter Phase die Strecke $L$ in der Zeit $L\/tilde(v)_p$ zurücklegt, ergibt sich die Phasendifferenz $Delta phi(f) = 2 pi f L\/tilde(v)_p$, woraus für die Phasengeschwindigkeit folgt:
 
 $ tilde(v)_p (f) = (2 pi f L)/(Delta phi(f)). $ <tf1-vp>
 
@@ -91,13 +91,15 @@ Frequenz und Richtung. Variiert werden $N_lambda$, die Courant-Zahl $S$
   image("../abbildungen/testfall_a_dispersion.pdf", width: 92%),
   caption: [Phasengeschwindigkeit bei achsenparalleler Ausbreitung
     ($theta = 0$) über der Auflösung, links linear, rechts als relativer Fehler
-    doppelt-logarithmisch mit Vergleichsgerade der Steigung $-2$.],
+    doppelt-logarithmisch mit Vergleichsgerade der Steigung $-2$. Sondenabstand $L = 200 Delta$, Messdauer
+    $N_T Delta t = 450 Delta\/c$.],
 ) <abb:tf1-dispersion>
 
 #figure(
   image("../abbildungen/testfall_a_anisotropie.pdf", width: 62%),
   caption: [Phasengeschwindigkeit über der Ausbreitungsrichtung $theta$ bei
-    $N_lambda = 10$.],
+    $N_lambda = 10$. Sondenabstand $L = 60 Delta$, Messdauer
+    $N_T Delta t = 250 Delta\/c$.],
 ) <abb:tf1-anisotropie>
 
 
@@ -166,8 +168,8 @@ Diese Gleichung ist nicht geschlossen nach $tilde(k)$ auflösbar und wird daher
 numerisch gelöst @lit:Taflove2005[vgl. S. 114]. Die so berechneten Werte stimmen
 mit den Messwerten aus @abb:tf1-dispersion und @abb:tf1-anisotropie näherungsweise überein.
 Die
-Abweichung von $c$ ist damit vollständig durch die numerische Dispersion
-erklärt; das Programm setzt das Yee-Verfahren korrekt um.
+Abweichung von $c$ lässt sich damit auf die numerische Dispersion
+zurückführen; ein Fehler in der Umsetzung des Yee-Verfahrens ist nicht erkennbar.
 
 Woher die drei Befunde stammen, zeigt eine eigene Taylor-Entwicklung von
 @num-dispersion-n für $N_lambda >> 1$ mit $sin x approx x - x^3\/6$:
@@ -183,7 +185,7 @@ Längs der Gitterdiagonalen ist die Ausbreitung dann dispersionsfrei
 Folge: Seine hochfrequenten, schlechter aufgelösten Anteile laufen langsamer und
 bleiben als Nachlauf zurück @lit:Taflove2005[S. 107].
 
-Während die Abweichung der Geschwindigkeit im niederschwelligen Prozentbereich als sehr gering erscheint, ergibt sich daraus ein Fehler, der sich mit der Zeit linear aufsummiert. Nach längerer Simulationsdauer kann es somit zu einer völlig verfälschten Phase kommen, weshalb die Kenntnis über die Größe des Fehlers von großer Relevanz für die sachgemäße Anwendung des FDTD-Verfahrens ist @lit:Schneider2010[S. 166].
+Die Abweichung der Geschwindigkeit ist zwar klein, der daraus folgende Phasenfehler wächst jedoch linear mit der Laufstrecke. Bei langen Laufwegen kann die Phase daher erheblich verfälscht sein, weshalb die Kenntnis über die Größe des Fehlers von großer Relevanz für die sachgemäße Anwendung des FDTD-Verfahrens ist @lit:Schneider2010[S. 166].
 
 
 == Testfall 2 --- Reflexion und Transmission an einer dielektrischen Grenzfläche <sec-tf3>
@@ -224,7 +226,7 @@ $ Gamma_"Sim"= abs(hat(E)_B - hat(E)_A)/abs(hat(E)_A) bar.v_(P_r) ,
   caption: [Reflexions- und Transmissionsfaktor für $epsilon_r = 4$ bei
     verschiedenen Courant-Zahlen. Links: $abs(Gamma_"Sim")$ und $T_"Sim"$ mit
     den Fresnel-Werten @tf3-fresnel (punktiert). Rechts: relative Abweichung
-    von @tf3-fresnel mit einer Vergleichsgeraden der Steigung $-2$.],
+    von @tf3-fresnel mit einer Vergleichsgeraden der Steigung $-2$. Messdauer $N_T Delta t = 500 Delta\/c$.],
 ) <abb:tf3-courant>
 
 Beide numerischen Koeffizienten liegen über den Fresnel-Werten; $abs(Gamma_"Sim")$ beträgt bei $N_lambda = 10$ etwa $0,42$ statt $1\/3$. Mit wachsender Auflösung konvergieren sie gegen die aus @tf3-fresnel berechneten Werte. Aus @abb:tf3-courant folgt zudem eine quadratische Abnahme dieser Abweichung mit $N_lambda^(-2)$, wohingegen die Courant-Zahl anders als in Testfall 1 kaum Einfluss nimmt. Mit der Permittivität wächst die Abweichung dagegen deutlich (@abb:tf3-material). 
@@ -232,7 +234,7 @@ Beide numerischen Koeffizienten liegen über den Fresnel-Werten; $abs(Gamma_"Sim
   image("../abbildungen/testfall_d_material.pdf", width: 55%),
   caption: [$abs(Gamma_"Sim")$ bezogen auf den Fresnel-Wert für
     verschiedene $epsilon_r$, punktiert $tilde(Gamma)\/Gamma$ nach
-    @tf3-gitter; $S = 0,99$.],
+    @tf3-gitter; $S = 0,99$, Aufbau wie in @abb:tf3-courant.],
 ) <abb:tf3-material>
 
 
@@ -243,8 +245,7 @@ Beide numerischen Koeffizienten liegen über den Fresnel-Werten; $abs(Gamma_"Sim
 In dem Testfall hängt die ebene Welle mit $theta=0$ nicht von $y$ ab, sodass $H_x$ verschwindet und der Testfall so der Ausbreitung in einem eindimensionalen Gitter ähnelt.
 
 Im Kontinuum braucht man für die beiden Unbekannten $Gamma$ und $T$ zwei
-Gleichungen: $E_z$ ist an der Grenzfläche stetig, und $H_y$ ist an der
-Grenzfläche stetig. Im Yee-Gitter gibt es an der Grenzfläche jedoch nur einen
+Gleichungen: Sowohl $E_z$ als auch $H_y$ sind an der Grenzfläche stetig. Im Yee-Gitter gibt es an der Grenzfläche jedoch nur einen
 $H_y$-Knoten. Die nächsten $E_z$-Knoten liegen eine halbe Zelle links und rechts
 davon.
 
@@ -302,110 +303,111 @@ Damit sind die Befunde aus @abb:tf3-courant und @abb:tf3-material erklärt, dass
 
 == Testfall 3 --- Absorbierender Rand <sec-tf4>
 
-In diesem Testfall steht die PML aus @sec-pml im Vordergrund. Nach
-@pml-restreflexion-profil hängt die Reflexion im Kontinuum nicht von der
-Frequenz ab; sie beträgt bei senkrechtem Einfall genau die vorgegebene
-Restreflexion $abs(R(0))$ und wächst bei schrägem Einfall auf
-$abs(R(0))^(cos theta)$. Geprüft wird, ob dies im Gitter gilt und welche Rolle
-die Dicke der Schicht spielt.
+Die PML aus @sec-pml ist über @pml-sigmamax so ausgelegt, dass eine senkrecht
+einfallende Welle im Kontinuum genau mit der vorgegebenen Restreflexion
+$abs(R(0))$ zurückkehrt; bei schrägem Einfall wächst diese nach
+@pml-restreflexion-profil auf $abs(R(0))^(cos theta)$. Geprüft wird, wie gut die
+Schicht diesen Auslegungswert im Gitter erreicht. Untersucht werden vier der
+Größen, von denen die Reflexion abhängt: die Vorgabe $abs(R(0))$, die über
+@pml-sigmamax die Leitfähigkeit $sigma_max$ festlegt, die Dicke der Schicht, die
+Auflösung $N_lambda$ und der Einfallswinkel $theta$.
 
 === Aufbau und Messgröße
 
-In der Mitte des Gebiets wird nach @sec-quellen
-eine Gitterlinie mit Stromquellen $J_z$ besetzt, die wie in Testfall 1
-gleichphasig einen Ricker-Puls einspeisen, sodass eine ebene Welle senkrecht
-auf die rechte Schicht zuläuft. Wenige Zellen vor der Schicht liegt die Sonde $P$. Die Reflexion wird wie in
-Testfall 2 (@sec-tf3) aus zwei Läufen bestimmt; an die Stelle des Laufs ohne
-Dielektrikum tritt ein breiteres Gebiet, dessen rechter Rand
-während der Messdauer nicht erreicht wird @lit:Taflove2005[S. 314, Abb. 7.2].
-$abs(R_"Sim")$ folgt damit aus @tf3-messung. Da die Amplitude einer ebenen
-Welle mit dem Laufweg nicht abnimmt, ist keine Korrektur nötig; die Höhe des
-Gebiets ist so gewählt, dass Störungen vom oberen und unteren Rand und von den
-Enden der Quelllinie die Sonde während der Messdauer nicht erreichen.
+In der Mitte des Gebiets wird nach @sec-quellen eine Gitterlinie mit
+Stromquellen $J_z$ besetzt, die wie in Testfall 1 einen Ricker-Puls einspeisen,
+sodass eine ebene Welle auf die rechte Schicht zuläuft. Fünf Zellen vor der
+Schicht liegt die Sonde $P$. Wie in Testfall 2 (@sec-tf3) wird die Reflexion aus
+zwei Läufen bestimmt; an die Stelle des Laufs ohne Dielektrikum tritt ein
+breiteres Gebiet, dessen rechter Rand während der Messdauer nicht erreicht wird
+@lit:Taflove2005[S. 314, Abb. 7.2]. $abs(R_"Sim")$ folgt damit aus
+@tf3-messung, und da der Puls breitbandig ist, liefert jeder Lauf die Reflexion
+für alle $N_lambda$ zugleich. Die Höhe des Gebiets ist so gewählt, dass Störungen
+vom oberen und unteren Rand und von den Enden der Quelllinie die Sonde während
+der Messdauer nicht erreichen. Für schrägen Einfall werden die Quellen nach
+@tf1-verzoegerung verzögert und zu den Enden hin abgeschwächt.
 
-Variiert werden die Vorgabe $abs(R(0))$ zwischen $10^(-1)$ und $10^(-20)$ für
-$5$, $10$ und $20$ Zellen bei $N_lambda = 10$. Für schrägen Einfall werden die
-Quellen nach @tf1-verzoegerung verzögert, zu den Enden hin abgeschwächt und $theta$ bei $14$ Zellen und den
-Vorgaben $10^(-3)$ und $10^(-6)$ zwischen $0°$ und $60°$ variiert; die Gebietshöhe wächst dabei mit
-$theta$. Eine Kontrolle mit größerer Höhe bei $45°$ und $60°$ ändert die Werte nicht. Das Profil bleibt kubisch ($m = 3$), die Courant-Zahl beträgt
-$S = 0,99$.
+Variiert wird die Vorgabe zwischen $10^(-1)$ und $10^(-16)$ für Schichten aus
+$5$ und $20$ Zellen, die Auflösung zwischen $N_lambda = 6$ und $30$ beim
+Standardwert $abs(R(0)) = 10^(-6)$ von `fdtd_core.py` sowie der Winkel zwischen
+$0°$ und $60°$ für $20$ Zellen. Wo nicht variiert, gelten $N_lambda = 20$, das
+kubische Profil ($m = 3$) und $S = 0,99$.
 
 === Ergebnis
 
 #figure(
-  image("../abbildungen/testfall_c_winkel.pdf", width: 100%),
-  caption: [Gemessene Reflexion der PML bei $N_lambda = 10$. Links: über der
-    Vorgabe $abs(R(0))$ für drei Dicken bei senkrechtem Einfall, punktiert
-    $abs(R_"Sim") = abs(R(0))$, gestrichelt der Standardwert von
-    `fdtd_core.py`. Rechts: über dem Einfallswinkel $theta$ für $14$ Zellen
-    und zwei Vorgaben, gestrichelt $abs(R(0))^(cos theta)$ nach
-    @pml-restreflexion-profil.],
+  image("../abbildungen/testfall_pml.pdf", width: 100%),
+  caption: [Gemessene Reflexion der PML. (a) Über der Vorgabe $abs(R(0))$ für
+    zwei Dicken, punktiert $abs(R_"Sim") = abs(R(0))$. (b) Über der Auflösung
+    $N_lambda$ beim Standardwert $abs(R(0)) = 10^(-6)$ (punktiert), gestrichelt eine
+    Vergleichsgerade der Steigung $-2$. (c) Über dem
+    Einfallswinkel $theta$ für $20$ Zellen. Messdauer bei senkrechtem Einfall
+    $N_T Delta t = 210 Delta\/c$.],
 ) <abb:tf4-restreflexion>
 
-Für schwache Vorgaben liegt die gemessene Reflexion unterhalb der Vorgabe, und
-zwar umso deutlicher, je strenger die Vorgabe und je dünner die Schicht ist
-(@abb:tf4-restreflexion, links); bei $10$ Zellen etwa beträgt sie für
-$abs(R(0)) = 10^(-1)$ das $0,75$-Fache, für $10^(-3)$ nur noch das $0,11$-Fache
-der Vorgabe. Für strengere Vorgaben steigt sie wieder an; eine kleinere Vorgabe führt also nicht
-zwangsläufig zu weniger Reflexion: Bei $10$ Zellen liegt der Tiefstwert im Einbruch bei
-$10^(-8)$ bei $7,0 dot 10^(-6)$, für $abs(R(0)) = 10^(-20)$ dagegen bei
-$5,2 dot 10^(-4)$. Mit
-wachsender Dicke sinkt das Minimum deutlich, von
-$3,5 dot 10^(-3)$ bei $5$ auf $1,4 dot 10^(-6)$ bei $20$ Zellen.
+Mit strengerer Vorgabe sinkt die Reflexion zunächst und steigt dann langsam
+wieder an, sodass jede Dicke ein Optimum besitzt (@abb:tf4-restreflexion a).
+Solange die Vorgabe schwach ist, folgt die Messung ihr annähernd.
+Mit wachsender Dicke sinkt das Optimum deutlich, von rund $10^(-3)$ bei $5$ auf rund $10^(-6)$ bei $20$ Zellen.
 
-Mit dem Einfallswinkel steigt die Reflexion für $abs(R(0)) = 10^(-3)$ von $1,8 dot 10^(-4)$ bei $0°$ auf
-$1,4 dot 10^(-2)$ bei $60°$ und damit noch stärker als
-$abs(R(0))^(cos theta)$, bleibt aber darunter (@abb:tf4-restreflexion, rechts). Für
-den Standardwert $10^(-6)$ bleibt sie bis $45°$ unter $10^(-5)$ und steigt erst
-bei $60°$ auf $3 dot 10^(-5)$.
+Über der Auflösung (b) fällt die Reflexion der dünnen Schicht zwischen
+$N_lambda = 6$ und $20$ im Mittel etwa mit $N_lambda^(-2)$, danach flacher; die der
+$20$-Zellen-Schicht hängt kaum von $N_lambda$ ab und nähert sich der Vorgabe.
+
+Mit dem Einfallswinkel (c) steigt die Reflexion für beide Vorgaben an; für
+$10^(-6)$ bleibt sie bis
+$45°$ nahe $10^(-6)$ und steigt erst bei $60°$ deutlich an.
 
 === Deutung
 
 Die gemessene Reflexion setzt sich aus zwei Anteilen zusammen
 @lit:Taflove2005[S. 293]. Der _Kontinuumsanteil_ ist die Welle, die die Schicht
-zweimal durchläuft und dazwischen am ideal leitenden Rand zurückgeworfen wird;
-er entspricht nach @pml-restreflexion-profil der Vorgabe $abs(R(0))$, bei
-schrägem Einfall $abs(R(0))^(cos theta)$, und hängt nicht von der Frequenz ab. Der _Diskretisierungsanteil_ entsteht, weil die
-Leitfähigkeit im Gitter nicht stetig ansteigt, sondern von Zelle zu Zelle
-springt: Jeder Sprung wirft wie eine kleine Grenzfläche einen Teil der Welle
-zurück @lit:Schneider2010[S. 309]. Der Potenzverlauf @pml-profil hält diese Sprünge
-am Eingang klein und legt die großen in die Tiefe, wo die Felder bereits
-abgeklungen sind @lit:Taflove2005[S. 293].
+zweimal durchläuft und am ideal leitenden Rand zurückgeworfen wird; er
+entspricht im Kontinuum @pml-restreflexion-profil. Der _Diskretisierungsanteil_
+entsteht, weil die Leitfähigkeit im Gitter nicht stetig ansteigt, sondern von
+Zelle zu Zelle springt. Im Kontinuum ist die Schicht an jeder Stelle angepasst, gleich wie
+groß $sigma$ ist (@sec-pml). Im Gitter dagegen verwenden zwei benachbarte Zellen
+unterschiedliche Koeffizienten $b_w$ und $C_w$ aus @pml-bc, und die Felder auf
+beiden Seiten eines Sprungs werden wie an der Grenzfläche in Testfall 2
+(@sec-tf3) nicht am selben Ort, sondern eine halbe Zelle versetzt miteinander
+verknüpft. Ein solcher Sprung wirkt ähnlich wie eine kleine Grenzfläche und wirft
+einen Teil der Welle zurück @lit:Schneider2010[vgl. S. 217]; wie an der
+Grenzfläche in Testfall 2 wächst dieser Anteil mit der Größe des Sprungs. Ein allmählicher Anstieg verringert diese
+Reflexion @lit:Schneider2010[vgl. S. 312], weshalb der Potenzverlauf @pml-profil die
+Sprünge am Eingang der Schicht klein hält @lit:Taflove2005[S. 293].
 
-Wie groß der Diskretisierungsanteil ausfällt, hängt davon ab, wie gut das
-stufige Profil den stetigen Verlauf des Kontinuums annähert. Mit wachsender
-Auflösung $N_lambda$ entfallen mehr Zellen auf eine Wellenlänge, sodass das
-Profil für die Welle glatter wird; zusätzliche Läufe für $N_lambda$ zwischen $7$
-und $30$ (nicht abgebildet) bestätigen das jedoch nur bei Schichten bis etwa
-$6$ Zellen; bei dickeren Schichten hängt die Reflexion nicht eindeutig von
-$N_lambda$ ab. Dieselbe Wirkung hat eine dickere Schicht:
-Je mehr Zellen sie umfasst, desto flacher steigt die Leitfähigkeit von null auf
-$sigma_max$ an, desto kleiner ist jeder einzelne Sprung und desto geringer die
-Reflexion (@abb:tf4-restreflexion, links).
+Damit lassen sich alle vier Abhängigkeiten zuordnen. Eine strengere Vorgabe
+senkt den Kontinuumsanteil, erhöht aber $sigma_max$: Nach @pml-sigmamax ist
+$sigma_max$ proportional zu $-ln abs(R(0))$, sodass etwa eine Vorgabe von
+$10^(-16)$ statt $10^(-4)$ $sigma_max$ und damit jeden Sprung des Profils
+vervierfacht. Eine kleine Vorgabe $abs(R(0))$ verlangt also große Sprünge; das Optimum in (a) ist die Abwägung zwischen beiden Anteilen
+@lit:Taflove2005[S. 293]. Da $sigma_max$ bei gleicher Vorgabe umgekehrt
+proportional zur Dicke ist, verteilt eine dickere Schicht den Anstieg auf kleinere
+Sprünge und senkt so das Optimum.
 
-Aus beiden Anteilen folgt auch das Minimum in @abb:tf4-restreflexion (links).
-Da $sigma_max$ nach @pml-sigmamax mit $-ln abs(R(0))$ wächst, senkt eine
-strengere Vorgabe zwar den Kontinuumsanteil, macht das Profil aber steiler und
-vergrößert so die Sprünge. Das Optimum gleicht beide Anteile aus
-@lit:Taflove2005[S. 293]; weil eine dickere Schicht die Sprünge verkleinert, sinkt
-es mit der Dicke und verschiebt sich zu strengeren Vorgaben. Warum die
-Reflexion bei schwachen Vorgaben sogar unter der Vorgabe liegt, wurde nicht
-abschließend geklärt; eine mögliche Ursache ist die rekursive Auswertung nach
-@pml-bc, die die kontinuierliche Dämpfung nur näherungsweise wiedergibt. Der
-Anstieg mit $theta$ in @abb:tf4-restreflexion (rechts) folgt aus dem Kontinuumsanteil nach
-@pml-restreflexion-profil; bei $10^(-6)$ ist dieser Anteil klein, sodass der
-Anstieg erst bei $60°$ sichtbar wird.
+Die Auflösung wirkt vor allem auf den Diskretisierungsanteil: Bei der dünnen
+Schicht mit den größten Sprüngen sinkt die Reflexion in (b) mit wachsendem
+$N_lambda$, im Mittel etwa mit zweiter Ordnung, ähnlich wie die Gitterfehler in
+Testfall 1 und 2 (@sec-tf1, @sec-tf3), die mit dem Abbruchfehler zweiter
+Ordnung der zentralen Differenz @zentraldifferenz-halb abnehmen. Bei
+$20$ Zellen ändert sie sich kaum; dort
+bestimmen Dicke und Vorgabe die Reflexion, nicht die Auflösung.
 
-Das von @lit:Taflove2005[S. 294] für $10$ Zellen als optimal genannte
-$abs(R(0)) approx e^(-16) approx 10^(-7)$ liegt in @abb:tf4-restreflexion
-(links) im flachen Bereich um das Minimum. Auch die Größenordnung von rund
-$10^(-5)$ stimmt mit @lit:Taflove2005[S. 315, Abb. 7.3a] überein.
+Der Einfallswinkel (c) wirkt vor unter anderem auf den Kontinuumsanteil. Nach
+@pml-daempfung wirkt die Dämpfung nur über $k_x = (omega\/c) cos theta$, sodass
+eine schräg einfallende Welle in der Schicht weniger abklingt. Da $cos theta$ im
+Exponenten von @pml-restreflexion-profil steht, wächst dieser Anteil mit dem
+Winkel nicht gleichmäßig, sondern exponentiell und damit über Größenordnungen.
+Bei der schwächeren Vorgabe überwiegt der Kontinuumsanteil schon bei senkrechtem
+Einfall, und die Kurve steigt von Beginn an. Bei der strengeren Vorgabe ist er
+anfangs so klein, dass er die Reflexion kaum beeinflusst; erst bei großen Winkeln
+ist er so weit gewachsen, dass er sich bemerkbar macht und die Kurve ansteigt.
 
-Für senkrechten Einfall ist damit zuerst die Dicke der Schicht maßgeblich; `r0` ist
-anschließend nahe dem Minimum und nicht möglichst klein zu wählen. Die in den
-übrigen Testfällen verwendeten $14$ Zellen erreichen mit dem Standardwert bei
-$N_lambda = 10$ bis $60°$ höchstens etwa $3 dot 10^(-5)$; flacherer Einfall wurde nicht gemessen.
+In der Praxis ist damit zwischen Dicke, Vorgabe und Einfallswinkel abzuwägen.
+Eine dickere Schicht senkt die Reflexion, vergrößert aber das Rechengebiet; die
+Vorgabe ist nahe dem Optimum der gewählten Dicke und nicht möglichst klein zu
+wählen; und je schräger Wellen auf den Rand treffen können, desto mehr Reserve
+brauchen Dicke und Vorgabe.
 
-Insgesamt zeigen die drei Testfälle Abweichungen vom Kontinuum, die sich bis
-auf einzelne Eigenschaften der PML auf die Diskretisierung zurückführen lassen;
+Insgesamt zeigen die drei Testfälle Abweichungen vom Kontinuum, die sich weitgehend aus der Diskretisierung ergeben;
 ihre Einordnung folgt im Fazit.

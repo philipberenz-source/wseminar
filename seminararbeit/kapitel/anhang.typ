@@ -23,7 +23,7 @@ Ich erkläre hiermit, dass ich die Seminararbeit ohne fremde Hilfe angefertigt
 und nur die im Literaturverzeichnis angeführten Quellen und Hilfsmittel benutzt
 habe.
 
-Als KI-basiertes Hilfsmittel wurden das Sprachmodell Opus 5.5 des Unternehmens Anthropic in folgendem Umfang verwendet:
+Als KI-basiertes Hilfsmittel wurde das Sprachmodell Opus 5.5 des Unternehmens Anthropic in folgendem Umfang verwendet:
 
 - zur sprachlichen Überarbeitung des Textes und zur Umsetzung einzelner,
   von mir geprüfter Korrekturvorschläge im Text,

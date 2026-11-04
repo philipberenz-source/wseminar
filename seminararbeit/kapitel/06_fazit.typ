@@ -13,7 +13,7 @@ fortschreiben. Den Zeitschritt begrenzt die Courant-Friedrichs-Lewy-Bedingung,
 und auch die absorbierende Randschicht fügt sich über die komplexe
 Koordinatenstreckung und die rekursive Auswertung der entstehenden Faltung in
 dieses Verfahren ein. Mit NumPy (Kapitel 4) lassen sich die Update-Gleichungen vektorisiert auf
-ganze Felder anwenden, wodurch Simulation effizient ausgeführt werden können.
+ganze Felder anwenden, wodurch sich Simulationen effizient ausführen lassen.
 
 Dieselbe Diskretisierung, die das Verfahren so einfach macht, bestimmt auch
 seine Grenzen. Die Validierung bestätigt zwar, dass der Solver Ausbreitung, Reflexion
@@ -58,8 +58,7 @@ $C_a$ und $C_b$ bereits implementiert, sodass sich die Reflexion an einem
 verlustbehafteten Halbraum mit demselben Zwei-Lauf-Verfahren wie in Testfall 2
 messen und mit der analytischen Lösung für leitfähige Medien vergleichen ließe.
 Energieerhaltung und Eigenfrequenzen ließen sich in einem ideal leitenden
-Hohlraum prüfen, und an einer schräg im Gitter liegenden Grenzfläche ließe sich
-abschätzen, wie stark der _Staircasing_-Fehler ins Gewicht fällt.
+Hohlraum prüfen, und an einer schräg im Gitter liegenden Grenzfläche könnte abgeschätzt werden, wie stark der _Staircasing_-Fehler ins Gewicht fällt.
 
 Zwei weitere Erweiterungen betreffen das Modell selbst. Die erste ist der
 Übergang in die dritte Dimension: Das Yee-Gitter lässt sich unmittelbar auf drei

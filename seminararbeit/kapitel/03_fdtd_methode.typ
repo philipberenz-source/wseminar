@@ -5,7 +5,7 @@
 Ziel dieses Kapitels ist es, die zuvor beleuchteten Maxwell-Gleichungen in ein
 System diskreter Gleichungen zu überführen. Dabei werden schrittweise drei
 Update-Gleichungen hergeleitet, die die Felder zu jedem Zeitschritt an jedem
-Gitterpunkt liefern. Diese bilden dann das Fundament für die tatsächliche
+Ort liefern. Diese bilden dann das Fundament für die tatsächliche
  Implementierung in Kapitel 4.
 
 == Grundidee: Finite-Differenzen-Approximation <sec-finite-differenzen>
@@ -153,7 +153,7 @@ $ J_z^"ges" = J_z + sigma E_z $ <stromaufteilung>
 
 Damit tritt $E_z$ in @tmz-ez zweimal auf --- einmal unter der Zeitableitung,
 einmal im Verlustterm. Die Zeitableitung ist nach @zentraldifferenz-halb dem
-Zeitpunkt $n+1\/2$ zugeordnet; da eine Gleichung nur dann erfüllt sein kann,
+Zeitpunkt $n+1\/2$ zugeordnet. Da eine Gleichung nur dann erfüllt sein kann,
 wenn all ihre Glieder für _denselben_ Zeitpunkt gelten, muss auch der
 Verlustterm dort ausgewertet werden. Genau dort liegt jedoch kein gespeicherter
 Wert von $E_z$ vor, weil das elektrische Feld nach @sec-yee nur zu ganzzahligen
@@ -202,12 +202,11 @@ $ "weich:" quad E_z bar.v_(i\,j)^(n+1) arrow.l
   quad quad quad
   "Strom:" quad J_z bar.v_(i\,j)^(n+1/2) = f^(n+1/2) $ <quellen>
 
-Nur die zweite Form ist physikalisch deutbar, da $J_z$ als Stromdichte unmittelbar in @tmz-ez auftritt; beiden gemeinsam ist, dass der
+Nur die zweite Form ist physikalisch deutbar, da $J_z$ als Stromdichte unmittelbar in @tmz-ez auftritt; beiden ist gemeinsam, dass der
 Quellpunkt regulär weiter aktualisiert wird und eine zurücklaufende Welle ihn
 daher ungehindert passiert.
 
-Beide wirken an einem einzigen Gitterpunkt und erzeugen damit eine
-Zylinderwelle. Für eine ebene Welle wird eine das Gebiet durchspannende
+Beide wirken an einem einzigen Gitterpunkt und erzeugen damit eine Zylinderwelle; wegen @zinvarianz entspricht eine solche Punktquelle einer in $z$-Richtung unendlich ausgedehnten Linienquelle. Für eine ebene Welle wird eine das Gebiet durchspannende
 Gitterlinie senkrecht zur Ausbreitungsrichtung mit identischen Quellen besetzt:
 Nach dem _Huygensschen Prinzip_ überlagern sich deren Elementarwellen zu einer
 ebenen Front, sodass das Feld längs dieser Linie konstant ist. Beide strahlen nach zwei
@@ -227,7 +226,7 @@ $ Delta t <= 1/(c sqrt(1\/(Delta x)^2 + 1\/(Delta y)^2))
   quad arrow.r.double quad
   Delta t <= Delta/(c sqrt(2)) $ <cfl>
 
-wobei rechts wieder das quadratische Gitter aus @sec-update vorausgesetzt ist.
+wobei die rechte Gleichung wieder das quadratische Gitter aus @sec-update voraussetzt.
 Dass darin die Vakuumlichtgeschwindigkeit $c$ steht, ist keine Einschränkung:
 In jedem Medium mit $epsilon_r >= 1$ ist die Ausbreitungsgeschwindigkeit
 kleiner, sodass @cfl stets die schärfere Forderung stellt.
@@ -259,10 +258,10 @@ fortgeschrieben.
 An den Rändern des Simulationsgebiets fehlen benachbarte $H_y$- bzw. $H_x$-Felder, um zentrale Differenzen zu bilden, weshalb $E_z$ an diesen Stellen auf null gesetzt wird. Damit wird das Feld nach @sec-pec vollständig zurückgeworfen. In vielen Fällen ist dieser Effekt jedoch unerwünscht, insbesondere wenn die Ausbreitung im unendlichen Raum simuliert wird.
 Naheliegend wäre es deshalb, den eigentlichen Rändern eine Schicht vorzulagern, welche die auslaufende Welle dämpft, sodass keine Energie zurück in das eigentliche Simulationsgebiet geworfen wird (@abb:pml-schema).
 
-Eine gewöhnliche verlustbehaftete Schicht leistet das jedoch nicht: Sie ist nur bei senkrechtem Einfall reflexionsfrei; bei schrägem Einfall reflektiert sie. Gefordert ist deshalb eine Schicht, die ausschließlich die Ausbreitung _senkrecht_ zur Grenzfläche dämpft @lit:Schneider2010[S. 309].
+Eine gewöhnliche verlustbehaftete Schicht leistet das jedoch nicht: Sie lässt sich nur für senkrechten Einfall reflexionsfrei auslegen; bei schrägem Einfall reflektiert sie. Gefordert ist deshalb eine Schicht, die ausschließlich die Ausbreitung _senkrecht_ zur Grenzfläche dämpft @lit:Schneider2010[S. 309].
 
-*Komplexe Koordinatenstreckung.* Die Lösung besteht darin, nicht das Material
-zu verändern, sondern die Koordinate. Die hier verwendete Formulierung
+Die Lösung besteht darin, nicht das Material
+zu verändern, sondern die Koordinate. Die hier verwendete Formulierung, die Chew und Weedon 1994 als Alternative zu Bérengers ursprünglicher PML vorgeschlagen haben @lit:Schneider2010[S. 309],
 heißt _komplexe Koordinatenstreckung_,
 weil die dabei eingeführten Faktoren die einzelnen Koordinatenrichtungen
 skalieren. Zu jeder Raumrichtung $w in {x, y}$ wird dabei
@@ -313,8 +312,7 @@ $ e^(-upright(i) s_x k_x x - upright(i) k_y y)
     Richtungen. (KI-generiert mit Claude Opus 5, Anthropic)],
 ) <abb:pml-schema>
 
-*Dicke und Verlauf der Schicht.* Hinter der dämpfenden Schicht bleibt der
-PEC-Rand bestehen. Eine Welle durchläuft die Schicht der Dicke $d$, wird an
+Hinter der Schicht bleibt der PEC-Rand weiterhin bestehen. Eine Welle durchläuft die Schicht der Dicke $d$, wird an
 diesem Rand gemäß @pec zurückgeworfen und durchläuft sie ein zweites Mal;
 maßgeblich für die verbleibende Reflexion ist deshalb die auf dem gesamten Hin-
 und Rückweg angesammelte Dämpfung. Für den Verlauf innerhalb der Schicht ist
@@ -325,18 +323,19 @@ $ sigma_x (rho) = sigma_max rho^m,
 
 worin $a$ den Abstand vom inneren Schichtrand bezeichnet. Mit $k_x = (omega\/c) cos theta$ und
 $1\/(c epsilon_0) = eta_0$, dem Freiraumwellenwiderstand, folgt aus dem
-Dämpfungsfaktor in @pml-daempfung für den Betrag des zurückkehrenden Anteils
+Dämpfungsfaktor in @pml-daempfung für den Betrag des zurückkehrenden Anteils @lit:Taflove2005[S. 292, Gl. (7.61)]:
 
 $ abs(R(theta)) = exp(-(2 eta_0 sigma_max d cos theta)/(m+1)) $ <pml-restreflexion-profil>
 
-@lit:Taflove2005[S. 292, Gl. (7.61)]. Darin tritt keine Frequenz auf. 
+ 
 Logarithmiert man @pml-restreflexion-profil für senkrechten Einfall
 ($theta = 0$) und löst nach der Leitfähigkeit auf, so folgt
 @lit:Taflove2005[S. 293, Gl. (7.62)]
 
 $ sigma_max = -((m+1) ln abs(R(0)))/(2 eta_0 d) $ <pml-sigmamax>
 
-*Rückkehr in den Zeitbereich.* Ziel der folgenden zwei Schritte ist es,
+Damit ist die Schicht festgelegt; offen ist noch ihre Umsetzung im
+Zeitschrittverfahren. Ziel der folgenden zwei Schritte ist es,
 @pml-tmz in eine Form zu bringen, die sich wie @update-hx bis @update-ez
 Zeitschritt für Zeitschritt auswerten lässt und dabei je Gitterpunkt nur einen
 zusätzlichen gespeicherten Wert benötigt. @pml-tmz steht im Frequenzbereich, das
@@ -363,9 +362,9 @@ Gleichung für $H_x$ @lit:Schneider2010[S.~319, mod. Gl.~(11.99)]
 $ mu_0 (partial H_x)/(partial t) = -(partial E_z)/(partial y)
   - zeta_y (t) star (partial E_z)/(partial y) $ <pml-zeit>
 
-für die übrigen Komponenten gilt dasselbe mit dem jeweils zugehörigen $zeta_w$.
+Für die übrigen Komponenten gilt dasselbe mit dem jeweils zugehörigen $zeta_w$.
 
-*Rekursive Auswertung der Faltung.* Eine Faltung über die gesamte Vorgeschichte würde den in @sec-yee gewonnenen Vorteil des expliziten Verfahrens zunichtemachen. Der Kern in @pml-zeta ist jedoch eine reine
+Über die gesamte Vorgeschichte ausgewertet, würde diese Faltung den in @sec-yee gewonnenen Vorteil des expliziten Verfahrens zunichtemachen. Der Kern in @pml-zeta ist jedoch eine reine
 Exponentialfunktion, und für einen solchen Kern lässt sich die Faltung rekursiv
 auswerten. Dazu wird das Faltungsintegral aus @pml-zeit zum Zeitpunkt
 $t = n Delta t$ in $n$ Teilintegrale über Intervalle der Breite $Delta t$ zerlegt. Es beginnt
@@ -407,7 +406,7 @@ Zeitschritt auf das $b_y$-Fache abgeschwächt wird. Für jede der vier in
 mitgeführt, die die gesamte Vorgeschichte in einer einzigen Zahl je
 Gitterpunkt speichert.
 
-*Modifizierte Update-Gleichungen.* An jeder Stelle, an der in @update-hx bis
+Mit diesen Hilfsgrößen lassen sich die Update-Gleichungen ergänzen: An jeder Stelle, an der in @update-hx bis
 @update-ez ein
 Differenzenquotient steht, tritt nun dieser Quotient _zuzüglich_ der zugehörigen
 Hilfsgröße auf. Für $H_x$ tritt an die Stelle
@@ -422,7 +421,7 @@ $ H_x bar.v_(i\,j+1/2)^(n+1/2) = H_x bar.v_(i\,j+1/2)^(n-1/2)
   - (Delta t)/mu_0 [(E_z bar.v_(i\,j+1)^n - E_z bar.v_(i\,j)^n)/Delta
     + Psi_(H_x) bar.v_(i\,j+1/2)^n] $ <pml-update-hx>
 
-Für $H_y$ gilt dasselbe mit $b_x$ und $C_x$. Für die elektrische Komponente sind zwei Hilfsgrößen nötig, weil in @pml-tmz
+Für $H_y$ gilt dasselbe mit $b_x$ und $C_x$. Die elektrische Komponente benötigt zwei Hilfsgrößen, weil in @pml-tmz
 zwei Ableitungen mit unterschiedlichen Streckfaktoren auftreten:
 
 $ Psi_(E\,x) bar.v_(i\,j)^(n+1/2) &= b_x bar.v_i thin
