@@ -58,7 +58,7 @@ $C_a$ und $C_b$ bereits implementiert, sodass sich die Reflexion an einem
 verlustbehafteten Halbraum mit demselben Zwei-Lauf-Verfahren wie in Testfall 2
 messen und mit der analytischen Lösung für leitfähige Medien vergleichen ließe.
 Energieerhaltung und Eigenfrequenzen ließen sich in einem ideal leitenden
-Hohlraum prüfen, und an einer schräg im Gitter liegenden Grenzfläche könnte abgeschätzt werden, wie stark der _Staircasing_-Fehler ins Gewicht fällt.
+Hohlraum prüfen, und an einer schräg im Gitter liegenden Grenzfläche könnte abgeschätzt werden, wie stark der Staircasing-Fehler ins Gewicht fällt.
 
 Zwei weitere Erweiterungen betreffen das Modell selbst. Die erste ist der
 Übergang in die dritte Dimension: Das Yee-Gitter lässt sich unmittelbar auf drei

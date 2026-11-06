@@ -32,10 +32,12 @@
   set text(lang: "de", size: 11pt)
   set par(justify: true, leading: 0.65em, first-line-indent: 0em)
   set heading(numbering: "1.1")
-  set math.equation(numbering: "(1)")
+  // Gleichungen kapitelweise nummeriert: (Kapitel.laufende Nummer)
+  set math.equation(numbering: n => numbering("(1.1)", counter(heading).get().first(), n))
 
   // Überschriften 1. Ordnung beginnen auf neuer Seite
   show heading.where(level: 1): it => {
+    counter(math.equation).update(0)
     pagebreak(weak: true)
     v(0.5em)
     text(size: 18pt, weight: "bold", it)

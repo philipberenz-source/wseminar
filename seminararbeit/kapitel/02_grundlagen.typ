@@ -32,17 +32,17 @@ lediglich einmal bei der Herleitung der Wellengleichung benötigt. Gegenstand de
 Arbeit ist dementsprechend vorrangig die Kopplung von @faraday (Faradaysches
 Induktionsgesetz: ein sich änderndes $bold(B)$ erzeugt ein umlaufendes
 $bold(E)$) und @ampere (Ampère-Maxwell-Gesetz: ein umlaufendes $bold(H)$
-entsteht durch einen Strom _oder_ ein sich änderndes $bold(D)$). Der Term
+entsteht durch einen Strom oder ein sich änderndes $bold(D)$). Der Term
 $partial bold(D)\/partial t$ heißt _Verschiebungsstrom_ @lit:GriffithsDE[S. 422];
 erst er schließt den Kreis und bildet damit die Grundlage für die Ausbreitung
-_elektromagnetischer_ Wellen.
+elektromagnetischer Wellen.
 
 == Materialgleichungen <sec-material>
 
 Die vier Gleichungen verknüpfen sechs Feldgrößen und sind unterbestimmt; es
 fehlt die Angabe, wie ein Material auf ein Feld reagiert. Diese
 _Materialgleichung_ folgt nicht aus den Maxwell-Gleichungen und hängt vom
-Material ab; in ihrer einfachsten, für _lineare_ Medien gültigen Form
+Material ab; in ihrer einfachsten, für lineare Medien gültigen Form
 @lit:GriffithsDE[S. 422] wird hier durchgehend angesetzt
 
 $ bold(D) = epsilon bold(E), quad bold(B) = mu bold(H), quad
@@ -60,7 +60,7 @@ Dass @material in dieser Form gilt, ist eine Annahme, die vier Vereinfachungen @
 / Nichtdispersivität: $epsilon,mu,sigma$ unabhängig von der Frequenz.
 / Zeitinvarianz: $epsilon,mu,sigma$ ändern sich während der Simulation nicht.
 
-Hinzu kommt die Festlegung auf _nichtmagnetische_ Materialien ($mu_r=1$,
+Hinzu kommt die Festlegung auf nichtmagnetische Materialien ($mu_r=1$,
 $mu=mu_0$ überall); das Programm in Kapitel 4 kennt entsprechend nur eine
 ortsabhängige Permittivität $epsilon_r(x,y)$ und Leitfähigkeit $sigma(x,y)$.
 
@@ -68,7 +68,7 @@ ortsabhängige Permittivität $epsilon_r(x,y)$ und Leitfähigkeit $sigma(x,y)$.
 
 Eine weitere Vereinfachung ist die Beschränkung auf zwei Dimensionen: Felder und
 Materialien werden nur in einer Ebene betrachtet.
-Die Reduktion ist dabei keine Näherung, sondern _exakt_, sofern weder Felder
+Die Reduktion ist dabei keine Näherung, sondern exakt, sofern weder Felder
 noch Materialverteilung von der dritten Koordinate abhängen:
 
 $ partial/(partial z) equiv 0 $ <zinvarianz>
@@ -95,7 +95,7 @@ Aufteilung folgt in @sec-update.
 
 An der Grenze zweier Medien ändern sich $epsilon, mu, sigma$ sprunghaft. Aus der
 Integralform der Maxwell-Gleichungen folgt, dass die zur Grenzfläche
-_parallelen_ Feldanteile dabei stetig bleiben @lit:GriffithsDE[S. 424, Gl. (7.62),
+parallelen Feldanteile dabei stetig bleiben @lit:GriffithsDE[S. 424, Gl. (7.62),
 Gl. (7.63)]:
 
 $ bold(E)_(1,parallel) = bold(E)_(2,parallel), quad
@@ -175,7 +175,7 @@ einen Faktor: Die zweifache Zeitableitung liefert $-omega^2$, der
 Laplace-Operator $-k^2$ mit $k^2 = k_x^2 + k_y^2$, da $k_z$ nach @zinvarianz
 entfällt. Der gemeinsame Faktor kürzt sich heraus, und aus der
 Differentialgleichung wird eine algebraische Bedingung, die
-_Dispersionsrelation_ @lit:GriffithsDE[vgl. S. 483]
+_Dispersionsrelation_ @lit:GriffithsDE[S. 483]
 
 $ k^2 = mu epsilon omega^2 $ <dispersion>
 
@@ -186,7 +186,7 @@ _Phasengeschwindigkeit_
 
 $ v_p = omega/k = 1/sqrt(mu epsilon) $ <phasengeschwindigkeit>
 
-Entscheidend ist, was in @phasengeschwindigkeit _nicht_ auftritt: weder $omega$
+Entscheidend ist, was in @phasengeschwindigkeit nicht auftritt: weder $omega$
 noch die Richtung von $bold(k)$. Im Kontinuum laufen also alle Frequenzen und
 alle Richtungen gleich schnell --- Ersteres folgt aus dem in @sec-material
 frequenzunabhängig angesetzten $epsilon$, Letzteres aus der dort geforderten
@@ -214,8 +214,8 @@ Die in diesem Kapitel behandelten Lösungen sind stark idealisiert: Die ebene
 Welle setzt einen unendlichen, homogenen Raum voraus, die Reflexion eine ebene,
 unendlich ausgedehnte Grenzfläche. Geschlossene analytische Lösungen existieren
 nur für solche Sonderfälle.
-Reale Anordnungen wie das _iPhone_ aus der Einleitung erfüllen keine dieser
+Reale Anordnungen wie das iPhone aus der Einleitung erfüllen keine dieser
 Voraussetzungen: Die Geometrie ist gekrümmt und endlich, das Material
 ortsabhängig ($epsilon_r (x,y)$, $sigma(x,y)$). Für sie muss das
 kontinuierliche Gleichungssystem diskretisiert und numerisch gelöst werden ---
-im folgenden Kapitel mit der _Finite-Difference Time-Domain_-Methode (FDTD).
+im folgenden Kapitel mit der Finite-Difference Time-Domain-Methode (FDTD).

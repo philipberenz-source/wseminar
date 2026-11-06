@@ -160,7 +160,7 @@ Um die in @sec-pml hergeleiteten Randbedingungen in Python zu implementieren, m�
 Die Methode `_pml_koeffizienten` berechnet die beiden Rekursionskoeffizienten nach @pml-bc an
 beliebigen Positionen. 
 Dafür nimmt die Methode als Argument ein eindimensionales _Array_ mit allen Positionen der Gitterpunkte in einer Richtung (bspw. Liste von ganzzahligen x-Koordinaten für $E_z$ oder Liste von  halben Zahlen für die x-Koordinaten von $H_y$).
-`d_links` und `d_rechts` messen anschließend, wie tief welche Position in der PML ist. Dabei entstehen jeweils zwei _Arrays_, sodass jede einzelne Position behandelt wird. Da bei einer Position stets mindestens einer der Werte `d_links` und `d_rechts` negativ ist, wählt die Variable `tiefe` die größere Zahl aus. Sind beide Zahlen negativ, so befindet sich die Position nicht in der PML und wird damit auf null gesetzt. Damit ist `tiefe` ebenfalls ein Array, welches für jede Position die Tiefe in einer PML speichert. Darauf aufbauend wird die Tiefe nun auf ein Intervall $[0;1]$ normiert und daraus eine Funktion für die Dämpfung $sigma$ festgelegt. Da außerhalb der PML $rho$ stets null beträgt, ist an diesen Stellen die Dämpfung ebenfalls null. Nach der Berechnung des Koeffizienten _b_ nach @pml-bc wird dieser gemeinsam mit dem Koeffizienten _C_ jeweils als _Array_ zurückgegeben.
+`d_links` und `d_rechts` messen anschließend, wie tief welche Position in der PML ist. Dabei entstehen jeweils zwei Arrays, sodass jede einzelne Position behandelt wird. Da bei einer Position stets mindestens einer der Werte `d_links` und `d_rechts` negativ ist, wählt die Variable `tiefe` die größere Zahl aus. Sind beide Zahlen negativ, so befindet sich die Position nicht in der PML und wird damit auf null gesetzt. Damit ist `tiefe` ebenfalls ein Array, welches für jede Position die Tiefe in einer PML speichert. Darauf aufbauend wird die Tiefe nun auf ein Intervall $[0;1]$ normiert und daraus eine Funktion für die Dämpfung $sigma$ festgelegt. Da außerhalb der PML $rho$ stets null beträgt, ist an diesen Stellen die Dämpfung ebenfalls null. Nach der Berechnung des Koeffizienten $b_w$ nach @pml-bc wird dieser gemeinsam mit dem Koeffizienten $C_w$ jeweils als Array zurückgegeben.
 
 
 ```python
@@ -222,7 +222,7 @@ zueinander verschoben. `self.Ez[:, 1:] - self.Ez[:, :-1]` liefert dementsprechen
 einem einzigen Aufruf die Differenz zwischen benachbarten Gitterpunkten in $y$-Richtung an
 allen Gitterpunkten zugleich --- also die diskrete Ableitung
 $partial E_z\/partial y$ als vollständiges Array.
-Da die Array-Operationen in kompiliertem Code ausgeführt werden, ist die _Vektorisierung_ effizienter als eine elementweise Schleife in reinem Python.
+Da die Array-Operationen in kompiliertem Code ausgeführt werden, ist die Vektorisierung effizienter als eine elementweise Schleife in reinem Python.
 
 Zu erläutern ist außerdem die unterschiedliche Schreibweise von `self.by_h[None, :]` und `self.bx_h[:, None]`. Da die Profile zunächst eindimensional vorliegen, müssen sie für die Verwendung in den zweidimensionalen Feldern entsprechend erweitert werden. Die eingefügte Achse bestimmt dabei, entlang welcher Raumrichtung das jeweilige Profil aufgespannt wird. `[None, :]` formt das $y$-Profil zu einer Zeile, die über alle $x$-Werte ausgedehnt wird, während `[:, None]` das $x$-Profil zu einer Spalte formt, die sich über alle $y$-Werte erstreckt. Würde ein $sigma_y$ versehentlich in $x$-Richtung aufgespannt, entstünde die entsprechende Schicht an den falschen Rändern.
 
@@ -248,7 +248,7 @@ Zu erläutern ist außerdem die unterschiedliche Schreibweise von `self.by_h[Non
 
 
 Der Ausschnitt `[1:-1, 1:-1]` lässt die äußerste Zeile und Spalte aus, sodass diese immer null bleiben; das ist die PEC-Bedingung @pec als
-Abschluss _hinter_ der Schicht, wie in @sec-randschicht bereits angedeutet. Im Gebietsinneren bleiben zudem die Hilfsgrößen $Psi$ wegen $b = 1$, $C = 0$ dauerhaft null, sodass der Ausdruck dort exakt in @update-ez übergeht – die PML ist damit im Gebietsinneren wirkungslos.
+Abschluss hinter der Schicht, wie in @sec-randschicht bereits angedeutet. Im Gebietsinneren bleiben zudem die Hilfsgrößen $Psi$ wegen $b_w = 1$, $C_w = 0$ dauerhaft null, sodass der Ausdruck dort exakt in @update-ez übergeht – die PML ist damit im Gebietsinneren wirkungslos.
 
 
 // --- Bausteine für den Ablaufplan in Abschnitt 4.8 ------------------------
@@ -348,4 +348,4 @@ Unter Berücksichtigung des zeitlichen Versatzes im Rahmen des Leapfrog-Schemas 
 
 
 
-Damit ist die aus den Maxwell-Gleichungen entwickelte FDTD-Methode vollständig in Python implementiert. Die konkrete Umsetzung bildet die Grundlage für die im folgenden Kapitel durchgeführten Testfälle, anhand derer die numerischen Ergebnisse mit analytischen Lösungen für die Ausbreitung, Reflexion und Transmission ebener Wellen verglichen und damit die Zuverlässigkeit des implementierten Solvers untersucht wird. Der gesamte Code ist in dem im Anhang verlinkten _GitHub_-Archiv aufrufbar.
+Damit ist die aus den Maxwell-Gleichungen entwickelte FDTD-Methode vollständig in Python implementiert. Die konkrete Umsetzung bildet die Grundlage für die im folgenden Kapitel durchgeführten Testfälle, anhand derer die numerischen Ergebnisse mit analytischen Lösungen für die Ausbreitung, Reflexion und Transmission ebener Wellen verglichen und damit die Zuverlässigkeit des implementierten Solvers untersucht wird. Der gesamte Code ist in dem im Anhang verlinkten GitHub-Archiv aufrufbar.

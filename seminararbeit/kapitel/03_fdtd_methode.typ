@@ -57,7 +57,7 @@ zerlegt: Ort und Zeit werden an den diskreten Stützstellen
 $x_i = i Delta x$, $y_j = j Delta y$ und $t_n = n Delta t$ abgetastet, wobei
 $Delta x$ und $Delta y$ die Kantenlängen einer Gitterzelle und $Delta t$ einen
 Zeitschritt beschreiben. Ausgehend von dieser Diskretisierung löste Yee die
-oben beschriebene Schwierigkeit mit einer einzigen Festlegung darüber, _wo_
+oben beschriebene Schwierigkeit mit einer einzigen Festlegung darüber, wo
 innerhalb dieses Gitters die einzelnen Feldkomponenten gespeichert werden
 @lit:Yee1966: Sie liegen nicht am selben Ort, sondern räumlich um
 eine halbe Zelle gegeneinander _versetzt_ (englisch _staggered_) --- und zwar
@@ -94,7 +94,7 @@ nicht aufgelöst. Yee versetzt deshalb zusätzlich die Anordnung auf der
 Zeitachse: Das elektrische Feld wird zu ganzzahligen Vielfachen $n Delta t$
 ausgewertet, das magnetische zu den dazwischenliegenden halbzahligen Zeitpunkten
 $(n+1\/2) Delta t$ @lit:Taflove2005[S. 60 f.]. Beide Felder werden dann abwechselnd
-fortgeschrieben --- ein Vorgehen, das nach dem Bocksprungspiel _leapfrog_
+fortgeschrieben --- ein Vorgehen, das nach dem Bocksprungspiel leapfrog
 benannt ist: Aus dem bekannten $E_z^n$ folgt über @tmz-hx und @tmz-hy das
 magnetische Feld zum Zeitpunkt $n+1\/2$, aus diesem über @tmz-ez das elektrische
 Feld zum Zeitpunkt $n+1$, und so fort. Auf der rechten Seite jeder
@@ -107,7 +107,7 @@ Differenz zweier um $Delta t$ auseinanderliegender Werte der halbzahligen
 Zwischenzeit zugeordnet, an der die jeweils andere Feldgröße gerade vorliegt.
 Damit ist auch die Zeitableitung eine zentrale Differenz nach
 @zentraldifferenz-halb und das Verfahren ist in
-Ort _und_ Zeit von zweiter Ordnung, also $O((Delta x)^2, (Delta y)^2,
+Ort und Zeit von zweiter Ordnung, also $O((Delta x)^2, (Delta y)^2,
 (Delta t)^2)$.
 
 == Herleitung der Update-Gleichungen (2D, $"TM"_z$-Fall) <sec-update>
@@ -115,7 +115,7 @@ Ort _und_ Zeit von zweiter Ordnung, also $O((Delta x)^2, (Delta y)^2,
 Unter Verwendung des Yee-Gitters aus @sec-yee und Bildung zentraler Differenzen
 nach @zentraldifferenz-halb ergeben sich aus @tmz-hx bis @tmz-ez unmittelbar
 drei explizite Aktualisierungsvorschriften, im Folgenden _Update-Gleichungen_
-genannt: Für ein _quadratisches_ Gitter mit
+genannt: Für ein quadratisches Gitter mit
 $Delta x = Delta y = Delta$ ergeben sich folgende Gleichungen @lit:Taflove2005[mod. Gl. (3.41)]:
 
 $ H_x bar.v_(i\,j+1/2)^(n+1/2) = H_x bar.v_(i\,j+1/2)^(n-1/2)
@@ -154,7 +154,7 @@ $ J_z^"ges" = J_z + sigma E_z $ <stromaufteilung>
 Damit tritt $E_z$ in @tmz-ez zweimal auf --- einmal unter der Zeitableitung,
 einmal im Verlustterm. Die Zeitableitung ist nach @zentraldifferenz-halb dem
 Zeitpunkt $n+1\/2$ zugeordnet. Da eine Gleichung nur dann erfüllt sein kann,
-wenn all ihre Glieder für _denselben_ Zeitpunkt gelten, muss auch der
+wenn all ihre Glieder für denselben Zeitpunkt gelten, muss auch der
 Verlustterm dort ausgewertet werden. Genau dort liegt jedoch kein gespeicherter
 Wert von $E_z$ vor, weil das elektrische Feld nach @sec-yee nur zu ganzzahligen
 Zeitpunkten geführt wird. Der Verlustterm wird deshalb durch das arithmetische
@@ -220,7 +220,7 @@ einem Gitterpunkt beeinflusst je Zeitschritt nur seine unmittelbaren Nachbarn,
 sodass sich eine Information im Gitter höchstens um eine Zelle je Schritt
 ausbreitet. Physikalisch läuft sie in derselben Zeit die Strecke $c Delta t$.
 Stabil kann das Verfahren daher nur sein, wenn die numerische Ausbreitung der
-physikalischen mindestens folgen kann @lit:Schneider2010[S.35]. Durch eine von-Neumann-Analyse der Update-Gleichungen ergibt sich für den _2D_-Fall die _Courant-Friedrichs-Lewy-Bedingung (CFL)_, die die Wahl des Zeitschrittes in Abhängigkeit von der Gitterbreite einschränkt @lit:Taflove2005[S.30f., Gl.(5.54)]:
+physikalischen mindestens folgen kann @lit:Schneider2010[S.35]. Durch eine von-Neumann-Analyse der Update-Gleichungen ergibt sich für den 2D-Fall die _Courant-Friedrichs-Lewy-Bedingung (CFL)_, die die Wahl des Zeitschrittes in Abhängigkeit von der Gitterbreite einschränkt @lit:Taflove2005[S.30f., Gl.(5.54)]:
 
 $ Delta t <= 1/(c sqrt(1\/(Delta x)^2 + 1\/(Delta y)^2))
   quad arrow.r.double quad
@@ -235,7 +235,7 @@ Wie nahe die Rechnung an dieser Grenze geführt wird, gibt die _Courant-Zahl_
 $S = sqrt(2) c Delta t \/ Delta$ an, die hier so normiert ist, dass die
 Stabilitätsgrenze @cfl gerade bei $S = 1$ liegt. Die in der Literatur übliche
 Courant-Zahl $S_c = c Delta t\/Delta$ mit der Stabilitätsgrenze
-$S_c <= 1\/sqrt(2)$ hängt damit über $S_c = S\/sqrt(2)$ zusammen. Welchen Einfluss die _Courant-Zahl_ auf die Simulationsergebnisse hat, wird in Kapitel 5 näher untersucht. 
+$S_c <= 1\/sqrt(2)$ hängt damit über $S_c = S\/sqrt(2)$ zusammen. Welchen Einfluss die Courant-Zahl auf die Simulationsergebnisse hat, wird in Kapitel 5 näher untersucht. 
 
 == Randbedingungen <sec-rand>
 
@@ -244,7 +244,7 @@ $S_c <= 1\/sqrt(2)$ hängt damit über $S_c = S\/sqrt(2)$ zusammen. Welchen Einf
 Für den ideal leitenden Rand gilt nach @sec-randbedingungen
 $bold(E)_parallel = 0$. Im TM#sub[z]-Fall ist $E_z$ die einzige elektrische
 Komponente und liegt für jede senkrecht zur $x y$-Ebene verlaufende Wand stets
-_parallel_ zu ihr; die Bedingung verkürzt sich damit auf $E_z = 0$. Bezeichnet
+parallel zu ihr; die Bedingung verkürzt sich damit auf $E_z = 0$. Bezeichnet
 $M$ die Menge der als leitend markierten Gitterpunkte, so werden deren
 $E_z$-Werte nach jeder Auswertung von @update-ez wieder auf null gesetzt:
 
@@ -258,7 +258,7 @@ fortgeschrieben.
 An den Rändern des Simulationsgebiets fehlen benachbarte $H_y$- bzw. $H_x$-Felder, um zentrale Differenzen zu bilden, weshalb $E_z$ an diesen Stellen auf null gesetzt wird. Damit wird das Feld nach @sec-pec vollständig zurückgeworfen. In vielen Fällen ist dieser Effekt jedoch unerwünscht, insbesondere wenn die Ausbreitung im unendlichen Raum simuliert wird.
 Naheliegend wäre es deshalb, den eigentlichen Rändern eine Schicht vorzulagern, welche die auslaufende Welle dämpft, sodass keine Energie zurück in das eigentliche Simulationsgebiet geworfen wird (@abb:pml-schema).
 
-Eine gewöhnliche verlustbehaftete Schicht leistet das jedoch nicht: Sie lässt sich nur für senkrechten Einfall reflexionsfrei auslegen; bei schrägem Einfall reflektiert sie. Gefordert ist deshalb eine Schicht, die ausschließlich die Ausbreitung _senkrecht_ zur Grenzfläche dämpft @lit:Schneider2010[S. 309].
+Eine gewöhnliche verlustbehaftete Schicht leistet das jedoch nicht: Sie lässt sich nur für senkrechten Einfall reflexionsfrei auslegen; bei schrägem Einfall reflektiert sie. Gefordert ist deshalb eine Schicht, die ausschließlich die Ausbreitung senkrecht zur Grenzfläche dämpft @lit:Schneider2010[S. 309].
 
 Die Lösung besteht darin, nicht das Material
 zu verändern, sondern die Koordinate. Die hier verwendete Formulierung, die Chew und Weedon 1994 als Alternative zu Bérengers ursprünglicher PML vorgeschlagen haben @lit:Schneider2010[S. 309],
@@ -272,7 +272,7 @@ $ s_w = 1 + sigma_w/(upright(i) omega epsilon_0) $ <pml-sw>
 
 
 Der Streckfaktor wird nun jeder Ortsableitung vorangestellt, und zwar derart, dass
-$1\/s_w$ stets an die Ableitung in _derselben_ Richtung $w$ gebunden ist. Dafür
+$1\/s_w$ stets an die Ableitung in derselben Richtung $w$ gebunden ist. Dafür
 wird der Nabla-Operator erweitert, hier auf zwei Dimensionen
 eingeschränkt @lit:Schneider2010[S.~318, mod. Gl.~(11.93)]
 
@@ -293,9 +293,11 @@ Wichtig ist, dass sich diese Streckung richtungsweise vorschreiben lässt.
 So wird die Richtungsselektivität gewährleistet: In den
 Schichten links und rechts ist $sigma_x > 0$, während $sigma_y = 0$ und damit
 $s_y = 1$ bleibt; in den
-Schichten oben und unten ist es umgekehrt (@abb:pml-schema). Der
-Reflexionsfaktor verschwindet dadurch im Kontinuum für _jeden_ Einfallswinkel und _jede_
-Frequenz. Setzt man @pml-sw in eine unter $theta$ einlaufende ebene Welle nach
+Schichten oben und unten ist es umgekehrt (@abb:pml-schema). Da $s_x$
+gleichermaßen in den Gleichungen für $E_z$ und $H_y$ auftritt, ist die Schicht an
+das Rechengebiet angepasst: Der Reflexionsfaktor an der Grenzfläche ist im
+Kontinuum für jeden Einfallswinkel und jede Frequenz null
+@lit:Schneider2010[S. 316 f., Gl. (11.69) bis (11.77)]. Setzt man @pml-sw in eine unter $theta$ einlaufende ebene Welle nach
 @ansatz ein, so tritt an die Stelle von $k_x$ das Produkt $s_x k_x$, und der
 Ortsanteil der Welle zerfällt in zwei Faktoren
 @lit:Schneider2010[S.~317, mod. Gl.~(11.82) und (11.83)]:
@@ -408,7 +410,7 @@ Gitterpunkt speichert.
 
 Mit diesen Hilfsgrößen lassen sich die Update-Gleichungen ergänzen: An jeder Stelle, an der in @update-hx bis
 @update-ez ein
-Differenzenquotient steht, tritt nun dieser Quotient _zuzüglich_ der zugehörigen
+Differenzenquotient steht, tritt nun dieser Quotient zuzüglich der zugehörigen
 Hilfsgröße auf. Für $H_x$ tritt an die Stelle
 von @update-hx das Paar
 
@@ -434,7 +436,9 @@ $ Psi_(E\,x) bar.v_(i\,j)^(n+1/2) &= b_x bar.v_i thin
     (H_x bar.v_(i\,j+1/2)^(n+1/2) - H_x bar.v_(i\,j-1/2)^(n+1/2))/Delta $ <pml-psi-ez>
 
 Diese treten in @update-ez als zusätzlicher Summand
-$Delta (Psi_(E\,x) - Psi_(E\,y))$ innerhalb der Klammer von $C_b$ auf.
+$Delta (Psi_(E\,x) - Psi_(E\,y))$ innerhalb der Klammer von $C_b$ auf. Dabei ist
+$C_b$ der Materialkoeffizient aus @update-ez und nicht mit den PML-Koeffizienten
+$C_x$ und $C_y$ zu verwechseln.
 
 Im Inneren des Rechengebiets ist
 $sigma_w = 0$ und damit $b_w = 1$ und $C_w = 0$, sodass die Gleichungen dort exakt in @update-hx bis @update-ez übergehen. Die Bezeichnung _perfectly matched_ darf allerdings nicht darüber

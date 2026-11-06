@@ -47,7 +47,7 @@ untersucht.
 Um nicht für jedes $N_lambda$ eigene Testläufe mit jeweils einer anderen Frequenz durchführen zu müssen, tritt in den Testfällen an die Stelle der harmonischen Quelle ein Puls. Konkret wird im Folgenden der _Ricker-Puls_ verwendet, also die zweite Ableitung der Gaußkurve @lit:Schneider2010[S. 118, Gl. (5.20)]. Da nach @nlambda jede Frequenz bei gleicher Gitterbreite einer anderen Auflösung entspricht, liefert ein einziger Lauf nach der Fourier-Transformation die Ergebnisse für verschiedene $N_lambda$ zugleich. 
 
 
-Der Code zu allen Testfällen ist über das im Anhang verlinkte _GitHub_-Archiv einsehbar.
+Der Code zu allen Testfällen ist über das im Anhang verlinkte GitHub-Archiv einsehbar.
 
 == Testfall 1 --- Ebene Welle im Vakuum <sec-tf1>
 
@@ -63,7 +63,7 @@ Nach @sec-quellen wird eine Gitterlinie mit mehreren Stromquellen $J_z$ besetzt 
 $ t_d = (y sin theta)/c $ <tf1-verzoegerung>
 
 verzögert, sodass sich die Elementarwellen zu
-einer um $theta$ gekippten Front überlagern. Die Quelllinie durchspannt das gesamte Gebiet; bei schräger Ausbreitung werden die Quellen zu den Enden hin abgeschwächt.
+einer um $theta$ gekippten Front überlagern @lit:Schneider2010[S. 312, Gl. (11.24)]. Die Quelllinie durchspannt das gesamte Gebiet; bei schräger Ausbreitung werden die Quellen zu den Enden hin abgeschwächt.
 
 #figure(
   image("../abbildungen/testfall_a_aufbau.pdf", width: 55%),
@@ -91,15 +91,13 @@ Frequenz und Richtung. Variiert werden $N_lambda$, die Courant-Zahl $S$
   image("../abbildungen/testfall_a_dispersion.pdf", width: 92%),
   caption: [Phasengeschwindigkeit bei achsenparalleler Ausbreitung
     ($theta = 0$) über der Auflösung, links linear, rechts als relativer Fehler
-    doppelt-logarithmisch mit Vergleichsgerade der Steigung $-2$. Sondenabstand $L = 200 Delta$, Messdauer
-    $N_T Delta t = 450 Delta\/c$.],
+    doppelt-logarithmisch mit Vergleichsgerade der Steigung $-2$.],
 ) <abb:tf1-dispersion>
 
 #figure(
   image("../abbildungen/testfall_a_anisotropie.pdf", width: 62%),
   caption: [Phasengeschwindigkeit über der Ausbreitungsrichtung $theta$ bei
-    $N_lambda = 10$. Sondenabstand $L = 60 Delta$, Messdauer
-    $N_T Delta t = 250 Delta\/c$.],
+    $N_lambda = 10$.],
 ) <abb:tf1-anisotropie>
 
 
@@ -165,7 +163,7 @@ $ 1/S_c^2 sin^2((pi S_c)/N_lambda)
   = sin^2((tilde(k) Delta cos theta)/2) + sin^2((tilde(k) Delta sin theta)/2) . $ <num-dispersion-n>
 
 Diese Gleichung ist nicht geschlossen nach $tilde(k)$ auflösbar und wird daher
-numerisch gelöst @lit:Taflove2005[vgl. S. 114]. Die so berechneten Werte stimmen
+numerisch gelöst @lit:Taflove2005[S. 114]. Die so berechneten Werte stimmen
 mit den Messwerten aus @abb:tf1-dispersion und @abb:tf1-anisotropie näherungsweise überein.
 Die
 Abweichung von $c$ lässt sich damit auf die numerische Dispersion
@@ -197,7 +195,7 @@ In diesem Testfall trifft eine Welle auf ein Dielektrikum und wird teilweise ref
 Eine ebene Welle trifft aus dem Vakuum ($n_1 = 1$) senkrecht auf einen
 verlustfreien Halbraum mit $epsilon_r in {2, 4, 9}$, also der Brechzahl $n_2 = sqrt(epsilon_r)$. Mit $mu = mu_0$ und
 @impedanz ergeben sich die beiden Fresnel-Formeln für senkrechten Einfall
-@lit:Schneider2010[S. 136, Gl. (5.94), (5.95)], die jeweils die anteilige _Reflexion_ bzw. _Transmission_ angeben:
+@lit:Schneider2010[S. 136, Gl. (5.94), (5.95)], die jeweils die anteilige Reflexion bzw. Transmission angeben:
 
 $ Gamma = (n_1 - n_2)/(n_1 + n_2) ,
   quad
@@ -210,7 +208,7 @@ Ergänzend wird eine weitere Simulation durchgeführt, die sich nur darin unters
 Nach @lit:Schneider2010[S. 136 f.] wird zweimal gerechnet: Aus Lauf A ohne Dielektrikum ergibt sich die einfallende Welle, während aus Lauf B mit Dielektrikum das Gesamtfeld folgt. 
 Da $Gamma$ und $T$ im
 Frequenzbereich definiert sind, werden die Spektren
-frequenzweise geteilt @lit:Schneider2010[S. 137]. Aus den beiden Testläufen folgt so in Abhängigkeit von der Frequenz für die Fresnel-Koeffizienten @lit:Schneider2010[vgl. S. 144]:
+frequenzweise geteilt @lit:Schneider2010[S. 137]. Aus den beiden Testläufen folgt so in Abhängigkeit von der Frequenz für die Fresnel-Koeffizienten @lit:Schneider2010[S. 144]:
 
 
 
@@ -226,7 +224,7 @@ $ Gamma_"Sim"= abs(hat(E)_B - hat(E)_A)/abs(hat(E)_A) bar.v_(P_r) ,
   caption: [Reflexions- und Transmissionsfaktor für $epsilon_r = 4$ bei
     verschiedenen Courant-Zahlen. Links: $abs(Gamma_"Sim")$ und $T_"Sim"$ mit
     den Fresnel-Werten @tf3-fresnel (punktiert). Rechts: relative Abweichung
-    von @tf3-fresnel mit einer Vergleichsgeraden der Steigung $-2$. Messdauer $N_T Delta t = 500 Delta\/c$.],
+    von @tf3-fresnel mit einer Vergleichsgeraden der Steigung $-2$. ],
 ) <abb:tf3-courant>
 
 Beide numerischen Koeffizienten liegen über den Fresnel-Werten; $abs(Gamma_"Sim")$ beträgt bei $N_lambda = 10$ etwa $0,42$ statt $1\/3$. Mit wachsender Auflösung konvergieren sie gegen die aus @tf3-fresnel berechneten Werte. Aus @abb:tf3-courant folgt zudem eine quadratische Abnahme dieser Abweichung mit $N_lambda^(-2)$, wohingegen die Courant-Zahl anders als in Testfall 1 kaum Einfluss nimmt. Mit der Permittivität wächst die Abweichung dagegen deutlich (@abb:tf3-material). 
@@ -234,7 +232,7 @@ Beide numerischen Koeffizienten liegen über den Fresnel-Werten; $abs(Gamma_"Sim
   image("../abbildungen/testfall_d_material.pdf", width: 55%),
   caption: [$abs(Gamma_"Sim")$ bezogen auf den Fresnel-Wert für
     verschiedene $epsilon_r$, punktiert $tilde(Gamma)\/Gamma$ nach
-    @tf3-gitter; $S = 0,99$, Aufbau wie in @abb:tf3-courant.],
+    @tf3-gitter; $S = 0,99$.],
 ) <abb:tf3-material>
 
 
@@ -273,7 +271,7 @@ Wellenzahl im Medium $ell$ ist ($ell = 1$: Vakuum, $ell = 2$: Dielektrikum).
 Die Update-Gleichung hat deshalb dieselbe Form wie die Stetigkeit von $E_z$ im
 Kontinuum, $1 + Gamma = T$ (einfallende plus reflektierte Welle ergibt die
 transmittierte Welle), nur trägt jede Welle zusätzlich den Faktor ihrer
-Phasendrehung @lit:Schneider2010[vgl. Gl. (7.58), (7.64)]:
+Phasendrehung @lit:Schneider2010[Gl. (7.58), (7.64)]:
 
 $ e^(upright(i) tilde(k)_1 Delta\/2) + tilde(Gamma) e^(-upright(i) tilde(k)_1 Delta\/2)
   = tilde(T) e^(upright(i) tilde(k)_2 Delta\/2) . $ <tf3-update>
@@ -307,10 +305,10 @@ Die PML aus @sec-pml ist über @pml-sigmamax so ausgelegt, dass eine senkrecht
 einfallende Welle im Kontinuum genau mit der vorgegebenen Restreflexion
 $abs(R(0))$ zurückkehrt; bei schrägem Einfall wächst diese nach
 @pml-restreflexion-profil auf $abs(R(0))^(cos theta)$. Geprüft wird, wie gut die
-Schicht diesen Auslegungswert im Gitter erreicht. Untersucht werden vier der
-Größen, von denen die Reflexion abhängt: die Vorgabe $abs(R(0))$, die über
-@pml-sigmamax die Leitfähigkeit $sigma_max$ festlegt, die Dicke der Schicht, die
-Auflösung $N_lambda$ und der Einfallswinkel $theta$.
+Schicht diesen Auslegungswert im Gitter erreicht. Variiert werden dazu die
+Vorgabe $abs(R(0))$, die über @pml-sigmamax die Leitfähigkeit $sigma_max$
+festlegt, sowie die Dicke der Schicht, die Auflösung $N_lambda$ und der
+Einfallswinkel $theta$.
 
 === Aufbau und Messgröße
 
@@ -339,10 +337,8 @@ kubische Profil ($m = 3$) und $S = 0,99$.
   image("../abbildungen/testfall_pml.pdf", width: 100%),
   caption: [Gemessene Reflexion der PML. (a) Über der Vorgabe $abs(R(0))$ für
     zwei Dicken, punktiert $abs(R_"Sim") = abs(R(0))$. (b) Über der Auflösung
-    $N_lambda$ beim Standardwert $abs(R(0)) = 10^(-6)$ (punktiert), gestrichelt eine
-    Vergleichsgerade der Steigung $-2$. (c) Über dem
-    Einfallswinkel $theta$ für $20$ Zellen. Messdauer bei senkrechtem Einfall
-    $N_T Delta t = 210 Delta\/c$.],
+    $N_lambda$ beim Standardwert $abs(R(0)) = 10^(-6)$ (punktiert). (c) Über dem
+    Einfallswinkel $theta$ für $20$ Zellen. ],
 ) <abb:tf4-restreflexion>
 
 Mit strengerer Vorgabe sinkt die Reflexion zunächst und steigt dann langsam
@@ -371,37 +367,31 @@ unterschiedliche Koeffizienten $b_w$ und $C_w$ aus @pml-bc, und die Felder auf
 beiden Seiten eines Sprungs werden wie an der Grenzfläche in Testfall 2
 (@sec-tf3) nicht am selben Ort, sondern eine halbe Zelle versetzt miteinander
 verknüpft. Ein solcher Sprung wirkt ähnlich wie eine kleine Grenzfläche und wirft
-einen Teil der Welle zurück @lit:Schneider2010[vgl. S. 217]; wie an der
+einen Teil der Welle zurück @lit:Schneider2010[S. 217]; wie an der
 Grenzfläche in Testfall 2 wächst dieser Anteil mit der Größe des Sprungs. Ein allmählicher Anstieg verringert diese
-Reflexion @lit:Schneider2010[vgl. S. 312], weshalb der Potenzverlauf @pml-profil die
+Reflexion @lit:Schneider2010[S. 312], weshalb der Potenzverlauf @pml-profil die
 Sprünge am Eingang der Schicht klein hält @lit:Taflove2005[S. 293].
 
 Damit lassen sich alle vier Abhängigkeiten zuordnen. Eine strengere Vorgabe
 senkt den Kontinuumsanteil, erhöht aber $sigma_max$: Nach @pml-sigmamax ist
 $sigma_max$ proportional zu $-ln abs(R(0))$, sodass etwa eine Vorgabe von
 $10^(-16)$ statt $10^(-4)$ $sigma_max$ und damit jeden Sprung des Profils
-vervierfacht. Eine kleine Vorgabe $abs(R(0))$ verlangt also große Sprünge; das Optimum in (a) ist die Abwägung zwischen beiden Anteilen
+vervierfacht. Das Optimum in (a) ist daher die Abwägung zwischen beiden Anteilen
 @lit:Taflove2005[S. 293]. Da $sigma_max$ bei gleicher Vorgabe umgekehrt
 proportional zur Dicke ist, verteilt eine dickere Schicht den Anstieg auf kleinere
 Sprünge und senkt so das Optimum.
 
-Die Auflösung wirkt vor allem auf den Diskretisierungsanteil: Bei der dünnen
-Schicht mit den größten Sprüngen sinkt die Reflexion in (b) mit wachsendem
-$N_lambda$, im Mittel etwa mit zweiter Ordnung, ähnlich wie die Gitterfehler in
-Testfall 1 und 2 (@sec-tf1, @sec-tf3), die mit dem Abbruchfehler zweiter
-Ordnung der zentralen Differenz @zentraldifferenz-halb abnehmen. Bei
-$20$ Zellen ändert sie sich kaum; dort
-bestimmen Dicke und Vorgabe die Reflexion, nicht die Auflösung.
+Die Auflösung wirkt auf den Diskretisierungsanteil der Reflexion, der durch
+die gestufte Abbildung des Leitfähigkeitsprofils entsteht. Bei der dünnen Schicht mit den größten Sprüngen sinkt
+die Reflexion in (b) daher mit wachsendem $N_lambda$. Bei $20$ Zellen ändert sie sich
+kaum. Dort überwiegt der Kontinuumsanteil; die Messung liegt mit
+$1,5 dot 10^(-6)$ nahe der Vorgabe.
 
-Der Einfallswinkel (c) wirkt vor unter anderem auf den Kontinuumsanteil. Nach
+Der Einfallswinkel (c) wirkt sich auf den Kontinuumsanteil aus. Nach
 @pml-daempfung wirkt die Dämpfung nur über $k_x = (omega\/c) cos theta$, sodass
 eine schräg einfallende Welle in der Schicht weniger abklingt. Da $cos theta$ im
-Exponenten von @pml-restreflexion-profil steht, wächst dieser Anteil mit dem
-Winkel nicht gleichmäßig, sondern exponentiell und damit über Größenordnungen.
-Bei der schwächeren Vorgabe überwiegt der Kontinuumsanteil schon bei senkrechtem
-Einfall, und die Kurve steigt von Beginn an. Bei der strengeren Vorgabe ist er
-anfangs so klein, dass er die Reflexion kaum beeinflusst; erst bei großen Winkeln
-ist er so weit gewachsen, dass er sich bemerkbar macht und die Kurve ansteigt.
+Exponenten von @pml-restreflexion-profil steht, wächst dieser Anteil mit
+abnehmendem $cos theta$ exponentiell und damit über Größenordnungen.
 
 In der Praxis ist damit zwischen Dicke, Vorgabe und Einfallswinkel abzuwägen.
 Eine dickere Schicht senkt die Reflexion, vergrößert aber das Rechengebiet; die
