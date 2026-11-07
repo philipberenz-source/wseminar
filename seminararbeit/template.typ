@@ -1,11 +1,3 @@
-// ---------------------------------------------------------------
-// template.typ — Formatvorlage für die W-Seminararbeit
-// ---------------------------------------------------------------
-// Hier werden Seitenlayout, Titelseite, Nummerierung und ein paar
-// Hilfsfunktionen (todo, note) definiert. Inhaltliche Änderungen
-// bitte in main.typ bzw. in den Dateien unter kapitel/ vornehmen,
-// nicht hier.
-
 #let project(
   title: "Titel der Arbeit",
   subtitle: none,
@@ -26,16 +18,11 @@
     number-align: center,
   )
 
-  // Schriftart bewusst nicht erzwungen — Typst nimmt seine mitgelieferte
-  // Standardschrift. Falls eine bestimmte Schrift gefordert ist, hier
-  // ergänzen, z. B.: font: "Libertinus Serif"
   set text(lang: "de", size: 11pt)
   set par(justify: true, leading: 0.65em, first-line-indent: 0em)
   set heading(numbering: "1.1")
-  // Gleichungen kapitelweise nummeriert: (Kapitel.laufende Nummer)
   set math.equation(numbering: n => numbering("(1.1)", counter(heading).get().first(), n))
 
-  // Überschriften 1. Ordnung beginnen auf neuer Seite
   show heading.where(level: 1): it => {
     counter(math.equation).update(0)
     pagebreak(weak: true)
@@ -45,12 +32,6 @@
     line(length: 100%, stroke: 0.6pt + luma(170))
     v(1em)
   }
-  // Abschnitte nicht am Seitenende anfangen: Ist unter der aktuellen Position
-  // weniger Platz als `min`, beginnt die Überschrift auf einer neuen Seite.
-  // `sticky` hält die Überschrift zusätzlich immer mit dem Folgetext zusammen.
-  // (Ohne context/here(): das würde mit dem Literaturpaket nicht konvergieren.
-  // Ein unsichtbarer, unteilbarer Block der Höhe `min` rutscht auf die nächste
-  // Seite, wenn er nicht mehr passt; der negative Abstand hebt ihn wieder auf.)
   let needspace(min) = {
     block(breakable: false, height: min, above: 0pt, below: 0pt)
     v(-min)
@@ -68,12 +49,8 @@
     v(0.3em)
   }
 
-  // Keine einzelnen Absatzzeilen am Seitenanfang/-ende (Hurenkind/Schusterjunge)
   set text(costs: (orphan: 100%, widow: 100%))
 
-  // ---------------- Tabellen: schlichter Buchsatz ----------------
-  // Keine Gitterlinien, nur eine Linie unter der Kopfzeile; Kopfzeile hellgrau
-  // hinterlegt und fett. Gilt automatisch für alle #table(...) im Dokument.
   set table(
     stroke: (x, y) => if y == 0 { (bottom: 0.7pt + luma(100)) },
     fill: (x, y) => if y == 0 { luma(243) },
@@ -82,11 +59,9 @@
   show table.cell.where(y: 0): set text(weight: "bold", size: 9.5pt)
   show table: set text(size: 9.5pt)
 
-  // ---------------- Abbildungen und Bildunterschriften ----------------
   show figure: set block(above: 1.4em, below: 1.4em)
   show figure.caption: set text(size: 9.5pt, fill: luma(60))
 
-  // ---------------- Codeblöcke ----------------
   show raw.where(block: true): it => block(
     fill: luma(247),
     stroke: 0.5pt + luma(215),
@@ -96,7 +71,6 @@
     text(size: 7.4pt, it),
   )
 
-  // ---------------- Titelseite ----------------
   align(center)[
     #v(1.5cm)
     #text(size: 13pt)[#school]
@@ -118,45 +92,11 @@
   ]
   pagebreak()
 
-  // ---------------- Inhaltsverzeichnis ----------------
   outline(title: "Inhaltsverzeichnis", indent: auto, depth: 2)
   pagebreak()
 
-  // Seitenzählung beginnt erst mit dem Textteil (Deckblatt und
-  // Inhaltsverzeichnis ohne Seitenzahl)
   set page(numbering: "1")
   counter(page).update(1)
 
   doc
 }
-
-// -----------------------------------------------------------
-// Hilfsfunktionen für effizientes Arbeiten am Entwurf
-// -----------------------------------------------------------
-
-// Platzhalter für noch zu schreibenden Fließtext.
-// Erscheint als gelber Kasten — vor der Abgabe alle #todo[...] auflösen.
-// Tipp: im Editor nach "TODO" suchen, um offene Stellen zu finden.
-#let todo(body) = block(
-  fill: yellow.lighten(70%),
-  inset: 8pt,
-  radius: 3pt,
-  stroke: 0.5pt + yellow.darken(30%),
-  width: 100%,
-)[#text(weight: "bold", fill: yellow.darken(40%))[TODO: ] #body]
-
-// Kurze Randnotiz / Erinnerung (kursiv, rot), nicht Teil des finalen Texts
-#let note(body) = text(fill: red.darken(10%), style: "italic")[Notiz: #body]
-
-// Platzhalter für eine noch einzufügende Abbildung
-#let figplaceholder(caption: "Abbildung folgt") = figure(
-  block(
-    width: 100%,
-    height: 4cm,
-    fill: luma(240),
-    stroke: 0.5pt + luma(180),
-    radius: 3pt,
-    align(center + horizon)[#text(fill: luma(120))[Platzhalter für Abbildung]],
-  ),
-  caption: caption,
-)

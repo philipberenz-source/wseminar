@@ -20,14 +20,19 @@
     scene: null, info: null, gen: 0,
     ez: null, intens: null, eps: null, pec: null,
     running: false, pending: false, ready: false, autoplay: true,
-    probes: [], energy: { t: [], w: [] }, spectra: [],
+    probes: [], energy: { t: [], w: [] }, spectra: [], schirmProf: null, nMittel: 0,
     tool: "info", spf: 4, peak: 0,
-    view: { mode: "Ez", cmap: "Nacht", scale: "auto", vmax: 1, pml: true, mat: true, marks: true, smooth: true, antiflicker: true },
+    view: { mode: "Ez", cmap: "Nacht", scale: "auto", vmax: 1, pml: true, mat: true, marks: true, schirm: true, smooth: true, antiflicker: true },
     material: { art: "dielektrikum", eps_r: 2.25, sigma: 0 },
     open: { quellen: new Set([0]), objekte: new Set(), sonden: new Set() },
     rate: 0, pyMs: 0, lastFrame: 0, drag: null, hover: null,
   };
   try { const v = JSON.parse(localStorage.getItem("fdtd-studio-view") || "null"); if (v) Object.assign(S.view, v); } catch (e) { /* egal */ }
+  // Gespeicherte Werte pruefen: eine unbekannte Darstellung oder Farbskala
+  // wuerde sonst ein leeres Feld zeichnen.
+  const MODUS_WERTE = ["Ez", "|Ez|", "Ez in dB", "Intensität", "Intensität in dB", "el. Energiedichte"];
+  if (!MODUS_WERTE.includes(S.view.mode)) S.view.mode = "Ez";
+  if (!F.CMAP_STOPS[S.view.cmap]) S.view.cmap = "Nacht";
   const saveView = () => { try { localStorage.setItem("fdtd-studio-view", JSON.stringify(S.view)); } catch (e) { /* egal */ } };
 
   // ------------------------------------------------------------ Worker
@@ -64,7 +69,8 @@
         if (m.gen !== S.gen) return;
         S.info = m.info; S.eps = m.eps; S.pec = m.pec; S.ez = m.ez; S.intens = null;
         S.probes = S.scene.sonden.map(() => []); S.spectra = []; S.energy = { t: [], w: [] };
-        S.peak = 0; S.pending = false; S.step = 0; S.t = 0;
+        S.peak = 0; S.pending = false; S.step = 0; S.t = 0; S.schirmProf = null; S.nMittel = 0;
+        $("#schirm-i").max = S.info.nx - 1; $("#schirm-i").value = schirmI();
         buildMaterialLayer(); fit(); render(); drawCharts(); updateStatus(); kpi();
         $("#loader").classList.add("gone");
         ["#btn-play", "#btn-step", "#btn-reset"].forEach(s => $(s).disabled = false);
@@ -74,6 +80,7 @@
         if (m.gen !== S.gen) return;
         S.pending = false;
         S.ez = m.ez; if (m.intens) S.intens = m.intens;
+        if (m.profil) { S.schirmProf = m.profil; S.nMittel = m.nMittel; }
         S.step = m.step; S.t = m.t; S.pyMs = m.ms;
         m.probes.forEach((y, k) => { const a = S.probes[k]; if (a) for (let q = 0; q < y.length; q++) a.push(y[q]); });
         S.energy.t.push(m.tw); S.energy.w.push(m.w);
@@ -90,6 +97,9 @@
       case "spectrum":
         if (m.gen !== S.gen) return;
         S.spectra[m.k] = { f: m.f, mag: m.mag }; drawSpectrum(); break;
+      case "schirm":
+        if (m.gen !== S.gen) return;
+        S.schirmProf = m.profil; S.nMittel = m.nMittel; drawSchirm(); break;
       case "exec": conOut(m.out || "", m.out && /Error|Traceback/.test(m.out) ? "er" : ""); break;
       case "error":
         if (m.during === "init") loaderError("Python konnte nicht geladen werden: " + m.text + "<br><br>Besteht eine Internetverbindung? Pyodide wird beim ersten Start von cdn.jsdelivr.net geladen.");
@@ -134,7 +144,14 @@
   function pump() {
     if (!S.running || S.pending || !S.info) return;
     S.pending = true;
-    post({ type: "run", n: effSpf(), intens: true, wantIntens: S.view.mode.startsWith("Intensit") });
+    post({ type: "run", n: effSpf(), intens: true, wantIntens: S.view.mode.startsWith("Intensit"), schirm: schirmI() });
+  }
+  /* Schirmspalte wie im Desktop-Studio: aus der Szene, sonst 20 Zellen vor
+     dem rechten Rand. */
+  function schirmI() {
+    if (!S.info) return 0;
+    const i = S.scene.schirm > 0 ? S.scene.schirm : S.info.nx - 20;
+    return Math.min(Math.max(Math.round(i), 0), S.info.nx - 1);
   }
   function setRunning(on) {
     S.running = on && !!S.info;
@@ -144,7 +161,7 @@
   function singleStep() {
     if (!S.info || S.pending) return;
     setRunning(false); S.pending = true;
-    post({ type: "run", n: 1, intens: true, wantIntens: S.view.mode.startsWith("Intensit") });
+    post({ type: "run", n: 1, intens: true, wantIntens: S.view.mode.startsWith("Intensit"), schirm: schirmI() });
   }
   function requestSpectra() {
     if (!S.info) return;
@@ -245,6 +262,13 @@
       c.setLineDash([5 * d, 5 * d]); c.strokeStyle = "rgba(255,255,255,.22)"; c.lineWidth = d;
       c.strokeRect(np * sx, np * sy, W - 2 * np * sx, H - 2 * np * sy); c.setLineDash([]);
       c.fillStyle = "rgba(255,255,255,.35)"; c.font = `500 ${10 * d}px JetBrains Mono`; c.fillText("PML", np * sx + 5 * d, np * sy + 14 * d);
+    }
+    if (S.view.schirm) {
+      const x = (schirmI() + 0.5) * sx;
+      c.strokeStyle = "rgba(255,209,102,.7)"; c.lineWidth = 1.2 * d; c.setLineDash([4 * d, 4 * d]);
+      c.beginPath(); c.moveTo(x, 0); c.lineTo(x, H); c.stroke(); c.setLineDash([]);
+      c.fillStyle = "rgba(255,209,102,.85)"; c.font = `500 ${10 * d}px JetBrains Mono`;
+      c.textAlign = "right"; c.fillText("Schirm", x - 4 * d, H - 6 * d); c.textAlign = "left";
     }
     if (S.view.marks) {
       // Objektumrisse
@@ -380,7 +404,10 @@
     nice(y0, y1).forEach(v => { c.strokeStyle = "rgba(255,255,255,.06)"; c.beginPath(); c.moveTo(L, Y(v)); c.lineTo(w - R, Y(v)); c.stroke(); c.fillStyle = "#5d6679"; c.textAlign = "right"; c.fillText(o.yfmt ? o.yfmt(v) : tickFmt(v), L - 6, Y(v) + 3); });
     nice(x0, x1, 5).forEach(v => { c.strokeStyle = "rgba(255,255,255,.04)"; c.beginPath(); c.moveTo(X(v), T); c.lineTo(X(v), T + ph); c.stroke(); c.fillStyle = "#5d6679"; c.textAlign = "center"; c.fillText(tickFmt(v), X(v), h - 7); });
     c.textAlign = "right"; c.fillStyle = "#8d97a9"; c.fillText(o.xlabel || "", w - R, h - 7 - 11); c.textAlign = "left";
-    (o.marks || []).forEach(m => { c.strokeStyle = "rgba(255,195,107,.5)"; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(X(m), T); c.lineTo(X(m), T + ph); c.stroke(); c.setLineDash([]); });
+    (o.marks || []).forEach((m, q) => {
+      c.strokeStyle = "rgba(255,195,107,.5)"; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(X(m), T); c.lineTo(X(m), T + ph); c.stroke(); c.setLineDash([]);
+      if (o.markLabels) { c.fillStyle = "#8d97a9"; c.textAlign = "left"; c.fillText(o.markLabels[q], X(m) + 3, T + 9 + (q % 2) * 11); }
+    });
     c.save(); c.beginPath(); c.rect(L, T, pw, ph); c.clip();
     series.forEach(s => {
       const n = s.x.length; if (!n) return;
@@ -398,7 +425,46 @@
     c.restore();
   }
 
-  function drawCharts() { drawOsc(); drawEnergy(); }
+  function drawCharts() { drawOsc(); drawEnergy(); drawSchirm(); }
+
+  /* Intensitaetsschirm wie im Desktop-Studio: <Ez^2> laengs der Spalte i,
+     auf das Schirmmaximum normiert; im linearen Modus werden die Maxima
+     (> 0,15, Randzellen ausgenommen) mit ihrem j markiert. */
+  function drawSchirm() {
+    if (!S.info) return;
+    const i = schirmI(), db = $("#schirm-scale").value === "db", p = S.schirmProf;
+    $("#schirm-info").textContent = `Spalte i = ${i}` + (S.nMittel ? ` · ${S.nMittel.toLocaleString("de-DE")} Schritte gemittelt` : "");
+    if (!p || !p.length) { chart($("#ch-schirm"), [], { empty: "noch keine Werte" }); return; }
+    let spitze = 0; for (const v of p) spitze = Math.max(spitze, v);
+    const n = p.length, x = new Float64Array(n), y = new Float64Array(n);
+    for (let j = 0; j < n; j++) {
+      const v = spitze > 0 ? p[j] / spitze : 0;
+      x[j] = j; y[j] = db ? Math.max(10 * Math.log10(v + 1e-12), -50) : v;
+    }
+    const maxima = [];
+    if (!db && spitze > 0)
+      for (let j = 6; j < n - 6 && maxima.length < 9; j++)
+        if (y[j] > y[j - 1] && y[j] >= y[j + 1] && y[j] > 0.15) maxima.push(j);
+    chart($("#ch-schirm"), [{ x, y, color: "#ffd166" }], {
+      xlabel: "j", xmin: 0, xmax: n - 1, ymin: db ? -52 : 0, ymax: db ? 3 : 1.12,
+      marks: maxima, markLabels: maxima.map(String), yfmt: db ? v => `${Math.round(v)} dB` : undefined });
+  }
+  const schirmFeld = $("#schirm-i");
+  schirmFeld.addEventListener("change", () => {
+    if (!S.info) return;
+    const v = parseInt(schirmFeld.value, 10);
+    if (!isFinite(v)) { schirmFeld.value = schirmI(); return; }
+    S.scene.schirm = Math.min(Math.max(v, 1), S.info.nx - 1); schirmFeld.value = S.scene.schirm;
+    overlay(); post({ type: "schirm", i: S.scene.schirm });
+  });
+  $("#schirm-scale").addEventListener("change", drawSchirm);
+  $("#schirm-reset").addEventListener("click", () => {
+    if (!S.info) return;
+    if (S.intens) S.intens = new Float32Array(S.intens.length);
+    post({ type: "intensReset", i: schirmI() });
+    if (!S.running) render();
+    toast("Zeitmittelung neu gestartet");
+  });
   function drawOsc() {
     if (!S.info) return;
     const dt = S.info.dt, f0 = S.scene.quellen.length ? S.scene.quellen[0].f0 : 15e9;
@@ -621,6 +687,7 @@
     field(f, { label: "PML-Rand zeigen", type: "check", full: true, get: () => V.pml, set: v => V.pml = v, change: () => { saveView(); overlay(); } });
     field(f, { label: "Materialien einfärben", type: "check", full: true, get: () => V.mat, set: v => V.mat = v, change: () => { saveView(); overlay(); } });
     field(f, { label: "Quellen, Sonden, Umrisse", type: "check", full: true, get: () => V.marks, set: v => V.marks = v, change: () => { saveView(); overlay(); } });
+    field(f, { label: "Schirmlinie zeigen", type: "check", full: true, get: () => V.schirm, set: v => V.schirm = v, change: () => { saveView(); overlay(); } });
     const p = document.createElement("p"); p.className = "st-hint st-f full";
     p.innerHTML = "Der <b>Flackerschutz</b> begrenzt bei Dauerstrich-Quellen die Rechenschritte pro Bild, sodass jeder Bildpunkt höchstens etwa zweimal pro Sekunde wechselt. Zeitgemittelte Darstellungen (<b>Intensität</b>) flackern nicht und laufen immer mit voller Geschwindigkeit.";
     f.append(p);

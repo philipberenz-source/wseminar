@@ -1,4 +1,3 @@
-// Eigenes Import nötig: #include teilt keine Variablen mit main.typ.
 #import "../template.typ": *
 
 = Validierung an analytisch lösbaren Anordnungen
@@ -46,7 +45,6 @@ untersucht.
 
 Um nicht für jedes $N_lambda$ eigene Testläufe mit jeweils einer anderen Frequenz durchführen zu müssen, tritt in den Testfällen an die Stelle der harmonischen Quelle ein Puls. Konkret wird im Folgenden der _Ricker-Puls_ verwendet, also die zweite Ableitung der Gaußkurve @lit:Schneider2010[S. 118, Gl. (5.20)]. Da nach @nlambda jede Frequenz bei gleicher Gitterbreite einer anderen Auflösung entspricht, liefert ein einziger Lauf nach der Fourier-Transformation die Ergebnisse für verschiedene $N_lambda$ zugleich. 
 
-
 Der Code zu allen Testfällen ist über das im Anhang verlinkte GitHub-Archiv einsehbar.
 
 == Testfall 1 --- Ebene Welle im Vakuum <sec-tf1>
@@ -56,7 +54,6 @@ lediglich die Update-Gleichungen @update-hx bis @update-ez mit  $C_a = 1$, $C_b 
 des Zeitschrittes geprüft; die PML begrenzt nur das Gebiet. 
 
 === Aufbau und Messgröße
-
 
 Nach @sec-quellen wird eine Gitterlinie mit mehreren Stromquellen $J_z$ besetzt (@abb:tf1-aufbau), welche durch gleichphasige Einspeisung eine ebene Welle in $x$-Richtung erzeugen ($theta=0$). Für eine schräge Ausbreitung  um $theta$ wird die jeweilige Einspeisung der Punktquellen um 
 
@@ -72,8 +69,6 @@ einer um $theta$ gekippten Front überlagern @lit:Schneider2010[S. 312, mod. Gl.
     wird an $P_1$ und $P_2$ im Abstand $L$. (KI-generiert mit Claude Opus 5, Anthropic)],
 ) <abb:tf1-aufbau>
 
-
-
 Parallel zur Ausbreitungsrichtung werden zwei Sonden $P_1$ und $P_2$ mit dem Abstand $L$ angeordnet; die _Fast Fourier Transformation_ liefert für jede Frequenz Amplitude und Phase. Da eine Fläche konstanter Phase die Strecke $L$ in der Zeit $L\/tilde(v)_p$ zurücklegt, ergibt sich die Phasendifferenz $Delta phi(f) = 2 pi f L\/tilde(v)_p$, woraus für die Phasengeschwindigkeit folgt:
 
 $ tilde(v)_p (f) = (2 pi f L)/(Delta phi(f)). $ <tf1-vp>
@@ -83,7 +78,6 @@ Sollgröße ist nach @phasengeschwindigkeit
 die Vakuumlichtgeschwindigkeit $c$ aus @sec-wellengleichung, unabhängig von
 Frequenz und Richtung. Variiert werden $N_lambda$, die Courant-Zahl $S$
 (Normierung aus @sec-cfl) und $theta$.
-
 
 === Ergebnis
 
@@ -99,7 +93,6 @@ Frequenz und Richtung. Variiert werden $N_lambda$, die Courant-Zahl $S$
   caption: [Phasengeschwindigkeit über der Ausbreitungsrichtung $theta$ bei
     $N_lambda = 10$.],
 ) <abb:tf1-anisotropie>
-
 
 Aus @abb:tf1-dispersion und @abb:tf1-anisotropie folgen drei systematische Erkenntnisse.
 Erstens ist die Phasengeschwindigkeit im Gitter stets langsamer als im Kontinuum, wobei die Abweichung mit abnehmender Auflösung zunimmt.
@@ -117,7 +110,6 @@ Bei grober Auflösung zerfällt der Puls in einen langen Nachlauf, bei feiner bl
 ) <abb:tf1-puls>
 
 === Deutung: numerische Dispersion
-
 
 Ziel der folgenden Herleitung ist eine Formel für die Phasengeschwindigkeit
 $tilde(v)_p$ im Gitter, die mit den Messwerten verglichen werden kann. Im Kontinuum folgt die Ausbreitungsgeschwindigkeit aus der Dispersionsrelation @dispersion, die in @sec-dispersionsrelation aus dem Einsetzen einer ebenen Welle in die Wellengleichung folgte. Die gleiche Vorgehensweise lässt sich auch auf das Gitter anwenden @lit:Taflove2005[S. 108]: In die verlustfreien Update-Gleichungen wird die an Gitterpunkten abgetastete ebene Welle 
@@ -147,7 +139,6 @@ für das quadratische Gitter die _numerische Dispersionsrelation_
 $ [1/(c Delta t) sin((omega Delta t)/2)]^2
   = [1/Delta sin((tilde(k)_x Delta)/2)]^2
   + [1/Delta sin((tilde(k)_y Delta)/2)]^2 . $ <num-dispersion>
-
 
 Für $Delta, Delta t -> 0$ geht @num-dispersion mit der Kleinwinkelnäherung $sin x approx x$ in $omega^2\/c^2 = k_x^2+k_y^2$, sprich in die Dispersionsrelation des Kontinuums, über. Bei endlicher Schrittweite dagegen hängt $tilde(k)$ nichtlinear von $omega$ ab:
 $tilde(v)_p$ wird frequenzabhängig, und das Gitter verhält sich
@@ -185,7 +176,6 @@ bleiben als Nachlauf zurück @lit:Taflove2005[S. 107].
 
 Die Abweichung der Geschwindigkeit ist zwar klein, der daraus folgende Phasenfehler wächst jedoch linear mit der Laufstrecke. Bei langen Laufwegen kann die Phase daher erheblich verfälscht sein, weshalb die Kenntnis über die Größe des Fehlers von großer Relevanz für die sachgemäße Anwendung des FDTD-Verfahrens ist @lit:Schneider2010[S. 166].
 
-
 == Testfall 2 --- Reflexion und Transmission an einer dielektrischen Grenzfläche <sec-tf3>
 
 In diesem Testfall trifft eine Welle auf ein Dielektrikum und wird teilweise reflektiert. Dabei wird insbesondere geprüft, ob die Reflexions- und Transmissionskoeffizienten mit dem Kontinuum übereinstimmen. 
@@ -210,12 +200,9 @@ Da $Gamma$ und $T$ im
 Frequenzbereich definiert sind, werden die Spektren
 frequenzweise geteilt @lit:Schneider2010[S. 137]. Aus den beiden Testläufen folgt so in Abhängigkeit von der Frequenz für die Fresnel-Koeffizienten @lit:Schneider2010[S. 144]:
 
-
-
 $ Gamma_"Sim"= abs(hat(E)_B - hat(E)_A)/abs(hat(E)_A) bar.v_(P_r) ,
   quad
   T_"Sim" = abs(hat(E)_B)/abs(hat(E)_A) bar.v_(P_t) . $ <tf3-messung>
-
 
 === Ergebnis
 
@@ -235,10 +222,7 @@ Beide numerischen Koeffizienten liegen über den Fresnel-Werten; $abs(Gamma_"Sim
     @tf3-gitter; $S = 0,99$.],
 ) <abb:tf3-material>
 
-
-
 === Deutung
-
 
 In dem Testfall hängt die ebene Welle mit $theta=0$ nicht von $y$ ab, sodass $H_x$ verschwindet und der Testfall so der Ausbreitung in einem eindimensionalen Gitter ähnelt.
 
@@ -286,18 +270,13 @@ $ tilde(Gamma) = (n_1 cos(tilde(k)_2 Delta\/2) - n_2 cos(tilde(k)_1 Delta\/2))
   tilde(T) = (2 n_1 cos(tilde(k)_1 Delta\/2))
     /(n_1 cos(tilde(k)_2 Delta\/2) + n_2 cos(tilde(k)_1 Delta\/2)) . $ <tf3-gitter>
 
-
-
 Bei kleiner Zellbreite nähern sich die Kosinusfaktoren eins und @tf3-gitter geht in @tf3-fresnel über. 
-
 
 Die quadratische Ordnung des aus den Kosinusfaktoren folgenden Fehlers lässt sich in eigener Rechnung mittels $cos x approx 1 - x^2 \/2$ und mittels Kleinwinkelnäherung von @num-dispersion-n,  aus welcher $tilde(k)_ell Delta\/2 approx pi n_ell\/N_lambda$ folgt, zeigen: 
 
 $ abs(tilde(Gamma))/abs(Gamma) approx 1 + (n_1 n_2 pi^2)/N_lambda^2 . $ <tf3-naeherung>
 
-
 Damit sind die Befunde aus @abb:tf3-courant und @abb:tf3-material erklärt, dass die Koeffizienten stets über der Sollgröße waren. Für große $N_lambda$ geht der zweite Summand gegen null und es folgt die analytische Sollgröße. Zudem zeigt sich auch die Zunahme des Fehlers bei großer Permittivität.
-
 
 == Testfall 3 --- Absorbierender Rand <sec-tf4>
 

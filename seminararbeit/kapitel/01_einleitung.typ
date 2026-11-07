@@ -1,12 +1,7 @@
-// Eigenes Import nötig: #include teilt keine Variablen mit main.typ.
 #import "../template.typ": *
 
 = Einleitung
 
-// Unsichtbare Zitate in der Reihenfolge des Literaturverzeichnisses (Gruppen
-// in main.typ): Da "ieee" nach der ersten Zitierung nummeriert, laufen die
-// Nummern im Verzeichnis so von oben nach unten durch. Neue Quellen hier an
-// der Stelle ihrer Gruppe eintragen (nur Quellen, die im Text zitiert werden).
 #place(hide[
   @lit:Maxwell1865 @lit:Hertz1889 @lit:Yee1966 @lit:Berenger1994
   @lit:ChewWeedon1994 @lit:Liu2022
@@ -15,7 +10,6 @@
 ])
 
 == Relevanz und Motivation
-
 
 Als Apple im September 2023 das iPhone 15 Pro vorstellte, dessen Antennen in den umlaufenden Titanrahmen des Gehäuses integriert sind, lag hinter diesem Antennendesign bereits eine lange Entwicklungszeit. Möglich wird eine solche Entwicklung durch computergestützte Simulationen, die die elektromagnetischen Eigenschaften eines Geräts im Voraus berechnen, sodass bereits der Prototyp ein optimiertes Abstrahlverhalten besitzen kann.
 

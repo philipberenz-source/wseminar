@@ -1,4 +1,3 @@
-// Eigenes Import nötig: #include teilt keine Variablen mit main.typ.
 #import "../template.typ": *
 
 = Quellcode und Website <anhang-code>

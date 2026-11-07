@@ -1,4 +1,3 @@
-// Eigenes Import nötig: #include teilt keine Variablen mit main.typ.
 #import "../template.typ": *
 
 = Die FDTD-Methode
@@ -44,7 +43,6 @@ verbleibende _Abbruchfehler_ ist von zweiter Ordnung --- eine Halbierung von
 $Delta x$ geht somit mit einer Viertelung des Fehlers einher.
 
 == Das Yee-Gitter (2D) <sec-yee>
-
 
 Die zentrale Differenz @zentraldifferenz-halb lässt sich auf @tmz-hx bis
 @tmz-ez zwar anwenden, ändert aber nichts an dem Problem der gegenseitigen Kopplung: Die Zeitableitung von $H_x$ und $H_y$ hängt nach @tmz-hx und
@@ -278,18 +276,15 @@ ein komplexer Streckfaktor eingeführt @lit:Schneider2010[S.~318, Gl.~(11.86)]:
 
 $ s_w = 1 + sigma_w/(upright(i) omega epsilon_0) $ <pml-sw>
 
-
-
 Der Streckfaktor wird nun jeder Ortsableitung vorangestellt, und zwar derart, dass
 $1\/s_w$ stets an die Ableitung in derselben Richtung $w$ gebunden ist. Dafür
-wird der Nabla-Operator erweitert @lit:ChewWeedon1994, hier auf zwei Dimensionen
-eingeschränkt @lit:Schneider2010[S.~318, mod. Gl.~(11.93)]
+wird der Nabla-Operator erweitert, hier auf zwei Dimensionen
+eingeschränkt @lit:ChewWeedon1994[Gl.(5)]
 
 $ tilde(nabla) = hat(x) 1/s_x partial/(partial x)
   + hat(y) 1/s_y partial/(partial y) $ <pml-nabla>
 
 Ausgeschrieben für den TM#sub[z]-Fall aus @sec-zweidimensional bedeutet das
-@lit:ChewWeedon1994[mod. Gl.(5)]
 
 $ upright(i) omega epsilon E_z = 1/s_x (partial H_y)/(partial x)
     - 1/s_y (partial H_x)/(partial y),
@@ -306,7 +301,7 @@ Schichten oben und unten ist es umgekehrt (@abb:pml-schema). Da $s_x$
 gleichermaßen in den Gleichungen für $E_z$ und $H_y$ auftritt, ist die Schicht an
 das Rechengebiet angepasst: Der Reflexionsfaktor an der Grenzfläche ist im
 Kontinuum für jeden Einfallswinkel und jede Frequenz null 
-@lit:Schneider2010[S. 316 f., Gl. (11.69) bis (11.77)]. Betrachtet wird im Folgenden
+@lit:ChewWeedon1994[S. 2]. Betrachtet wird im Folgenden
 die rechte Schicht ($sigma_x > 0$, $s_y = 1$); für die übrigen Schichten gilt
 dasselbe mit der jeweils zur Schicht senkrechten Komponente. Setzt man @pml-sw in
 eine ebene Welle nach @ansatz ein, die unter dem Winkel $theta$ zur Schichtnormalen

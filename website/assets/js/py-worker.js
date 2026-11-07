@@ -50,15 +50,16 @@ function build(sceneJson) {
   post({ type: "built", info, eps, pec, ez: buf(lauf.ez(), Float32Array) }, [eps.buffer, pec.buffer]);
 }
 
-function run({ n, intens, wantIntens }) {
+function run({ n, intens, wantIntens, schirm }) {
   const t0 = performance.now();
   const ok = lauf.schritte(n, intens);
   const ms = performance.now() - t0;
   const sim = lauf.sim;
   const ez = buf(lauf.ez(), Float32Array);
   const transfer = [ez.buffer];
-  let it = null;
+  let it = null, profil = null;
   if (wantIntens) { it = buf(lauf.intensitaet(), Float32Array); transfer.push(it.buffer); }
+  if (schirm !== undefined && schirm !== null) { profil = buf(lauf.schirm(schirm), Float64Array); transfer.push(profil.buffer); }
   // Nur neue Sondenwerte schicken.
   const probes = [];
   for (let k = 0; k < probeSeen.length; k++) {
@@ -66,7 +67,12 @@ function run({ n, intens, wantIntens }) {
     probeSeen[k] += y.length; probes.push(y); transfer.push(y.buffer);
   }
   const t = sim.t, step = sim.time_step; sim.destroy();
-  post({ type: "frame", ok, ez, intens: it, probes, t, step, w: lauf.w, tw: lauf.t_w, n, ms }, transfer);
+  post({ type: "frame", ok, ez, intens: it, profil, nMittel: lauf.intens_n, probes, t, step, w: lauf.w, tw: lauf.t_w, n, ms }, transfer);
+}
+
+function schirm({ i }) {
+  const profil = buf(lauf.schirm(i), Float64Array);
+  post({ type: "schirm", profil, nMittel: lauf.intens_n }, [profil.buffer]);
 }
 
 function spectrum({ k, fenster }) {
@@ -84,6 +90,8 @@ self.onmessage = async e => {
     else if (m.type === "build") build(m.scene);
     else if (m.type === "run") run(m);
     else if (m.type === "spectrum") spectrum(m);
+    else if (m.type === "schirm") schirm(m);
+    else if (m.type === "intensReset") { lauf.intens_zuruecksetzen(); schirm(m); }
     else if (m.type === "exec") {            // Python-Konsole
       let out = "";
       py.setStdout({ batched: s => { out += s + "\n"; } });

@@ -179,6 +179,19 @@ class Lauf:
             return np.zeros(self.sim.nx * self.sim.ny, dtype=np.float32)
         return (self.intens / self.intens_n).astype(np.float32).ravel()
 
+    def schirm(self, i):
+        """Zeitgemittelte Intensitaet <Ez^2> laengs der Spalte i (wie
+        Studio._intens_zeichnen im Desktop-Studio)."""
+        i = int(np.clip(i, 0, self.sim.nx - 1))
+        if self.intens_n == 0:
+            return np.zeros(self.sim.ny)
+        return self.intens[i, :] / self.intens_n
+
+    def intens_zuruecksetzen(self):
+        """Mittelung neu beginnen, z. B. nach dem Einschwingen."""
+        self.intens[...] = 0.0
+        self.intens_n = 0
+
     def sonde(self, k, ab=0):
         p = self.sim._probes[k]
         return np.asarray(p["Ez"][int(ab):], dtype=np.float64)

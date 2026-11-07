@@ -1,9 +1,5 @@
-// Eigenes Import nötig: #include teilt keine Variablen mit main.typ.
 #import "../template.typ": *
 
-// --- Bausteine für das Klassendiagramm in Abschnitt 4.1 ------------------
-// Absolute Koordinaten in cm; wird ein Kasten höher, sind die y-Werte der
-// folgenden Elemente mit anzupassen.
 #let kl-strich = 0.6pt + luma(70)
 
 #let kl-kasten(x, y, w, h, fuellung: white) = place(top + left, dx: x, dy: y,
@@ -39,13 +35,9 @@
 Python wurde gewählt, da die Sprache eine vergleichsweise kompakte Implementierung mathematischer Operationen ermöglicht und mit NumPy eine Bibliothek zur effizienten Verarbeitung mehrdimensionaler Arrays bereitstellt.
 == Aufbau der Klasse <sec-aufbau>
 
-
-
 Der gesamte Löser wird als Klasse `FDTD2D` aufgefasst. Eine Simulation kann dementsprechend als ein Objekt betrachtet werden, welches sämtliche Feldwerte, Materialkoeffizienten, PML-Profile und Auflösungen hält; Feldkomponenten und Materialgrößen liegen dabei als zweidimensionale NumPy-Arrays mit je einem Eintrag pro Gitterpunkt vor. Ändern lassen sich diese Zustände durch verschiedene Methoden, die die Klasse ebenfalls bereitstellt. Der entscheidende Vorteil einer solchen Struktur ist die Möglichkeit, mehrere voneinander unabhängige Simulationen als separate Objektinstanzen zu erzeugen, was insbesondere in Kapitel 5 bei der Durchführung mehrerer Testfälle mit unterschiedlichen Parametern von Nutzen sein wird.
 
 Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse, wobei besonders relevante Stellen in den folgenden Abschnitten gesondert erläutert werden:
-
-
 
 #figure(
   placement: auto,
@@ -54,7 +46,6 @@ Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse, wobei beso
     #set par(justify: false, leading: 0.45em)
     #set align(left)
 
-    // ---------- Zustand (rechts) ----------
     #kl-kasten(8.9cm, 0.0cm, 6.1cm, 10.3cm, fuellung: luma(249))
     #kl-inhalt(8.9cm, 0.0cm, 6.1cm, 10.3cm)[
       #text(size: 8.4pt, weight: "bold")[Zustand des Objekts] \
@@ -85,7 +76,6 @@ Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse, wobei beso
         links verändern ihn.]
     ]
 
-    // ---------- Aufbau ----------
     #kl-kasten(0.0cm, 0.0cm, 5.6cm, 2.75cm)
     #kl-inhalt(0.0cm, 0.0cm, 5.6cm, 2.75cm)[
       #text(size: 8.4pt, weight: "bold")[Aufbau] #h(0.3em)
@@ -98,7 +88,6 @@ Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse, wobei beso
       `add_soft_source()`, `add_probe()`, ...
     ]
 
-    // ---------- Zeitschritt ----------
     #kl-kasten(0.0cm, 3.55cm, 5.6cm, 4.55cm, fuellung: luma(252))
     #kl-inhalt(0.0cm, 3.55cm, 5.6cm, 0.6cm)[
       #text(size: 8.4pt, weight: "bold")[Zeitschritt] #h(0.3em)
@@ -119,7 +108,6 @@ Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse, wobei beso
     #kl-kasten(0.5cm, 7.37cm, 4.6cm, 0.5cm)
     #kl-mitte(0.5cm, 7.37cm, 4.6cm, 0.5cm)[`_record_probes()`, `_record_snapshots()`]
 
-    // ---------- Auswertung ----------
     #kl-kasten(0.0cm, 8.90cm, 5.6cm, 1.40cm)
     #kl-inhalt(0.0cm, 8.90cm, 5.6cm, 1.40cm)[
       #text(size: 8.4pt, weight: "bold")[Auswertung] #h(0.3em)
@@ -128,7 +116,6 @@ Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse, wobei beso
       `get_spectrum()`, `get_grid()`
     ]
 
-    // ---------- Verbindungen ----------
     #kl-pfeil-r(5.6cm, 8.9cm, 1.38cm)
     #kl-label(5.95cm, 1.02cm)[legt an und trägt ein]
     #kl-pfeil-lr(5.6cm, 8.9cm, 5.83cm)
@@ -162,7 +149,6 @@ beliebigen Positionen.
 Dafür nimmt die Methode als Argument ein eindimensionales _Array_ mit allen Positionen der Gitterpunkte in einer Richtung (bspw. Liste von ganzzahligen x-Koordinaten für $E_z$ oder Liste von  halben Zahlen für die x-Koordinaten von $H_y$).
 `d_links` und `d_rechts` messen anschließend, wie tief welche Position in der PML ist. Dabei entstehen jeweils zwei Arrays, sodass jede einzelne Position behandelt wird. Da bei einer Position stets mindestens einer der Werte `d_links` und `d_rechts` negativ ist, wählt die Variable `tiefe` die größere Zahl aus. Sind beide Zahlen negativ, so befindet sich die Position nicht in der PML und wird damit auf null gesetzt. Damit ist `tiefe` ebenfalls ein Array, welches für jede Position die Tiefe in einer PML speichert. Darauf aufbauend wird die Tiefe nun auf ein Intervall $[0;1]$ normiert und daraus eine Funktion für die Dämpfung $sigma$ festgelegt. Da außerhalb der PML $rho$ stets null beträgt, ist an diesen Stellen die Dämpfung ebenfalls null. Nach der Berechnung des Koeffizienten $b_w$ nach @pml-bc wird dieser gemeinsam mit dem Koeffizienten $C_w$ jeweils als Array zurückgegeben.
 
-
 ```python
     def _setup_pml(self):
         if self.npml > 0:
@@ -192,8 +178,6 @@ Positionen um $0,5$.
 Abschließend werden die Hilfsfelder $Psi$ auf null initialisiert. `psi_hx` und `psi_hy` haben dabei die gleichen Dimensionen wie 
 die beiden H-Felder, während die beiden Hilfsgrößen des E-Feldes mit  $(n_x - 2) times (n_y - 2)$ kleiner sind, da $E_z$  nur im Inneren aktualisiert wird und die beiden äußeren Spalten und Zeilen 
 als PEC-Abschluss null bleiben.
-
-
 
 == Die Update-Gleichungen im Code <sec-updateE>
 ```python
@@ -225,7 +209,6 @@ Da die Array-Operationen in kompiliertem Code ausgeführt werden, ist die Vektor
 
 Zu erläutern ist außerdem die unterschiedliche Schreibweise von `self.by_h[None, :]` und `self.bx_h[:, None]`. Da die Profile zunächst eindimensional vorliegen, müssen sie für die Verwendung in den zweidimensionalen Feldern entsprechend erweitert werden. Die eingefügte Achse bestimmt dabei, entlang welcher Raumrichtung das jeweilige Profil aufgespannt wird. `[None, :]` formt das $y$-Profil zu einer Zeile, die über alle $x$-Werte ausgedehnt wird, während `[:, None]` das $x$-Profil zu einer Spalte formt, die sich über alle $y$-Werte erstreckt. Würde ein $sigma_y$ versehentlich in $x$-Richtung aufgespannt, entstünde die entsprechende Schicht an den falschen Rändern.
 
-
 ```python
     def _update_E(self):
         d = self.d
@@ -245,16 +228,9 @@ Zu erläutern ist außerdem die unterschiedliche Schreibweise von `self.by_h[Non
             self.Ez[self._pec_mask] = 0.0
 ```
 
-
 Der Ausschnitt `[1:-1, 1:-1]` lässt die äußerste Zeile und Spalte aus, sodass diese immer null bleiben; das ist die PEC-Bedingung @pec als
 Abschluss hinter der Schicht, wie in @sec-randschicht bereits angedeutet. Im Gebietsinneren bleiben zudem die Hilfsgrößen $Psi$ wegen $b_w = 1$, $C_w = 0$ dauerhaft null, sodass der Ausdruck dort exakt in @update-ez übergeht --- die PML ist damit im Gebietsinneren wirkungslos.
 
-
-// --- Bausteine für den Ablaufplan in Abschnitt 4.8 ------------------------
-// Ergänzt die kl-*-Bausteine aus Abschnitt 4.1 um die DIN-Symbole eines
-// Flussdiagramms: Raute (Verzweigung), Parallelogramm (Ein-/Ausgabe) und
-// Terminator (Start/Ende). Wie dort absolute Koordinaten in cm; wird ein
-// Kasten höher oder breiter, verschieben sich die folgenden Werte mit.
 #let ad-raute(x, y, w, h, fuellung: white) = place(top + left, dx: x, dy: y,
   polygon(fill: fuellung, stroke: kl-strich,
     (w / 2, 0cm), (w, h / 2), (w / 2, h), (0cm, h / 2)))
@@ -276,7 +252,6 @@ Unter Berücksichtigung des zeitlichen Versatzes im Rahmen des Leapfrog-Schemas 
     #set par(justify: false, leading: 0.42em)
     #set align(left)
 
-    // ---------- Aufbau: Konstruktor (senkrecht, Mitte) ----------
     #ad-terminator(5.9cm, 0.0cm, 2.2cm, 0.6cm)
     #kl-mitte(5.9cm, 0.0cm, 2.2cm, 0.6cm)[Start]
     #kl-pfeil-ab(7.0cm, 0.6cm, 0.9cm)
@@ -301,7 +276,6 @@ Unter Berücksichtigung des zeitlichen Versatzes im Rahmen des Leapfrog-Schemas 
     #kl-mitte(3.0cm, 4.9cm, 8.0cm, 0.6cm)[Quellen festlegen]
     #kl-pfeil-ab(7.0cm, 5.5cm, 5.85cm)
 
-    // ---------- Zeitschleife ----------
     #ad-raute(4.8cm, 5.85cm, 4.4cm, 1.6cm)
     #kl-mitte(4.8cm, 5.85cm, 4.4cm, 1.6cm)[$n < n_"steps"$?]
     #kl-label(7.15cm, 7.48cm)[ja]
@@ -326,12 +300,10 @@ Unter Berücksichtigung des zeitlichen Versatzes im Rahmen des Leapfrog-Schemas 
     #kl-kasten(3.0cm, 11.6cm, 8.0cm, 0.7cm)
     #kl-mitte(3.0cm, 11.6cm, 8.0cm, 0.7cm)[`_record_probes()`, `_record_snapshots()`; Zähler und Zeit fortschreiben]
 
-    // Rücksprung: unten aus der Schleife heraus, links vorbei, oben wieder in die Raute hinein
     #kl-linie(7.0cm, 12.3cm, 0.6cm, 12.3cm)
     #kl-linie(0.6cm, 12.3cm, 0.6cm, 6.65cm)
     #kl-pfeil-r(0.6cm, 4.8cm, 6.65cm)
 
-    // ---------- Ende ----------
     #kl-pfeil-r(9.2cm, 10.0cm, 6.65cm)
     #ad-terminator(10.0cm, 6.35cm, 2.4cm, 0.6cm)
     #kl-mitte(10.0cm, 6.35cm, 2.4cm, 0.6cm)[Ende]
@@ -344,7 +316,5 @@ Unter Berücksichtigung des zeitlichen Versatzes im Rahmen des Leapfrog-Schemas 
     Simulation. Die Auswertung  erfolgt danach separat und
     ist hier nicht mit dargestellt.],
 ) <fig-gesamtablauf>
-
-
 
 Damit ist die aus den Maxwell-Gleichungen entwickelte FDTD-Methode vollständig in Python implementiert. Die konkrete Umsetzung bildet die Grundlage für die im folgenden Kapitel durchgeführten Testfälle, anhand derer die numerischen Ergebnisse mit analytischen Lösungen für die Ausbreitung, Reflexion und Transmission ebener Wellen verglichen und damit die Zuverlässigkeit des implementierten Solvers untersucht wird. Der gesamte Code ist in dem im Anhang verlinkten GitHub-Archiv aufrufbar.

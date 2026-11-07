@@ -1,4 +1,3 @@
-// Eigenes Import nötig: #include teilt keine Variablen mit main.typ.
 #import "../template.typ": *
 
 = Theoretische Grundlagen
@@ -52,7 +51,6 @@ mit $epsilon = epsilon_0 epsilon_r$ und $mu = mu_0 mu_r$
 sowie der Leitfähigkeit $sigma$; der letzte Ausdruck ist das Ohmsche Gesetz in
 lokaler Form @lit:GriffithsDE[S. 368].
 
-
 Dass @material in dieser Form gilt, ist eine Annahme, die vier Vereinfachungen @lit:Taflove2005[S. 52 f.] voraussetzt:
 
 / Linearität: $epsilon,mu,sigma$ unabhängig von der Feldstärke.
@@ -89,7 +87,6 @@ $ epsilon (partial E_z)/(partial t) + J_z^"ges"
 
 wobei $J_z^"ges"$ die gesamte Stromdichte in $z$-Richtung bezeichnet; ihre
 Aufteilung folgt in @sec-update.
-
 
 == Randbedingungen an Grenzflächen <sec-randbedingungen>
 

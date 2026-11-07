@@ -8,15 +8,6 @@
   const fmt = (x, n = 2) => x.toLocaleString("de-DE", { minimumFractionDigits: n, maximumFractionDigits: n });
 
   // ----------------------------------------------------------- Allgemein
-  const nav = $("#nav");
-  const onScroll = () => nav.classList.toggle("scrolled", scrollY > 20);
-  addEventListener("scroll", onScroll, { passive: true }); onScroll();
-
-  const io = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
-  }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
-  $$(".reveal").forEach(el => io.observe(el));
-
   function renderTex() {
     if (!window.katex) return setTimeout(renderTex, 60);
     $$(".tex").forEach(el => {
@@ -201,81 +192,6 @@
       last = now; draw();
     });
     draw();
-  })();
-
-  // ----------------------------------------------------------------- Hero
-  (function hero() {
-    const cv = $("#hero-canvas"); if (!cv) return;
-    let sim, off, st = { peak: 0 }, src, base = [], pulses = [], mouse = null, lastMove = 0, cell = 5;
-
-    function build() {
-      const w = cv.clientWidth, h = cv.clientHeight;
-      cell = Math.max(3.2, Math.sqrt(w * h / 52000));
-      const nx = Math.max(60, Math.round(w / cell)), ny = Math.max(60, Math.round(h / cell));
-      sim = new F.FDTD2D(nx, ny, 1e-3, { courant: 0.99, npml: 14 });
-      const f0 = 10e9, w0 = 2 * Math.PI * f0;
-      src = { x: nx * 0.7, y: ny * 0.5, amp: 0 };
-      // Quelle an einer Zwischenposition: bilinear auf die vier Nachbarzellen
-      // verteilt, damit das Mitziehen kein Gitterrauschen erzeugt.
-      const corner = (di, dj) => ({
-        get i() { return Math.floor(src.x) + di; }, get j() { return Math.floor(src.y) + dj; }, amp: 1,
-        fn: t => {
-          const fx = src.x - Math.floor(src.x), fy = src.y - Math.floor(src.y);
-          return (di ? fx : 1 - fx) * (dj ? fy : 1 - fy) * src.amp * Math.sin(w0 * t);
-        }
-      });
-      sim.currentSources = [corner(0, 0), corner(1, 0), corner(0, 1), corner(1, 1)];
-      // zweite, ruhende Quelle -> Interferenz
-      const s2 = F.machWellenform("sinus", f0, 0.7, 3);
-      sim.addCurrentSource(Math.round(nx * 0.82), Math.round(ny * 0.28), s2);
-      base = sim.currentSources.slice();
-      off = offscreen(nx, ny);
-      cv.width = Math.round(w * Math.min(devicePixelRatio, 1.5));
-      cv.height = Math.round(h * Math.min(devicePixelRatio, 1.5));
-      st.peak = 0; pulses = [];
-    }
-
-    function toCell(e) {
-      const r = cv.getBoundingClientRect();
-      return { i: Math.round((e.clientX - r.left) / r.width * sim.nx), j: Math.round((1 - (e.clientY - r.top) / r.height) * sim.ny) };
-    }
-    const clampI = (v, n) => Math.min(Math.max(v, 2), n - 3);
-
-    addEventListener("pointermove", e => {
-      const r = cv.getBoundingClientRect();
-      if (e.clientY < r.top || e.clientY > r.bottom) { mouse = null; return; }
-      mouse = toCell(e); lastMove = performance.now();
-    }, { passive: true });
-    cv.parentElement.addEventListener("pointerdown", e => {
-      if (e.target.closest("a,button")) return;
-      const p = toCell(e);
-      const f = F.machWellenform("ricker", 9e9, 3), t0 = sim.t;
-      pulses.push({ i: clampI(p.i, sim.nx), j: clampI(p.j, sim.ny), amp: 1, fn: t => f(t - t0), until: t0 + 3 / 9e9 });
-    });
-
-    let resizeT;
-    addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(build, 200); });
-    build();
-
-    loop(cv, () => {
-      const now = performance.now(), tt = now / 1000;
-      // Quelle folgt der Maus, sonst einer Lissajous-Bahn
-      let ti, tj;
-      if (mouse && now - lastMove < 2500) { ti = mouse.i; tj = mouse.j; }
-      else { ti = sim.nx * (0.66 + 0.16 * Math.sin(tt * 0.31)); tj = sim.ny * (0.5 + 0.28 * Math.sin(tt * 0.47 + 1)); }
-      src.x = clampI(src.x + (ti - src.x) * 0.04, sim.nx);
-      src.y = clampI(src.y + (tj - src.y) * 0.04, sim.ny);
-      src.amp += (1 - src.amp) * 0.02;
-
-      const steps = 1;                           // ~1,4 Schwingungen/s: ruhig
-      for (let s = 0; s < steps; s++) {
-        pulses = pulses.filter(p => sim.t < p.until);
-        sim.currentSources = base.concat(pulses);
-        sim.step();
-      }
-      drawField(off.ctx, off.img, sim, st, { gain: 0.8 });
-      blit(cv, off.c);
-    });
   })();
 
   // ------------------------------------------------------------------ Yee
@@ -551,26 +467,4 @@
     make("#pml-canvas", 12);
   })();
 
-  // -------------------------------------------------------- Studio-Teaser
-  (function teaser() {
-    const cv = $("#teaser-canvas"); if (!cv) return;
-    const sz = F.PRESETS["Doppelspalt (Beugung)"]();
-    sz.nx = 240; sz.ny = 200; sz.schirm = 0;
-    sz.quellen[0].i = 20;
-    sz.objekte = sz.objekte.map(o => ({ ...o, i0: 80, i1: 83, j0: Math.round(o.j0 * 2 / 3), j1: Math.round(o.j1 * 2 / 3) }));
-    let { sim } = F.baue(sz);
-    const off = offscreen(sz.nx, sz.ny), st = { peak: 0 };
-    const fit = () => { const r = cv.getBoundingClientRect(); cv.width = Math.round(r.width * 1.25); cv.height = Math.round(r.height * 1.25); };
-    fit(); addEventListener("resize", fit);
-    loop(cv, () => {
-      sim.step();
-      if (sim.timeStep > 3000) ({ sim } = F.baue(sz));
-      drawField(off.ctx, off.img, sim, st, { gain: 0.9 });
-      // Seitenverhaeltnis erhalten ("cover")
-      const c = cv.getContext("2d"), s = Math.max(cv.width / sz.nx, cv.height / sz.ny);
-      const w = sz.nx * s, h = sz.ny * s;
-      c.imageSmoothingEnabled = true; c.imageSmoothingQuality = "high";
-      c.drawImage(off.c, (cv.width - w) / 2, (cv.height - h) / 2, w, h);
-    });
-  })();
 })();
