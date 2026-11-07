@@ -220,7 +220,9 @@ einem Gitterpunkt beeinflusst je Zeitschritt nur seine unmittelbaren Nachbarn,
 sodass sich eine Information im Gitter höchstens um eine Zelle je Schritt
 ausbreitet. Physikalisch läuft sie in derselben Zeit die Strecke $c Delta t$.
 Stabil kann das Verfahren daher nur sein, wenn die numerische Ausbreitung der
-physikalischen mindestens folgen kann @lit:Schneider2010[S.35]. Durch eine von-Neumann-Analyse der Update-Gleichungen ergibt sich für den 2D-Fall die _Courant-Friedrichs-Lewy-Bedingung (CFL)_, die die Wahl des Zeitschrittes in Abhängigkeit von der Gitterbreite einschränkt @lit:Taflove2005[S.30f., Gl.(5.54)]:
+physikalischen mindestens folgen kann @lit:Schneider2010[S. 35]. Diese Überlegung liefert
+jedoch nur eine notwendige Bedingung: Sie führt auf $Delta t <= Delta\/c$, während die
+tatsächliche Grenze im 2D-Fall um den Faktor $sqrt(2)$ schärfer ist. Diese folgt erst aus einer von-Neumann-Analyse der Update-Gleichungen @lit:Taflove2005[S. 30 f.]. Das Ergebnis ist die _Courant-Friedrichs-Lewy-Bedingung (CFL)_, die die Wahl des Zeitschrittes in Abhängigkeit von der Gitterbreite einschränkt @lit:Taflove2005[Gl. (5.54)]:
 
 $ Delta t <= 1/(c sqrt(1\/(Delta x)^2 + 1\/(Delta y)^2))
   quad arrow.r.double quad
@@ -258,10 +260,17 @@ fortgeschrieben.
 An den Rändern des Simulationsgebiets fehlen benachbarte $H_y$- bzw. $H_x$-Felder, um zentrale Differenzen zu bilden, weshalb $E_z$ an diesen Stellen auf null gesetzt wird. Damit wird das Feld nach @sec-pec vollständig zurückgeworfen. In vielen Fällen ist dieser Effekt jedoch unerwünscht, insbesondere wenn die Ausbreitung im unendlichen Raum simuliert wird.
 Naheliegend wäre es deshalb, den eigentlichen Rändern eine Schicht vorzulagern, welche die auslaufende Welle dämpft, sodass keine Energie zurück in das eigentliche Simulationsgebiet geworfen wird (@abb:pml-schema).
 
+#figure(
+  image("../abbildungen/abb_pml_schema.pdf", width: 48%),
+  caption: [Anordnung der absorbierenden Schicht: Sie umgibt das eigentliche
+    Rechengebiet auf allen vier Seiten und ist außen weiterhin durch einen
+    PEC-Rand abgeschlossen; in den Ecken überlappen die Schichten beider
+    Richtungen. (KI-generiert mit Claude Opus 5, Anthropic)],
+) <abb:pml-schema>
+
 Eine gewöhnliche verlustbehaftete Schicht leistet das jedoch nicht: Sie lässt sich nur für senkrechten Einfall reflexionsfrei auslegen; bei schrägem Einfall reflektiert sie. Gefordert ist deshalb eine Schicht, die ausschließlich die Ausbreitung senkrecht zur Grenzfläche dämpft @lit:Schneider2010[S. 309].
 
-Die Lösung besteht darin, nicht das Material
-zu verändern, sondern die Koordinate. Die hier verwendete Formulierung, die Chew und Weedon 1994 als Alternative zu Bérengers ursprünglicher PML vorgeschlagen haben @lit:Schneider2010[S. 309],
+Die Idee einer solchen Schicht geht auf Bérenger zurück, der 1994 die erste PML vorstellte @lit:Berenger1994. Er erreichte die Richtungsabhängigkeit, indem er jede Feldkomponente in zwei nicht-physikalische Teilfelder aufspaltete @lit:Schneider2010[S. 309]. Im selben Jahr zeigten Chew und Weedon, dass sich dieselbe Eigenschaft ohne Aufspaltung erreichen lässt, indem nicht das Material verändert wird, sondern die Koordinate @lit:ChewWeedon1994[S. 3]. In dieser Arbeit wird ihre Formulierung verwendet. Sie
 heißt _komplexe Koordinatenstreckung_,
 weil die dabei eingeführten Faktoren die einzelnen Koordinatenrichtungen
 skalieren. Zu jeder Raumrichtung $w in {x, y}$ wird dabei
@@ -273,14 +282,14 @@ $ s_w = 1 + sigma_w/(upright(i) omega epsilon_0) $ <pml-sw>
 
 Der Streckfaktor wird nun jeder Ortsableitung vorangestellt, und zwar derart, dass
 $1\/s_w$ stets an die Ableitung in derselben Richtung $w$ gebunden ist. Dafür
-wird der Nabla-Operator erweitert, hier auf zwei Dimensionen
+wird der Nabla-Operator erweitert @lit:ChewWeedon1994, hier auf zwei Dimensionen
 eingeschränkt @lit:Schneider2010[S.~318, mod. Gl.~(11.93)]
 
 $ tilde(nabla) = hat(x) 1/s_x partial/(partial x)
   + hat(y) 1/s_y partial/(partial y) $ <pml-nabla>
 
 Ausgeschrieben für den TM#sub[z]-Fall aus @sec-zweidimensional bedeutet das
-@lit:Schneider2010[S.~318, mod. Gl.~(11.90) bis (11.92)]
+@lit:ChewWeedon1994[mod. Gl.(5)]
 
 $ upright(i) omega epsilon E_z = 1/s_x (partial H_y)/(partial x)
     - 1/s_y (partial H_x)/(partial y),
@@ -289,30 +298,27 @@ $ upright(i) omega epsilon E_z = 1/s_x (partial H_y)/(partial x)
   quad
   upright(i) omega mu_0 H_x = -1/s_y (partial E_z)/(partial y) $ <pml-tmz>
 
-Wichtig ist, dass sich diese Streckung richtungsweise vorschreiben lässt.
-So wird die Richtungsselektivität gewährleistet: In den
+Die Streckung lässt sich richtungsweise vorschreiben; dadurch wird die
+Richtungsselektivität gewährleistet: In den
 Schichten links und rechts ist $sigma_x > 0$, während $sigma_y = 0$ und damit
 $s_y = 1$ bleibt; in den
 Schichten oben und unten ist es umgekehrt (@abb:pml-schema). Da $s_x$
 gleichermaßen in den Gleichungen für $E_z$ und $H_y$ auftritt, ist die Schicht an
 das Rechengebiet angepasst: Der Reflexionsfaktor an der Grenzfläche ist im
-Kontinuum für jeden Einfallswinkel und jede Frequenz null
-@lit:Schneider2010[S. 316 f., Gl. (11.69) bis (11.77)]. Setzt man @pml-sw in eine unter $theta$ einlaufende ebene Welle nach
-@ansatz ein, so tritt an die Stelle von $k_x$ das Produkt $s_x k_x$, und der
+Kontinuum für jeden Einfallswinkel und jede Frequenz null 
+@lit:Schneider2010[S. 316 f., Gl. (11.69) bis (11.77)]. Betrachtet wird im Folgenden
+die rechte Schicht ($sigma_x > 0$, $s_y = 1$); für die übrigen Schichten gilt
+dasselbe mit der jeweils zur Schicht senkrechten Komponente. Setzt man @pml-sw in
+eine ebene Welle nach @ansatz ein, die unter dem Winkel $theta$ zur Schichtnormalen
+$hat(x)$ einläuft, so tritt an die Stelle von $k_x$ das Produkt $s_x k_x$, während
+die tangentiale Komponente $k_y$ durch Phasenanpassung an der Grenzfläche erhalten
+bleibt. Der
 Ortsanteil der Welle zerfällt in zwei Faktoren
 @lit:Schneider2010[S.~317, mod. Gl.~(11.82) und (11.83)]:
 
 $ e^(-upright(i) s_x k_x x - upright(i) k_y y)
   = underbrace(e^(-(sigma_x k_x)/(omega epsilon_0) x), "reell, klingt ab")
   dot underbrace(e^(-upright(i) (k_x x + k_y y)), "unveränderte Phase") $ <pml-daempfung>
-
-#figure(
-  image("../abbildungen/abb_pml_schema.pdf", width: 48%),
-  caption: [Anordnung der absorbierenden Schicht: Sie umgibt das eigentliche
-    Rechengebiet auf allen vier Seiten und ist außen weiterhin durch einen
-    PEC-Rand abgeschlossen; in den Ecken überlappen die Schichten beider
-    Richtungen. (KI-generiert mit Claude Opus 5, Anthropic)],
-) <abb:pml-schema>
 
 Hinter der Schicht bleibt der PEC-Rand weiterhin bestehen. Eine Welle durchläuft die Schicht der Dicke $d$, wird an
 diesem Rand gemäß @pec zurückgeworfen und durchläuft sie ein zweites Mal;

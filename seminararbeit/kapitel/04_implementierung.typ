@@ -41,7 +41,7 @@ Python wurde gewählt, da die Sprache eine vergleichsweise kompakte Implementier
 
 
 
-Der gesamte Löser wird als Klasse `FDTD2D` aufgefasst. Eine Simulation kann dementsprechend als ein Objekt betrachtet werden, welches sämtliche Feldwerte, Materialkoeffizienten, PML-Profile und Auflösungen hält. Ändern lassen sich diese Zustände durch verschiedene Methoden, die die Klasse ebenfalls bereitstellt. Der entscheidende Vorteil einer solchen Struktur ist die Möglichkeit, mehrere voneinander unabhängige Simulationen als separate Objektinstanzen zu erzeugen, was insbesondere in Kapitel 5 bei der Durchführung mehrerer Testfälle mit unterschiedlichen Parametern von Nutzen sein wird.
+Der gesamte Löser wird als Klasse `FDTD2D` aufgefasst. Eine Simulation kann dementsprechend als ein Objekt betrachtet werden, welches sämtliche Feldwerte, Materialkoeffizienten, PML-Profile und Auflösungen hält; Feldkomponenten und Materialgrößen liegen dabei als zweidimensionale NumPy-Arrays mit je einem Eintrag pro Gitterpunkt vor. Ändern lassen sich diese Zustände durch verschiedene Methoden, die die Klasse ebenfalls bereitstellt. Der entscheidende Vorteil einer solchen Struktur ist die Möglichkeit, mehrere voneinander unabhängige Simulationen als separate Objektinstanzen zu erzeugen, was insbesondere in Kapitel 5 bei der Durchführung mehrerer Testfälle mit unterschiedlichen Parametern von Nutzen sein wird.
 
 Das untenstehende _Klassendiagramm_ beschreibt den Aufbau der Klasse, wobei besonders relevante Stellen in den folgenden Abschnitten gesondert erläutert werden:
 
@@ -183,12 +183,11 @@ Dafür nimmt die Methode als Argument ein eindimensionales _Array_ mit allen Pos
         self.psi_ez_x = np.zeros((nx - 2, ny - 2))
         self.psi_ez_y = np.zeros((nx - 2, ny - 2))
 ```
-Aus der Restreflexion `r0` folgt $sigma_max$ aus @pml-sigmamax. Erwähnenswert ist ein Namenskonflikt: Während dort $d$ die Dicke der Schicht darstellt, bezeichnet $d$ im Code die Zellweite --
-die Variable `D` hält die beiden auseinander.
+Aus der Restreflexion `r0` folgt $sigma_max$ aus @pml-sigmamax. In @pml-sigmamax bezeichnet $d$ die Schichtdicke, im Code dagegen die Zellweite; die Schichtdicke steht dort in der Variable `D`.
 
 Insgesamt werden vier Dämpfungsprofile berechnet, da die Feldkomponenten aufgrund des Yee-Gitters an verschiedenen Positionen sind. 
 Aus der ganzzahligen Position von $E_z$ folgt `np.arange(nx)` und aus dem Versatz von $H_x$ und $H_y$ folgt `np.arange(nx-1)+0.5`, also eine Position weniger und eine Verschiebung aller
-Positionen um $0.5$.  
+Positionen um $0,5$.  
 
 Abschließend werden die Hilfsfelder $Psi$ auf null initialisiert. `psi_hx` und `psi_hy` haben dabei die gleichen Dimensionen wie 
 die beiden H-Felder, während die beiden Hilfsgrößen des E-Feldes mit  $(n_x - 2) times (n_y - 2)$ kleiner sind, da $E_z$  nur im Inneren aktualisiert wird und die beiden äußeren Spalten und Zeilen 
@@ -248,7 +247,7 @@ Zu erläutern ist außerdem die unterschiedliche Schreibweise von `self.by_h[Non
 
 
 Der Ausschnitt `[1:-1, 1:-1]` lässt die äußerste Zeile und Spalte aus, sodass diese immer null bleiben; das ist die PEC-Bedingung @pec als
-Abschluss hinter der Schicht, wie in @sec-randschicht bereits angedeutet. Im Gebietsinneren bleiben zudem die Hilfsgrößen $Psi$ wegen $b_w = 1$, $C_w = 0$ dauerhaft null, sodass der Ausdruck dort exakt in @update-ez übergeht – die PML ist damit im Gebietsinneren wirkungslos.
+Abschluss hinter der Schicht, wie in @sec-randschicht bereits angedeutet. Im Gebietsinneren bleiben zudem die Hilfsgrößen $Psi$ wegen $b_w = 1$, $C_w = 0$ dauerhaft null, sodass der Ausdruck dort exakt in @update-ez übergeht --- die PML ist damit im Gebietsinneren wirkungslos.
 
 
 // --- Bausteine für den Ablaufplan in Abschnitt 4.8 ------------------------

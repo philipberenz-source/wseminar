@@ -19,21 +19,18 @@ Solver direkt im Browser visuell genutzt werden kann:
 
 #heading(numbering: none, outlined: true)[Erklärung]
 
-Ich erkläre hiermit, dass ich die Seminararbeit ohne fremde Hilfe angefertigt
+Ich erkläre hiermit, dass ich die Seminararbeit selbstständig angefertigt
 und nur die im Literaturverzeichnis angeführten Quellen und Hilfsmittel benutzt
 habe.
 
-Als KI-basiertes Hilfsmittel wurde das Sprachmodell Opus 5.5 des Unternehmens Anthropic in folgendem Umfang verwendet:
+Als KI-basiertes Hilfsmittel wurde das Sprachmodell Opus 5 des Unternehmens Anthropic in folgendem Umfang verwendet:
 
 - zur sprachlichen Überarbeitung des Textes und zur Umsetzung einzelner,
   von mir geprüfter Korrekturvorschläge im Text,
 - zum Erstellen eines Layouts in Typst,
-- zur Überprüfung des Inhaltes auf Kohärenz und zur Bewertung von
-  Kapitelentwürfen,
 - zur Erstellung der begleitenden W-Seminar-Website, auf der der Solver visuell
   genutzt werden kann,
-- zur Erstellung der als KI-generiert gekennzeichneten Abbildungen in Kapitel 3 und 5.
-
+- zur Erstellung der als KI-generiert gekennzeichneten Abbildungen in Kapitel 3 und 5
 Die durch das Hilfsmittel erzeugten Inhalte habe ich geprüft; für die
 inhaltliche Richtigkeit der gesamten Arbeit trage ich die Verantwortung.
 

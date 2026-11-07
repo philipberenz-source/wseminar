@@ -17,15 +17,24 @@ ganze Felder anwenden, wodurch sich Simulationen effizient ausführen lassen.
 
 Dieselbe Diskretisierung, die das Verfahren so einfach macht, bestimmt auch
 seine Grenzen. Die Validierung bestätigt zwar, dass der Solver Ausbreitung, Reflexion
-und Transmission ebener Wellen wiedergibt, aber nicht exakt: Der Abbruchfehler
+und Transmission ebener Wellen wiedergibt, jedoch ergibt sich eine Abweichung gegenüber dem Kontinuum: Der Abbruchfehler
 der zentralen Differenz verlangsamt die Welle im Gitter, die Verknüpfung der
 Felder eine halbe Zelle neben der Grenzfläche erhöht Reflexions- und
 Transmissionskoeffizient, und das stufige Leitfähigkeitsprofil trägt zur
 Restreflexion der PML bei. Die Dispersion hängt von Auflösung, Courant-Zahl und
 Ausbreitungsrichtung ab, der Grenzflächenfehler von Auflösung und
-Permittivität; beide lassen sich mit den diskreten Gleichungen
-vorhersagen. Bei der Randschicht sind ihre Dicke, die vorgegebene
-Restreflexion und der Einfallswinkel maßgeblich.
+Permittivität. Beide Fehler lassen sich mit den diskreten Gleichungen
+vorhersagen und fallen quadratisch mit $N_lambda$. Der zunächst rein
+mathematische Abbruchfehler zweiter Ordnung aus der Taylor-Entwicklung
+(@sec-finite-differenzen) zeigt sich damit als messbare physikalische Abweichung
+von Ausbreitungsgeschwindigkeit, Reflexion und Transmission.
+
+Eine Einschränkung gilt für die PML: Dass sie im Gitter teils stärker dämpft,
+als ihre Auslegung vorsieht, wurde in Testfall 3 auf die Näherung bei der
+rekursiven Auswertung der Faltung zurückgeführt (@sec-tf4). Diese
+Erklärung ist eine eigene, nicht durch Literatur belegte Überlegung. Sie
+passt zwar zu den Messwerten, ist aber im Gegensatz zu den übrigen
+Deutungen nicht abgesichert.
 
 Ein Fehler ist damit nicht von vornherein ein Mangel der Simulation. Lässt sich
 einordnen, woraus er sich ergibt und wovon er abhängt, so können Auflösung,
@@ -59,6 +68,9 @@ verlustbehafteten Halbraum mit demselben Zwei-Lauf-Verfahren wie in Testfall 2
 messen und mit der analytischen Lösung für leitfähige Medien vergleichen ließe.
 Energieerhaltung und Eigenfrequenzen ließen sich in einem ideal leitenden
 Hohlraum prüfen, und an einer schräg im Gitter liegenden Grenzfläche könnte abgeschätzt werden, wie stark der Staircasing-Fehler ins Gewicht fällt.
+Ebenso ließe sich die nicht belegte Erklärung der verstärkten Dämpfung der PML
+aus Testfall 3 prüfen: Trifft sie zu, muss sich die gemessene
+Reflexion mit kleiner werdendem Zeitschritt dem Auslegungswert nähern.
 
 Zwei weitere Erweiterungen betreffen das Modell selbst. Die erste ist der
 Übergang in die dritte Dimension: Das Yee-Gitter lässt sich unmittelbar auf drei

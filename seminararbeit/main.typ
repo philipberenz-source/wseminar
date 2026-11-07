@@ -22,7 +22,7 @@
   course: "Wissenschaftspropädeutisches Seminar im Leitfach Physik",
   seminar-topic: "Wellen und Teilchen",
   supervisor: "Roman Störmer",
-  date: datetime(year: 2026, month: 8, day: 1),
+  date: datetime(year: 2026, month: 11, day: 11),
   doc,
 )
 
@@ -44,11 +44,11 @@
 // "Sonstige Quellen", damit kein Verweis ins Leere zeigt.
 #let gruppen = (
   ([Primärliteratur (Originalarbeiten)],
-    ("Maxwell1865", "Yee1966", "Berenger1994", "Schuhmann2001", "ShinFan2012", "Liu2022")),
+    ("Maxwell1865", "Hertz1889", "Yee1966", "Berenger1994", "ChewWeedon1994", "Schuhmann2001", "ShinFan2012", "Liu2022")),
   ([Sekundärliteratur (Lehrbücher und Lehrmaterialien)],
     ("Taflove2005", "Sullivan2013", "GriffithsDE", "Fleisch2008", "Schneider2010", "Orosz2022")),
   ([Software-Dokumentation und Online-Quellen],
-    ("NumPyFFT", "CSTStudio", "AstroPi", "AppleSpecs")),
+    ("Oskooi2010", "Warren2016", "NumPyFFT", "CSTStudio", "AstroPi", "AppleSpecs")),
 )
 
 #heading(numbering: none)[Literaturverzeichnis]

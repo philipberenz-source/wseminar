@@ -8,9 +8,10 @@
 // Nummern im Verzeichnis so von oben nach unten durch. Neue Quellen hier an
 // der Stelle ihrer Gruppe eintragen (nur Quellen, die im Text zitiert werden).
 #place(hide[
-  @lit:Maxwell1865 @lit:Yee1966 @lit:Liu2022
+  @lit:Maxwell1865 @lit:Hertz1889 @lit:Yee1966 @lit:Berenger1994
+  @lit:ChewWeedon1994 @lit:Liu2022
   @lit:Taflove2005 @lit:GriffithsDE @lit:Orosz2022 @lit:Schneider2010
-  @lit:AppleSpecs @lit:CSTStudio
+  @lit:Oskooi2010 @lit:Warren2016 @lit:AppleSpecs @lit:CSTStudio
 ])
 
 == Relevanz und Motivation
@@ -24,13 +25,13 @@ Der Fall steht dabei stellvertretend für eine ganze Klasse technischer Problems
 
 Wo eine analytische Lösung nicht verfügbar ist, treten deshalb numerische Verfahren an ihre Stelle: Das Kontinuum wird in ein endliches Gitter überführt und Differentialquotienten durch Differenzenquotienten angenähert.
 
-Eines der verbreitetsten Verfahren in diesem Zusammenhang ist die _Finite-Difference Time-Domain_-Methode (FDTD), welche in der Praxis meist über kommerzielle Software angewandt wird. Weit verbreitet ist dabei etwa die Software CST Studio Suite, deren Quellcode jedoch nicht öffentlich zugänglich ist @lit:CSTStudio. Mit MEEP oder gprMax existieren jedoch auch _Open-Source_-Implementierungen; die eigentliche Lücke liegt daher weniger in der Verfügbarkeit des Codes als im Nachvollzug der Herleitung: Gegenüber dem physikalischen Kontinuum treten auf einem diskreten Gitter systematische Abweichungen auf, deren Ursachen bei der alleinigen Verwendung kommerzieller Blackbox-Programme oder fremder Quelltexte nur eingeschränkt nachvollzogen werden können.
+Eines der verbreitetsten Verfahren in diesem Zusammenhang ist die _Finite-Difference Time-Domain_-Methode (FDTD), welche in der Praxis meist über kommerzielle Software angewandt wird. Weit verbreitet ist dabei etwa die Software CST Studio Suite, deren Quellcode jedoch nicht öffentlich zugänglich ist @lit:CSTStudio. Mit MEEP @lit:Oskooi2010 oder gprMax @lit:Warren2016 existieren jedoch auch _Open-Source_-Implementierungen; die eigentliche Lücke liegt daher weniger in der Verfügbarkeit des Codes als im Nachvollzug der Herleitung: Gegenüber dem physikalischen Kontinuum treten auf einem diskreten Gitter systematische Abweichungen auf, deren Ursachen bei der alleinigen Verwendung kommerzieller Blackbox-Programme oder fremder Quelltexte nur eingeschränkt nachvollzogen werden können.
 
-Dementsprechend verfolgt diese Arbeit den Ansatz, die Maxwell-Gleichungen in ein System diskreter Gleichungen zu überführen und daraus einen eigenen FDTD-Solver in Python zu implementieren, welcher anschließend gegen analytisch beschriebene Testfälle gehalten wird. Dadurch wird sowohl die numerische Genauigkeit des Verfahrens bestimmt, als auch untersucht, welche Fehlerquellen sich durch die Diskretisierung ergeben. 
+Dementsprechend verfolgt diese Arbeit den Ansatz, die Maxwell-Gleichungen in ein System diskreter Gleichungen zu überführen und daraus einen eigenen FDTD-Solver in Python zu implementieren, welcher anschließend gegen analytisch beschriebene Testfälle gehalten wird. Dadurch wird sowohl die numerische Genauigkeit des Verfahrens bestimmt als auch untersucht, welche Fehlerquellen sich durch die Diskretisierung ergeben. 
 
 == Historischer Kontext
 
-Maxwell führte 1865 Elektrizität, Magnetismus und Optik in einem einheitlichen Gleichungssystem zusammen und sagte die Existenz sich mit Lichtgeschwindigkeit ausbreitender elektromagnetischer Wellen voraus @lit:Maxwell1865; der experimentelle Nachweis gelang Hertz rund zwanzig Jahre später. Damit waren die grundlegenden Gesetzmäßigkeiten der klassischen Elektrodynamik in einem einheitlichen theoretischen Rahmen formuliert. Die Beschreibung komplexer elektromagnetischer Konfigurationen stellte jedoch weiterhin insbesondere aufgrund der zu lösenden Randwertprobleme eine Herausforderung dar.
+Maxwell führte 1865 Elektrizität, Magnetismus und Optik in einem einheitlichen Gleichungssystem zusammen und sagte die Existenz sich mit Lichtgeschwindigkeit ausbreitender elektromagnetischer Wellen voraus @lit:Maxwell1865; der experimentelle Nachweis gelang Hertz rund zwanzig Jahre später @lit:Hertz1889. Damit waren die grundlegenden Gesetzmäßigkeiten der klassischen Elektrodynamik in einem einheitlichen theoretischen Rahmen formuliert. Die Beschreibung komplexer elektromagnetischer Konfigurationen stellte jedoch weiterhin insbesondere aufgrund der zu lösenden Randwertprobleme eine Herausforderung dar.
 
 Die numerische Umsetzung begründete Kane S. Yee 1966 @lit:Yee1966, indem er die elektrischen und magnetischen Feldkomponenten räumlich und zeitlich gegeneinander versetzt auf einem sogenannten Yee-Gitter anordnete. Dadurch lassen sich die gekoppelten Rotationsgleichungen durchgängig mit zentralen Differenzenquotienten approximieren und beide Feldgrößen alternierend fortschreiben (_leapfrog_-Schema).
 

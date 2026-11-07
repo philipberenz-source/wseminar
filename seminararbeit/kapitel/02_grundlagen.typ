@@ -108,7 +108,9 @@ Ein wichtiger Sonderfall ist der _ideal leitende_ Rand (PEC): Für
 $sigma arrow.r infinity$ bleibt die Stromdichte $bold(J) = sigma bold(E)$ nur
 endlich, wenn $bold(E)$ im Inneren verschwindet @lit:GriffithsDE[S. 368]; mit
 @stetig folgt an der Grenzfläche $bold(E)_parallel = 0$, im TM#sub[z]-Fall
-also $E_z = 0$.
+also $E_z = 0$. Da hinter einem solchen Rand kein Feld existiert, kann keine
+Energie transmittiert werden: Eine auftreffende Welle wird vollständig
+reflektiert.
 
 == Die elektromagnetische Wellengleichung <sec-wellengleichung>
 
@@ -151,7 +153,7 @@ im TM#sub[z]-Fall hat $bold(E)$ nur die Komponente $E_z$ ---, $bold(r)$ der
 Ortsvektor, $omega=2pi f$ die Kreisfrequenz und $bold(k)$ der Wellenvektor,
 dessen Richtung die Ausbreitungsrichtung angibt @lit:GriffithsDE[mod. Gl. (9.43)].
 Wegen @zinvarianz liegt $bold(k)$ stets in der $x y$-Ebene, sodass
-$bold(k) dot bold(r) = k_x x + k_y y$ gilt. Physikalisch ist der Realteil des
+$bold(k) dot bold(r) = k_x x + k_y y$ gilt. Physikalisch bedeutsam ist nur der Realteil des
 komplexen Ansatzes; $upright(i)$ bezeichnet hier und im Folgenden die imaginäre
 Einheit. Ihren Namen trägt die ebene Welle, weil alle Orte gleicher Phase zu
 jedem Zeitpunkt eine zu $bold(k)$ senkrechte Ebene bilden @lit:GriffithsDE[S. 483],

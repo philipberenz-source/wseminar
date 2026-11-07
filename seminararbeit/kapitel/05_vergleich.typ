@@ -63,7 +63,7 @@ Nach @sec-quellen wird eine Gitterlinie mit mehreren Stromquellen $J_z$ besetzt 
 $ t_d = (y sin theta)/c $ <tf1-verzoegerung>
 
 verzögert, sodass sich die Elementarwellen zu
-einer um $theta$ gekippten Front überlagern @lit:Schneider2010[S. 312, Gl. (11.24)]. Die Quelllinie durchspannt das gesamte Gebiet; bei schräger Ausbreitung werden die Quellen zu den Enden hin abgeschwächt.
+einer um $theta$ gekippten Front überlagern @lit:Schneider2010[S. 312, mod. Gl. (11.24)]. Die Quelllinie durchspannt das gesamte Gebiet; bei schräger Ausbreitung werden die Quellen zu den Enden hin abgeschwächt.
 
 #figure(
   image("../abbildungen/testfall_a_aufbau.pdf", width: 55%),
@@ -103,7 +103,7 @@ Frequenz und Richtung. Variiert werden $N_lambda$, die Courant-Zahl $S$
 
 Aus @abb:tf1-dispersion und @abb:tf1-anisotropie folgen drei systematische Erkenntnisse.
 Erstens ist die Phasengeschwindigkeit im Gitter stets langsamer als im Kontinuum, wobei die Abweichung mit abnehmender Auflösung zunimmt.
-Zweitens verläuft die Abweichung im doppelt-logarithmischen Diagramm annähernd parallel mit einer Geraden der Steigung $-2$, sodass sie mit $N_lambda^(-2)$ fällt. Drittens zeigt sich eine Anisotropie von $tilde(v)_p$: Längs der Gitterachsen ist die Welle am langsamsten, längs der Diagonalen schneller und erreicht dort für $S = 0,99$ beinahe $c$.
+Zweitens verläuft die Abweichung im doppelt-logarithmischen Diagramm annähernd parallel zu einer Geraden der Steigung $-2$, sodass sie mit $N_lambda^(-2)$ fällt. Drittens zeigt sich eine Anisotropie von $tilde(v)_p$: Längs der Gitterachsen ist die Welle am langsamsten, längs der Diagonalen schneller und erreicht dort für $S = 0,99$ beinahe $c$.
 Visuell lässt sich das Phänomen der Frequenzabhängigkeit besonders bei der Betrachtung eines Pulses beobachten (@abb:tf1-puls): 
 Bei grober Auflösung zerfällt der Puls in einen langen Nachlauf, bei feiner bleibt er erhalten. 
 
@@ -343,16 +343,21 @@ kubische Profil ($m = 3$) und $S = 0,99$.
 
 Mit strengerer Vorgabe sinkt die Reflexion zunächst und steigt dann langsam
 wieder an, sodass jede Dicke ein Optimum besitzt (@abb:tf4-restreflexion a).
-Solange die Vorgabe schwach ist, folgt die Messung ihr annähernd.
+Solange die Vorgabe schwach ist, folgt die Messung ihrem Verlauf, liegt aber
+stets darunter; bei $20$ Zellen etwa beträgt sie $3,5 dot 10^(-4)$ statt $10^(-3)$.
 Mit wachsender Dicke sinkt das Optimum deutlich, von rund $10^(-3)$ bei $5$ auf rund $10^(-6)$ bei $20$ Zellen.
 
 Über der Auflösung (b) fällt die Reflexion der dünnen Schicht zwischen
 $N_lambda = 6$ und $20$ im Mittel etwa mit $N_lambda^(-2)$, danach flacher; die der
-$20$-Zellen-Schicht hängt kaum von $N_lambda$ ab und nähert sich der Vorgabe.
+$20$-Zellen-Schicht hängt deutlich schwächer von $N_lambda$ ab und fällt nur von
+$4,4 dot 10^(-6)$ auf $1,4 dot 10^(-6)$.
 
 Mit dem Einfallswinkel (c) steigt die Reflexion für beide Vorgaben an; für
 $10^(-6)$ bleibt sie bis
-$45°$ nahe $10^(-6)$ und steigt erst bei $60°$ deutlich an.
+$45°$ nahe $10^(-6)$, obwohl nach @pml-restreflexion-profil dort bereits
+$5,7 dot 10^(-5)$ zu erwarten wären, und steigt erst bei $60°$ deutlich an.
+Für $10^(-3)$ liegt sie bei allen Winkeln unter $abs(R(0))^(cos theta)$, bei
+$60°$ etwa mit $1,9 dot 10^(-2)$ statt $3,2 dot 10^(-2)$.
 
 === Deutung
 
@@ -372,7 +377,7 @@ Grenzfläche in Testfall 2 wächst dieser Anteil mit der Größe des Sprungs. Ei
 Reflexion @lit:Schneider2010[S. 312], weshalb der Potenzverlauf @pml-profil die
 Sprünge am Eingang der Schicht klein hält @lit:Taflove2005[S. 293].
 
-Damit lassen sich alle vier Abhängigkeiten zuordnen. Eine strengere Vorgabe
+Damit lassen sich alle vier Abhängigkeiten qualitativ zuordnen. Eine strengere Vorgabe
 senkt den Kontinuumsanteil, erhöht aber $sigma_max$: Nach @pml-sigmamax ist
 $sigma_max$ proportional zu $-ln abs(R(0))$, sodass etwa eine Vorgabe von
 $10^(-16)$ statt $10^(-4)$ $sigma_max$ und damit jeden Sprung des Profils
@@ -382,16 +387,26 @@ proportional zur Dicke ist, verteilt eine dickere Schicht den Anstieg auf kleine
 Sprünge und senkt so das Optimum.
 
 Die Auflösung wirkt auf den Diskretisierungsanteil der Reflexion, der durch
-die gestufte Abbildung des Leitfähigkeitsprofils entsteht. Bei der dünnen Schicht mit den größten Sprüngen sinkt
-die Reflexion in (b) daher mit wachsendem $N_lambda$. Bei $20$ Zellen ändert sie sich
-kaum. Dort überwiegt der Kontinuumsanteil; die Messung liegt mit
-$1,5 dot 10^(-6)$ nahe der Vorgabe.
+die gestufte Abbildung des Leitfähigkeitsprofils entsteht. Mit wachsendem
+$N_lambda$ wird dieser Anteil kleiner, da das gestufte Profil gemessen an der
+Wellenlänge feiner aufgelöst ist. Bei der dünnen Schicht mit den größten
+Sprüngen sinkt die Reflexion in (b) daher deutlich mit wachsendem $N_lambda$.
 
 Der Einfallswinkel (c) wirkt sich auf den Kontinuumsanteil aus. Nach
 @pml-daempfung wirkt die Dämpfung nur über $k_x = (omega\/c) cos theta$, sodass
 eine schräg einfallende Welle in der Schicht weniger abklingt. Da $cos theta$ im
 Exponenten von @pml-restreflexion-profil steht, wächst dieser Anteil mit
 abnehmendem $cos theta$ exponentiell und damit über Größenordnungen.
+
+Offen bleibt, weshalb die Messung in (a) und (c) teils deutlich unter dem
+Kontinuumswert nach @pml-restreflexion-profil liegt, bei $20$ Zellen und
+$abs(R(0)) = 10^(-3)$ etwa um den Faktor $3$. Eine mögliche Erklärung, die
+eine eigene, nicht durch Literatur belegte Überlegung ist, liefert die Näherung
+in @pml-zerlegt, die Ableitung über jedes Zeitintervall als konstant
+anzunehmen: Sie könnte bewirken, dass die Schicht im Gitter stärker dämpft als
+ausgelegt, umso mehr, je größer der Zeitschritt ist. Dazu passt, dass ein
+Kontrolllauf mit kleinerem Zeitschritt ($S = 0,5$) näher an der Vorgabe liegt.
+Belegt ist die Erklärung damit jedoch nicht.
 
 In der Praxis ist damit zwischen Dicke, Vorgabe und Einfallswinkel abzuwägen.
 Eine dickere Schicht senkt die Reflexion, vergrößert aber das Rechengebiet; die
