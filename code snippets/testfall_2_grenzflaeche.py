@@ -4,7 +4,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from fdtd_core import FDTD2D, C0
-from testfall_a import ABB, D, NPML, COURANT, FARBEN, linienquelle, schritte, log_achse
+from testfall_1_vakuum import ABB, D, NPML, COURANT, FARBEN, linienquelle, schritte, log_achse
 
 N1 = 1.0
 N2 = 2.0

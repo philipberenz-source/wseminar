@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 from fdtd_core import FDTD2D, C0
-from testfall_a import ABB, D, FARBEN, linienquelle, schritte
+from testfall_1_vakuum import ABB, D, FARBEN, linienquelle, schritte
 
 S = 0.99
 M = 3
@@ -25,7 +25,7 @@ WINKEL = (0.0, 15.0, 30.0, 45.0, 60.0)
 WINKEL_DICKE = 20
 WINKEL_VORGABEN = (1e-3, 1e-6)
 HOEHE, ABSTAND, LAUFWEG = 500, 95, 210
-DATEI = Path(__file__).resolve().parent / "testfall_pml.npz"
+DATEI = Path(__file__).resolve().parent / "testfall_3_pml.npz"
 
 
 def lauf_senkrecht(breite, npml, r0, courant=S):
