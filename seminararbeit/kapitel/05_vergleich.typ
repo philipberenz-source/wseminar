@@ -60,7 +60,7 @@ Nach @sec-quellen wird eine Gitterlinie mit mehreren Stromquellen $J_z$ besetzt 
 $ t_d = (y sin theta)/c $ <tf1-verzoegerung>
 
 verzögert, sodass sich die Elementarwellen zu
-einer um $theta$ gekippten Front überlagern @lit:Schneider2010[S. 312, mod. Gl. (11.24)]. Die Quelllinie durchspannt das gesamte Gebiet; bei schräger Ausbreitung werden die Quellen zu den Enden hin abgeschwächt.
+einer um $theta$ gekippten Front überlagern @lit:Schneider2010[S. 312, mod. Gl. (11.24)]. Dabei bezeichnet $y$ den Abstand der jeweiligen Punktquelle vom oberen Ende der Quelllinie, welche das gesamte Gebiet durchspannt; bei schräger Ausbreitung werden die Quellen zu den Enden hin abgeschwächt.
 
 #figure(
   image("../abbildungen/testfall_a_aufbau.pdf", width: 55%),

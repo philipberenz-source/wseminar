@@ -32,7 +32,7 @@
 = Implementierung in Python
 
  Ziel dieses Kapitels ist es, die Update-Gleichungen und die Randbedingungen in ein Computerprogramm zu überführen, welches objektorientiert im Rahmen einer _Solver-Klasse_ Methoden zur numerischen Lösung der Maxwell-Gleichungen bereitstellt. 
-Python wurde gewählt, da die Sprache eine vergleichsweise kompakte Implementierung mathematischer Operationen ermöglicht und mit NumPy eine Bibliothek zur effizienten Verarbeitung mehrdimensionaler Arrays bereitstellt.
+Python wurde gewählt, da die Sprache eine vergleichsweise kompakte Implementierung mathematischer Operationen ermöglicht und mit NumPy eine Bibliothek zur effizienten Verarbeitung mehrdimensionaler Arrays bereitstellt. Im Code wird NumPy unter dem Kürzel `np` eingebunden (`import numpy as np`).
 == Aufbau der Klasse <sec-aufbau>
 
 Der gesamte Löser wird als Klasse `FDTD2D` aufgefasst. Eine Simulation kann dementsprechend als ein Objekt betrachtet werden, welches sämtliche Feldwerte, Materialkoeffizienten, PML-Profile und Auflösungen hält; Feldkomponenten und Materialgrößen liegen dabei als zweidimensionale NumPy-Arrays mit je einem Eintrag pro Gitterpunkt vor. Ändern lassen sich diese Zustände durch verschiedene Methoden, die die Klasse ebenfalls bereitstellt. Der entscheidende Vorteil einer solchen Struktur ist die Möglichkeit, mehrere voneinander unabhängige Simulationen als separate Objektinstanzen zu erzeugen, was insbesondere in Kapitel 5 bei der Durchführung mehrerer Testfälle mit unterschiedlichen Parametern von Nutzen sein wird.
@@ -172,8 +172,8 @@ Dafür nimmt die Methode als Argument ein eindimensionales _Array_ mit allen Pos
 Aus der Restreflexion `r0` folgt $sigma_max$ aus @pml-sigmamax. In @pml-sigmamax bezeichnet $d$ die Schichtdicke, im Code dagegen die Zellweite; die Schichtdicke steht dort in der Variable `D`.
 
 Insgesamt werden vier Dämpfungsprofile berechnet, da die Feldkomponenten aufgrund des Yee-Gitters an verschiedenen Positionen sind. 
-Aus der ganzzahligen Position von $E_z$ folgt `np.arange(nx)` und aus dem Versatz von $H_x$ und $H_y$ folgt `np.arange(nx-1)+0.5`, also eine Position weniger und eine Verschiebung aller
-Positionen um $0,5$.  
+Aus der ganzzahligen Position von $E_z$ folgt `np.arange(nx)` und aus dem Versatz von $H_y$ folgt `np.arange(nx-1)+0.5`, also eine Position weniger und eine Verschiebung aller
+Positionen um $0,5$.
 
 Abschließend werden die Hilfsfelder $Psi$ auf null initialisiert. `psi_hx` und `psi_hy` haben dabei die gleichen Dimensionen wie 
 die beiden H-Felder, während die beiden Hilfsgrößen des E-Feldes mit  $(n_x - 2) times (n_y - 2)$ kleiner sind, da $E_z$  nur im Inneren aktualisiert wird und die beiden äußeren Spalten und Zeilen 
@@ -194,6 +194,8 @@ als PEC-Abschluss null bleiben.
 ```
 Der obenstehende Code setzt @pml-psi-hx und @pml-update-hx sowie das analoge Paar für $H_y$ um. Für jede Komponente werden jeweils zwei Zeilen Code benötigt:
 Zunächst wird die Hilfsgröße nach @pml-bc fortgeschrieben, woraus danach das Feld nach @pml-update-hx berechnet werden kann.
+
+In den Update-Gleichungen aus Kapitel 3 treten halbzahlige Indizes wie $j + 1\/2$ auf, Array-Indizes sind in Python jedoch stets ganzzahlig. Der Eintrag `Hx[i, j]` bezeichnet daher den Feldwert an der Stelle $(i, j + 1\/2)$, `Hy[i, j]` entsprechend den Wert an $(i + 1\/2, j)$. Der Versatz des Yee-Gitters wird somit nicht explizit gespeichert, sondern ergibt sich allein aus der Struktur der Arrays: Da zwischen $n_y$ Knoten von $E_z$ nur $n_y - 1$ Zwischenpositionen liegen, besitzt `Hx` in $y$-Richtung eine Position weniger als `Ez`, analog `Hy` in $x$-Richtung.
 
 Auffällig ist die Abwesenheit jeglicher _for-Schleifen_, die in der Programmierung klassischerweise für Array-Iterationen verwendet werden. 
 Stattdessen greift der Code auf das Konzept der _Vektorisierung_ zurück, bei der Operationen elementweise auf gesamte Arrays wirken. Verwendet wird dabei die Ausschnitts-Schreibweise

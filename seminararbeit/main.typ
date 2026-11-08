@@ -29,7 +29,7 @@
   ([Primärliteratur (Originalarbeiten)],
     ("Maxwell1865", "Hertz1889", "Yee1966", "Berenger1994", "ChewWeedon1994", "Schuhmann2001", "ShinFan2012", "Liu2022")),
   ([Sekundärliteratur (Lehrbücher und Lehrmaterialien)],
-    ("Taflove2005", "Sullivan2013", "GriffithsDE", "Fleisch2008", "Schneider2010", "Orosz2022")),
+    ("Taflove2005", "Sullivan2013", "GriffithsDE", "Fleisch2008", "Schneider2010", "Orosz2022", "Teixeira2023")),
   ([Software-Dokumentation und Online-Quellen],
     ("Oskooi2010", "Warren2016", "NumPyFFT", "CSTStudio", "AstroPi", "AppleSpecs")),
 )
