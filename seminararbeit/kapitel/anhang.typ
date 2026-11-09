@@ -24,8 +24,7 @@ habe.
 
 Als KI-basiertes Hilfsmittel wurde das Sprachmodell Opus 5 des Unternehmens Anthropic in folgendem Umfang verwendet:
 
-- zur sprachlichen Überarbeitung des Textes und zur Umsetzung einzelner,
-  von mir geprüfter Korrekturvorschläge im Text,
+- zur punktuellen Korrektur sprachlicher Unstimmigkeiten,
 - zum Erstellen eines Layouts in Typst,
 - zur Erstellung der begleitenden W-Seminar-Website, auf der der Solver visuell
   genutzt werden kann,
