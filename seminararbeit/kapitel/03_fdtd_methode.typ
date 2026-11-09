@@ -407,7 +407,8 @@ Ortsableitung einmal mit dem Gewicht $C_y$ eingeht und danach mit jedem
 Zeitschritt auf das $b_y$-Fache abgeschwächt wird. Spaltet man von dieser
 Summe den Summanden $p = 0$ ab, der den neuesten Wert der Ortsableitung
 enthält, und setzt in der verbleibenden Summe $q = p - 1$, so lässt sich $b_y$
-ausklammern, und es bleibt genau $Psi_(H_x)^(n-1)$ übrig:
+ausklammern, und es bleibt genau $Psi_(H_x)^(n-1)$ übrig
+@lit:Schneider2010[S.~324, mod. Gl.~(11.129) bis (11.132)]:
 
 $ Psi_(H_x)^n = C_y ((partial E_z)/(partial y))^n
   + sum_(p=1)^(n-1) C_y (b_y)^p ((partial E_z)/(partial y))^(n-p)

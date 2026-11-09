@@ -174,7 +174,7 @@ Längs der Gitterdiagonalen ist die Ausbreitung dann dispersionsfrei
 Folge: Seine hochfrequenten, schlechter aufgelösten Anteile laufen langsamer und
 bleiben als Nachlauf zurück @lit:Taflove2005[S. 107].
 
-Die Abweichung der Geschwindigkeit ist zwar klein, der daraus folgende Phasenfehler wächst jedoch linear mit der Laufstrecke. Bei langen Laufwegen kann die Phase daher erheblich verfälscht sein, weshalb die Kenntnis über die Größe des Fehlers von großer Relevanz für die sachgemäße Anwendung des FDTD-Verfahrens ist @lit:Schneider2010[S. 166].
+Die Abweichung der Geschwindigkeit ist zwar klein, der daraus folgende Phasenfehler wächst jedoch linear mit der Laufstrecke. Bei langen Laufwegen kann die Phase daher erheblich verfälscht sein, weshalb die Kenntnis über die Größe des Fehlers von großer Relevanz für die sachgemäße Anwendung des FDTD-Verfahrens ist.
 
 == Testfall 2 --- Reflexion und Transmission an einer dielektrischen Grenzfläche <sec-tf3>
 
