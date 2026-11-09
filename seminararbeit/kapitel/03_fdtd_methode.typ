@@ -404,7 +404,17 @@ Faltung beispielsweise in die Summe
 $Psi_(H_x)^n = sum_(p=0)^(n-1) C_y (b_y)^p (partial E_z \/ partial y)^(n-p)$ über
 @lit:Schneider2010[S.~323, mod. Gl.~(11.128)], in die jeder Wert der
 Ortsableitung einmal mit dem Gewicht $C_y$ eingeht und danach mit jedem
-Zeitschritt auf das $b_y$-Fache abgeschwächt wird. Für jede der vier in
+Zeitschritt auf das $b_y$-Fache abgeschwächt wird. Spaltet man von dieser
+Summe den Summanden $p = 0$ ab, der den neuesten Wert der Ortsableitung
+enthält, und setzt in der verbleibenden Summe $q = p - 1$, so lässt sich $b_y$
+ausklammern, und es bleibt genau $Psi_(H_x)^(n-1)$ übrig:
+
+$ Psi_(H_x)^n = C_y ((partial E_z)/(partial y))^n
+  + sum_(p=1)^(n-1) C_y (b_y)^p ((partial E_z)/(partial y))^(n-p)
+  = C_y ((partial E_z)/(partial y))^n + b_y Psi_(H_x)^(n-1) $ <pml-rekursion>
+
+Zur Berechnung von $Psi_(H_x)^n$ wird damit nur der vorherige Wert
+$Psi_(H_x)^(n-1)$ benötigt. Für jede der vier in
 @pml-tmz auftretenden Ortsableitungen wird deshalb eine Hilfsgröße $Psi$
 mitgeführt, die die gesamte Vorgeschichte in einer einzigen Zahl je
 Gitterpunkt speichert.
