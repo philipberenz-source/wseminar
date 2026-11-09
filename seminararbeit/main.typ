@@ -31,7 +31,7 @@
   ([Sekundärliteratur (Lehrbücher und Lehrmaterialien)],
     ("Taflove2005", "Sullivan2013", "GriffithsDE", "Fleisch2008", "Schneider2010", "Orosz2022", "Teixeira2023")),
   ([Software-Dokumentation und Online-Quellen],
-    ("Oskooi2010", "Warren2016", "NumPyFFT", "CSTStudio", "AstroPi", "AppleSpecs")),
+    ("Oskooi2010", "Warren2016", "NumPyFFT", "AnsysLumerical", "AstroPi", "AppleSpecs")),
 )
 
 #heading(numbering: none)[Literaturverzeichnis]

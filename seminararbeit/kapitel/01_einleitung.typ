@@ -5,8 +5,8 @@
 #place(hide[
   @lit:Maxwell1865 @lit:Hertz1889 @lit:Yee1966 @lit:Berenger1994
   @lit:ChewWeedon1994 @lit:Liu2022
-  @lit:Taflove2005 @lit:GriffithsDE @lit:Orosz2022 @lit:Schneider2010
-  @lit:Oskooi2010 @lit:Warren2016 @lit:AppleSpecs @lit:CSTStudio
+  @lit:Taflove2005 @lit:GriffithsDE @lit:Orosz2022 @lit:Schneider2010 @lit:Teixeira2023
+  @lit:Oskooi2010 @lit:Warren2016 @lit:AppleSpecs @lit:AnsysLumerical
 ])
 
 == Relevanz und Motivation
@@ -17,7 +17,7 @@ Der Fall steht dabei stellvertretend für eine ganze Klasse technischer Problems
 
 Wo eine analytische Lösung nicht verfügbar ist, treten deshalb numerische Verfahren an ihre Stelle: Das Kontinuum wird in ein endliches Gitter überführt und Differentialquotienten durch Differenzenquotienten angenähert.
 
-Eines der verbreitetsten Verfahren in diesem Zusammenhang ist die _Finite-Difference Time-Domain_-Methode (FDTD), welche in der Praxis meist über kommerzielle Software angewandt wird @lit:Teixeira2023. Weit verbreitet ist dabei etwa die Software CST Studio Suite, deren Quellcode jedoch nicht öffentlich zugänglich ist @lit:CSTStudio. Mit MEEP @lit:Oskooi2010 oder gprMax @lit:Warren2016 existieren jedoch auch _Open-Source_-Implementierungen; die eigentliche Lücke liegt daher weniger in der Verfügbarkeit des Codes als im Nachvollzug der Herleitung: Gegenüber dem physikalischen Kontinuum treten auf einem diskreten Gitter systematische Abweichungen auf, deren Ursachen bei der alleinigen Verwendung kommerzieller Blackbox-Programme oder fremder Quelltexte nur eingeschränkt nachvollzogen werden können.
+Eines der verbreitetsten Verfahren in diesem Zusammenhang ist die _Finite-Difference Time-Domain_-Methode (FDTD), welche in der Praxis meist über kommerzielle Software angewandt wird @lit:Teixeira2023. Weit verbreitet ist dabei etwa die Software Ansys Lumerical FDTD, deren Quellcode jedoch nicht öffentlich zugänglich ist @lit:AnsysLumerical. Mit MEEP @lit:Oskooi2010 oder gprMax @lit:Warren2016 existieren jedoch auch _Open-Source_-Implementierungen; die eigentliche Lücke liegt daher weniger in der Verfügbarkeit des Codes als im Nachvollzug der Herleitung: Gegenüber dem physikalischen Kontinuum treten auf einem diskreten Gitter systematische Abweichungen auf, deren Ursachen bei der alleinigen Verwendung kommerzieller Blackbox-Programme oder fremder Quelltexte nur eingeschränkt nachvollzogen werden können.
 
 Dementsprechend verfolgt diese Arbeit den Ansatz, die Maxwell-Gleichungen in ein System diskreter Gleichungen zu überführen und daraus einen eigenen FDTD-Solver in Python zu implementieren, welcher anschließend gegen analytisch beschriebene Testfälle gehalten wird. Dadurch wird sowohl die numerische Genauigkeit des Verfahrens bestimmt als auch untersucht, welche Fehlerquellen sich durch die Diskretisierung ergeben. 
 
